@@ -144,14 +144,19 @@ public class CLocsFileReader extends IlluminaFileReader {
 
     public static void main(String[] args) throws Exception {
 
-        CLocsFileReader fr = new CLocsFileReader("/nfs/users/nfs_g/gq1/illumina2bam/testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.clocs");
+        String clocsFileName = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.clocs";
+        if(args.length > 0  && args[0] != null){
+            clocsFileName = args[0];
+        }
+
+        CLocsFileReader fr = new CLocsFileReader(clocsFileName);
         int count = 0;
         while (fr.hasNext()) {
             String[] pos = fr.next();
             count++;
-            //if (count % 100000 == 1) {
+            if (count % 100000 == 1) {
                 System.out.println(pos[0] + " " + pos[1]);
-            //}
+            }
         }
         System.err.println(fr.getCurrentTotalClusters());
 

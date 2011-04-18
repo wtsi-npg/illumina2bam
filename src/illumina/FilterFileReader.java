@@ -110,7 +110,12 @@ public class FilterFileReader extends IlluminaFileReader {
 
     public static void main(String args[]) throws Exception {
 
-        FilterFileReader filter = new FilterFileReader("/nfs/users/nfs_g/gq1/illumina2bam/testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/s_1_1101.filter");
+        String filterFileName = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/s_1_1101.filter";
+        if(args.length > 0  && args[0] != null){
+            filterFileName = args[0];
+        }
+
+        FilterFileReader filter = new FilterFileReader(filterFileName);
 
         int numberPFCluster = 0;
         while (filter.hasNext()) {

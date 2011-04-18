@@ -130,7 +130,12 @@ public class SCLFileReader extends IlluminaFileReader {
 
     public static void main(String args[]) throws Exception {
 
-        SCLFileReader scl = new SCLFileReader("/nfs/users/nfs_g/gq1/illumina2bam/testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C1.1/s_1_1101.scl");
+        String sclFileName = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C1.1/s_1_1101.scl";
+        if(args.length > 0  && args[0] != null){
+            sclFileName = args[0];
+        }
+
+        SCLFileReader scl = new SCLFileReader(sclFileName);
 
         System.out.println(scl.getTotalClusters());
 

@@ -113,7 +113,11 @@ public class BCLFileReader extends IlluminaFileReader {
 
     public static void main(String args[]) throws Exception {
 
-        BCLFileReader bcl = new BCLFileReader("testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C1.1/s_1_1101.bcl");
+        String bclFileName = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C1.1/s_1_1101.bcl";
+        if(args.length > 0  && args[0] != null){
+            bclFileName = args[0];
+        }
+        BCLFileReader bcl = new BCLFileReader(bclFileName);
 
         System.out.println(bcl.getTotalClusters());
 

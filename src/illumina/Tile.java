@@ -491,7 +491,11 @@ public class Tile {
      */
     public static void main (String [] args) throws Exception{
 
-        String intensityDir = "/nfs/users/nfs_g/gq1/illumina2bam/testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities";
+        String intensityDir = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities";
+        if(args.length > 0  && args[0] != null){
+            intensityDir = args[0];
+        }
+        
         String id = "HS13_6000";
         int lane = 1;
         int tileNumber = 1101;
