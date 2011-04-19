@@ -65,15 +65,15 @@ public class TileTest {
 
     @Test
     public void checkOneSAMRecord() {
-        String[] baseQuals = {".G", "BA"};
+        byte [][] baseQuals = { {78, 71}, {33, 32}};
         String readName = "HS13_6000:1:1101:21238:9999";
         String secondBases = "AAA";
-        String[] baseQualsIndex = {"TC", "FC"};
+        byte [][] baseQualsIndex = {{84, 67}, {37 ,34} };
         SAMRecord record = tile.getSAMRecord(
                 null, readName, 5, baseQuals, secondBases, baseQualsIndex, 0, true, true);
         String result = "HS13_6000:1:1101:21238:9999	581"
                 + "	*	*	0	*	*	*	*	"
-                + "NG	BA	E2:Z:AAA	RG:Z:1	QT:Z:FC	RT:Z:TC	ci:i:5";
+                + "NG	BA	E2:Z:AAA	RG:Z:1	QT:Z:ud	RT:Z:TC	ci:i:5";
         assertEquals(record.format(), result);
     }
 
@@ -100,23 +100,24 @@ public class TileTest {
     @Test
     public void checkNextClusterMethods() throws Exception {
 
-        String[] read1 = tile.getNextClusterBaseQuals("read1");
-        assertEquals(read1[0], ".G");
-        assertEquals(read1[1], "BI");
+        byte [][] read1 = tile.getNextClusterBaseQuals("read1");
+        assertEquals(tile.covertByteArrayToString(read1[0]), "NG");
+        assertEquals(tile.covertPhredQulByteArrayToFastqString(read1[1]), "!*");
 
-        String[] read2 = tile.getNextClusterBaseQuals("read2");
-        assertEquals(read2[0], "..");
-        assertEquals(read2[1], "BB");
+        byte [][] read2 = tile.getNextClusterBaseQuals("read2");
+        assertEquals(tile.covertByteArrayToString(read2[0]), "NN");
+        assertEquals(tile.covertPhredQulByteArrayToFastqString(read2[1]), "!!");
 
-        String[] readIndex = tile.getNextClusterBaseQuals("readIndex");
-        assertEquals(readIndex[0], ".");
-        assertEquals(readIndex[1], "B");
+        byte [][] readIndex = tile.getNextClusterBaseQuals("readIndex");
+        assertEquals(tile.covertByteArrayToString(readIndex[0]), "N");
+        assertEquals(tile.covertPhredQulByteArrayToFastqString(readIndex[1]), "!");
     }
+
 
     @Test
     public void checkProcessTileOK() throws Exception {
 
-        File tempBamFile = File.createTempFile("test", ".bam");
+        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
         factory.setCreateMd5File(true);
@@ -131,9 +132,10 @@ public class TileTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "491c39b683fbfcea52f595a53c3e4d6a");
+        assertEquals(md5, "9e260104a4876289b29a361eaad4f5a5");
         
         md5File.delete();
         tempBamFile.delete();
+        
     }
 }

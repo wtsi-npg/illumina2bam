@@ -38,9 +38,9 @@ public class BCLFileReaderTest {
     @Test
     public void checkNextFirstClusterOK() {
 
-        char[] cluster = bclFileReader.next();
-        assertEquals(cluster[0], '.');
-        assertEquals(cluster[1], 'B');
+        byte [] cluster = bclFileReader.next();
+        assertEquals((char) cluster[0], 'N');
+        assertEquals((char) (cluster[1]+ 64), 64);
         assertEquals(bclFileReader.getCurrentCluster(), 1);
         assertTrue(bclFileReader.hasNext());
     }
@@ -51,9 +51,9 @@ public class BCLFileReaderTest {
         for (int i = 0; i < 305; i++) {
             bclFileReader.next();
         }
-        char[] cluster = bclFileReader.next();
-        assertEquals(cluster[0], 'A');
-        assertEquals(cluster[1], '^');
+        byte [] cluster = bclFileReader.next();
+        assertEquals((char)cluster[0], 'A');
+        assertEquals((char)(cluster[1] + 64 ), '^');
         assertEquals(bclFileReader.getCurrentCluster(), 307);
         assertEquals(bclFileReader.getTotalClusters(), 2609912);
         assertTrue(bclFileReader.hasNext());
@@ -62,13 +62,13 @@ public class BCLFileReaderTest {
     @Test
     public void checkNextLastClusterOK() {
 
-        char[] cluster = null;
+        byte[] cluster = null;
 
         while (bclFileReader.hasNext()) {
             cluster = bclFileReader.next();
         }
-        assertEquals(cluster[0], 'G');
-        assertEquals(cluster[1], 'T');
+        assertEquals((char)cluster[0], 'G');
+        assertEquals((char) (cluster[1] + 64), 'T');
         assertEquals(bclFileReader.getCurrentCluster(), 2609912);
         assertEquals(bclFileReader.getTotalClusters(), 2609912);
         assertFalse(bclFileReader.hasNext());
