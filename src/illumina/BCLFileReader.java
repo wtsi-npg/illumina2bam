@@ -3,6 +3,7 @@
  */
 package illumina;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 import java.util.logging.Level;
@@ -13,9 +14,8 @@ import java.util.logging.Logger;
  */
 public class BCLFileReader extends IlluminaFileReader {
 
-    private final char[] BASE_ARRAY = {'A', 'C', 'G', 'T'};
-    private final char UNKNOWN_BASE = '.';
-    private final int UNKNOWN_BASE_QUALITY = 66;
+    private final byte[] BASE_ARRAY = {65, 67, 71, 84}; //A C G T
+    private final byte UNKNOWN_BASE = 78;
     private int currentCluster = 0;
     private int totalClusters = 0;
 
@@ -53,37 +53,39 @@ public class BCLFileReader extends IlluminaFileReader {
         return (this.getCurrentCluster() < this.getTotalClusters()) ? true : false;
     }
 
+
     /**
-     * get base and quality for next cluster
-     * @return char[], base for the first element and quality as the second element
+     *  get base and quality for next cluster
+     * @return byte [] base byte for the first element and quality byte as the second element
+     *
      */
     @Override
-    public char[] next() {
+    public byte[] next() {
 
         try {
-            int nextBase = this.inputStream.read();
 
-            //end of the file
-            if (nextBase == -1) {
-                Logger.getLogger(BCLFileReader.class.getName()).log(Level.SEVERE, "There is no mroe cluster in BCL file after cluster {1}: {0} ", new Object[]{this.fileName, this.getCurrentCluster()});
+            byte nextBase;
+            try{
+                nextBase = this.inputStream.readByte();
+            } catch( EOFException ex) {
+                //end of the file
+                Logger.getLogger(BCLFileReader.class.getName()).log(Level.SEVERE,
+                        "There is no mroe cluster in BCL file after cluster {1}: {0}\n{2} ",
+                        new Object[]{this.fileName, this.getCurrentCluster(), ex}
+                );
                 return null;
             }
 
-            char base, qul;
-            char[] currentClusterPair = new char[2];
+            //last two bits are base index
+            int baseIndex =  nextBase & 0x3;
 
-            //last two bits are base
-            int baseInt = nextBase & 0x3;
             //the rest base are quality
-            int qulInt = (nextBase & 0xFC) >> 2;
+            byte qul = ( byte) ( (nextBase & 0xFC) >> 2 ) ;
 
             //convert base to char or unknow
-            base = (qulInt != 0) ? this.BASE_ARRAY[baseInt] : this.UNKNOWN_BASE;
+            byte base = (qul != 0) ? this.BASE_ARRAY[baseIndex] : this.UNKNOWN_BASE;
 
-            //convert quality score
-            qulInt = (qulInt != 0) ? (qulInt + 64) : UNKNOWN_BASE_QUALITY;
-            qul = (char) qulInt;
-
+            byte [] currentClusterPair = new byte[2];
             currentClusterPair[0] = base;
             currentClusterPair[1] = qul;
 
@@ -124,15 +126,15 @@ public class BCLFileReader extends IlluminaFileReader {
         int count = 0;
         while (bcl.hasNext()) {
             count++;
-            char[] cluster = bcl.next();
+            byte [] cluster = bcl.next();
             if (count % 100000 == 1 || count == 2609912) {
-                System.out.println(count + "-" + cluster[0] + "-" + cluster[1]);
+                System.out.println(count + "-" + (char)cluster[0] + "-" + (char)(cluster[1] + 64) );//base and qseq quality score
             }
         }
 
         System.out.println(bcl.getCurrentCluster());
 
-        char[] cluster = bcl.next();
+        byte [] cluster = bcl.next();
         if (cluster == null) {
             System.out.println("no more cluster");
         }

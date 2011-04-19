@@ -141,16 +141,16 @@ public class Tile {
             int filtered = (Integer) filterFileReader.next();
 
             //read 1
-            String [] basesQuals1 = this.getNextClusterBaseQuals("read1");
+            byte [][] basesQuals1 = this.getNextClusterBaseQuals("read1");
 
             //read 2
-            String [] basesQuals2 = null;
+            byte [][] basesQuals2 = null;
             if(this.isPairedRead()){
                 basesQuals2 = this.getNextClusterBaseQuals("read2");
             }
             
             //index read
-            String [] basesQualsIndex = null;
+            byte [][] basesQualsIndex = null;
             if(this.isIndexed()){
                  basesQualsIndex = this.getNextClusterBaseQuals("readIndex");
             }
@@ -290,7 +290,7 @@ public class Tile {
      * @return
      * @throws Exception
      */
-    public String[] getNextClusterBaseQuals(String read) throws Exception {
+    public byte[][] getNextClusterBaseQuals(String read) throws Exception {
        BCLFileReader[] bclFileList = this.getBclFileReaderListByRead().get(read);
        return this.getNextClusterBaseQuals(bclFileList);
     }
@@ -301,22 +301,20 @@ public class Tile {
      * @return
      * @throws Exception
      */
-    public String[] getNextClusterBaseQuals(BCLFileReader[] bclFileList) throws Exception {
+    public byte [][] getNextClusterBaseQuals(BCLFileReader[] bclFileList) throws Exception {
 
         int readLength = bclFileList.length;
 
-        StringBuilder bases = new StringBuilder(readLength);
-        StringBuilder quals = new StringBuilder(readLength);
-
-        for (BCLFileReader fileReader : bclFileList) {
-            char[] cluster = fileReader.next();
-            bases.append(cluster[0]);
-            quals.append(cluster[1]);
+        byte [][] clusterBaseQuals = new byte[2][readLength];
+        int count = 0;
+        for (BCLFileReader fileReader : bclFileList) {            
+            byte [] cluster = fileReader.next();
+            clusterBaseQuals[0][count] = cluster[0];
+            clusterBaseQuals[1][count] = cluster[1];
+            count++;
         }
 
-        String[] clusterPair = {bases.toString(), quals.toString()};
-
-        return clusterPair;
+        return clusterBaseQuals;
     }
 
     /**
@@ -369,9 +367,9 @@ public class Tile {
             SAMFileHeader fileHeader,
             String readName,
             int clusterIndex,
-            String[] baseQuals,
+            byte [][] baseQuals,
             String secondBases,
-            String [] baseQualsIndex,
+            byte [][] baseQualsIndex,
             int filter,
             boolean paired,
             boolean firstRead) {
@@ -380,8 +378,8 @@ public class Tile {
 
         samRecord.setReadName(readName);
         samRecord.setAttribute("ci", clusterIndex);
-        samRecord.setReadString(baseQuals[0]);
-        samRecord.setBaseQualityString(baseQuals[1]);
+        samRecord.setReadBases(baseQuals[0]);
+        samRecord.setBaseQualities(baseQuals[1]);
         samRecord.setReadUnmappedFlag(true);
         samRecord.setAttribute("RG", "1");
 
@@ -403,8 +401,9 @@ public class Tile {
         }
 
         if(baseQualsIndex != null){
-            samRecord.setAttribute("RT",baseQualsIndex[0]);
-            samRecord.setAttribute("QT",baseQualsIndex[1]);
+
+            samRecord.setAttribute("RT",this.covertByteArrayToString(baseQualsIndex[0]));
+            samRecord.setAttribute("QT",this.covertPhredQulByteArrayToFastqString(baseQualsIndex[0]));
         }
         
         return samRecord;
@@ -439,6 +438,32 @@ public class Tile {
                 + File.separator
                 + this.tileName;
         return firstCall ? cycleDir + ".bcl" : cycleDir + ".scl";
+    }
+
+    /**
+     *
+     * @param array
+     * @return
+     */
+    public String covertPhredQulByteArrayToFastqString(byte [] array){
+        StringBuilder builder = new StringBuilder(array.length);
+        for (byte b : array){
+            builder.append( (char) (b + 33) );
+        }
+        return builder.toString();
+    }
+
+    /**
+     * 
+     * @param array
+     * @return
+     */
+    public String covertByteArrayToString(byte [] array){
+        StringBuilder builder = new StringBuilder(array.length);
+        for (byte b : array){
+            builder.append((char) b);
+        }
+        return builder.toString();
     }
 
     /**
