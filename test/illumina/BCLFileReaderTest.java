@@ -84,7 +84,7 @@ public class BCLFileReaderTest {
         while( bclFileReaderCorrupt.getCurrentCluster() < totalCluster ) {
            byte[] cluster = bclFileReaderCorrupt.next();
         }
-
+        bclFileReaderCorrupt.close();
     }
 
     @Test
@@ -94,6 +94,6 @@ public class BCLFileReaderTest {
         BCLFileReader bclFileReaderCorrupt = new BCLFileReader(testBCLFileCorrupt);
         int totalCluster = bclFileReaderCorrupt.getTotalClusters();
         assertEquals(totalCluster, 0);
-
+        bclFileReaderCorrupt.close();
     }
 }
