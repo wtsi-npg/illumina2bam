@@ -124,9 +124,19 @@ public class Tile {
      */
     public void processTile(SAMFileWriter outputSam) throws Exception {
 
-        CLocsFileReader clocsFileReader = new CLocsFileReader(this.getcLocsFileName());
+        
         FilterFileReader filterFileReader = new FilterFileReader(this.getFilterFileName());
+        CLocsFileReader clocsFileReader = new CLocsFileReader(this.getcLocsFileName());
+
         SAMFileHeader samFileHeader = outputSam.getFileHeader();
+
+        int totalClusterInTile = filterFileReader.getTotalClusters();
+
+        //the number of cluster in each bcl or scl checked here
+        this.checkBCLClusterNumber(totalClusterInTile);
+        if(this.includeSecondCall){
+            this.checkSCLClusterNumber(totalClusterInTile);
+        }
 
         int clusterIndex = 0;
         while (filterFileReader.hasNext()) {
@@ -177,19 +187,75 @@ public class Tile {
             }
         }
 
-        //check number of cluster from filter file match the cluster nubmer in clocs file
-        //the number of cluster in each bcl or scl not checked here
-        if (clocsFileReader.getCurrentTotalClusters() != filterFileReader.getTotalClusters()) {
+        //check number of clusters from filter header is correct
+
+        if(totalClusterInTile != filterFileReader.getCurrentCluster()){
+            throw new Exception("Number of clusters in filter file "
+                    + filterFileReader.fileName
+                    + " is incorrect");
+        }
+
+        //check number of clusters from filter file match the cluster nubmer in clocs file
+        if (clocsFileReader.getCurrentTotalClusters() != totalClusterInTile) {
             throw new Exception("Number of clusters in clocs file does not match filter file "
                     + filterFileReader.getTotalClusters() + " "
                     + clocsFileReader.getCurrentTotalClusters());
         }
+
 
         //close clocs and filter file
         clocsFileReader.close();
         filterFileReader.close();
     }
 
+    /**
+     *
+     * @param expectedClusterNumber
+     * @return
+     * @throws Exception
+     */
+    public boolean checkBCLClusterNumber(int expectedClusterNumber) throws Exception{
+
+        for (Map.Entry<String, BCLFileReader []> entry : this.bclFileReaderListByRead.entrySet()) {
+              BCLFileReader [] bclFileReaderList = entry.getValue();
+              for(BCLFileReader bclFileReader: bclFileReaderList){
+                  if( bclFileReader.getTotalClusters() != expectedClusterNumber){
+                      throw new Exception("Number of Clusters in BCL file "
+                              + bclFileReader.fileName
+                              + " "
+                              + bclFileReader.getTotalClusters()
+                              + " not as expected:"
+                              + expectedClusterNumber
+                              );
+                  }
+              }
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @param expectedClusterNumber
+     * @return
+     * @throws Exception
+     */
+    public boolean checkSCLClusterNumber(int expectedClusterNumber) throws Exception {
+
+        for (Map.Entry<String, SCLFileReader[]> entry : this.sclFileReaderListByRead.entrySet()) {
+            SCLFileReader[] sclFileReaderList = entry.getValue();
+            for (SCLFileReader sclFileReader : sclFileReaderList) {
+                if (sclFileReader.getTotalClusters() != expectedClusterNumber) {
+                    throw new Exception("Number of Clusters in SCL file "
+                            + sclFileReader.fileName
+                            + " "
+                            + sclFileReader.getTotalClusters()
+                            + " not as expected:"
+                            + expectedClusterNumber);
+                }
+            }
+        }
+        return true;
+    }
     /**
      * open all BCL or SCL files
      *
@@ -403,7 +469,7 @@ public class Tile {
         if(baseQualsIndex != null){
 
             samRecord.setAttribute("RT",this.covertByteArrayToString(baseQualsIndex[0]));
-            samRecord.setAttribute("QT",this.covertPhredQulByteArrayToFastqString(baseQualsIndex[0]));
+            samRecord.setAttribute("QT",this.covertPhredQulByteArrayToFastqString(baseQualsIndex[1]));
         }
         
         return samRecord;

@@ -83,8 +83,13 @@ public class CLocsFileReader extends IlluminaFileReader {
     public String[] next() {
 
         if (this.getCurrentBlock() >= this.getTotalBlocks()) {
-            Logger.getLogger(CLocsFileReader.class.getName()).log(Level.SEVERE, "Try to read a block out of range: {0}", getCurrentBlock());
-            return null;
+           throw new RuntimeException("Try to read a block "
+                    + getCurrentBlock()
+                    + " out of range:"
+                    + this.totalBlocks
+                    + ". Current number of Clusters:"
+                    + this.getCurrentTotalClusters()
+                    );
         }
 
         try {
@@ -159,8 +164,11 @@ public class CLocsFileReader extends IlluminaFileReader {
             }
         }
         System.err.println(fr.getCurrentTotalClusters());
-
-        String[] next = fr.next();
+        try{
+           String[] next = fr.next();
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
 
     }
 }

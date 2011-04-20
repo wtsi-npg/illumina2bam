@@ -87,23 +87,23 @@ public class CLocsFileReaderTest {
         assertNull(cluster);
         assertEquals(cLocsFileReader.getCurrentBlock(), 65600);
         assertEquals(cLocsFileReader.getCurrentTotalClusters(), 2609912);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void checkAfterLastBlock() throws RuntimeException {
         assertFalse(cLocsFileReader.hasNext());
         assertNull(cLocsFileReader.next());
     }
 
-    @Test
-    public void testCorruptionFile() throws Exception{
+    @Test(expected = RuntimeException.class)
+    public void testCorruptionFile() throws Exception {
         //the final part of the file corruped, the positions not avalible
-       String testCLocsFile2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/L003/s_3_1101.clocs";
-       CLocsFileReader cLocsFileReader2 = new CLocsFileReader(testCLocsFile2);
-       while(cLocsFileReader2.getCurrentTotalClusters()<3658339){
-          String[] pos = cLocsFileReader2.next();
-          if(pos == null){
-              break;
-          }
-       }
-      assertEquals(cLocsFileReader2.getCurrentTotalClusters(), 3658310);
-      cLocsFileReader2.close();
+        String testCLocsFile2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/L003/s_3_1101.clocs";
+        CLocsFileReader cLocsFileReader2 = new CLocsFileReader(testCLocsFile2);
+        while (cLocsFileReader2.getCurrentTotalClusters() < 3658339) {
+            cLocsFileReader2.next();
+        }
+        cLocsFileReader2.close();
     }
 
     @Test
@@ -111,9 +111,8 @@ public class CLocsFileReaderTest {
         //the final part of the file corruped, the positions not avalible
        String testCLocsFile2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/L003/s_3_1101.clocs";
        CLocsFileReader cLocsFileReader2 = new CLocsFileReader(testCLocsFile2);
-       String[] pos = null;
        while(cLocsFileReader2.hasNext()){
-          pos = cLocsFileReader2.next();
+          cLocsFileReader2.next();
        }
        assertEquals(cLocsFileReader2.getCurrentTotalClusters(), 3658310);
        cLocsFileReader2.close();

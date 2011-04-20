@@ -39,7 +39,7 @@ public class TileTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(1);
+        HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(3);
         cycleRangeByRead.put("read1", cycleRangeRead1);
         cycleRangeByRead.put("read2", cycleRangeRead2);
         cycleRangeByRead.put("readIndex", cycleRangeIndex);
@@ -73,7 +73,7 @@ public class TileTest {
                 null, readName, 5, baseQuals, secondBases, baseQualsIndex, 0, true, true);
         String result = "HS13_6000:1:1101:21238:9999	581"
                 + "	*	*	0	*	*	*	*	"
-                + "NG	BA	E2:Z:AAA	RG:Z:1	QT:Z:ud	RT:Z:TC	ci:i:5";
+                + "NG	BA	E2:Z:AAA	RG:Z:1	QT:Z:FC	RT:Z:TC	ci:i:5";
         assertEquals(record.format(), result);
     }
 
@@ -118,6 +118,7 @@ public class TileTest {
     public void checkProcessTileOK() throws Exception {
 
         File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
+        tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
         factory.setCreateMd5File(true);
@@ -129,13 +130,60 @@ public class TileTest {
         outputSam.close();
 
         File md5File = new File(tempBamFile.getAbsolutePath() + ".md5");
+        md5File.deleteOnExit();
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "9e260104a4876289b29a361eaad4f5a5");
-        
-        md5File.delete();
-        tempBamFile.delete();
-        
+        assertEquals(md5, "03785d1102b07a86d5b313a26e5cbb21");        
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkCorruptedBCLFile() throws Exception {
+        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
+        tempBamFile.deleteOnExit();
+
+        SAMFileWriterFactory factory = new SAMFileWriterFactory();
+        SAMFileHeader header = new SAMFileHeader();
+        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, tempBamFile);
+
+        String intensityDir_2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities";
+        String id_2 = "HS17_6067";
+        int lane_2 = 3;
+        int tileNumber_2 = 1101;
+        int[] cycleRangeRead_1 = {59, 59};
+
+        HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(1);
+        cycleRangeByRead.put("read1", cycleRangeRead_1);
+
+        Tile tile2 = new Tile(intensityDir_2, id_2, lane_2, tileNumber_2, cycleRangeByRead, false, true);
+        tile2.openBaseCallFiles();
+        tile2.processTile(outputSam);
+        tile2.closeBaseCallFiles();
+        outputSam.close();
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void checkCorruptedClocsFile() throws Exception {
+        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
+        tempBamFile.deleteOnExit();
+
+        SAMFileWriterFactory factory = new SAMFileWriterFactory();
+        SAMFileHeader header = new SAMFileHeader();
+        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, tempBamFile);
+
+        String intensityDir_2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities";
+        String id_2 = "HS17_6067";
+        int lane_2 = 3;
+        int tileNumber_2 = 1101;
+        int[] cycleRangeRead_1 = {58, 58};
+
+        HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(1);
+        cycleRangeByRead.put("read1", cycleRangeRead_1);
+
+        Tile tile2 = new Tile(intensityDir_2, id_2, lane_2, tileNumber_2, cycleRangeByRead, false, false);
+        tile2.openBaseCallFiles();
+        tile2.processTile(outputSam);
+        tile2.closeBaseCallFiles();
+        outputSam.close();
     }
 }
