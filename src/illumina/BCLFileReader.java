@@ -19,6 +19,10 @@ public class BCLFileReader extends IlluminaFileReader {
     private int currentCluster = 0;
     private int totalClusters = 0;
 
+    //define current illumina quality score range
+    private final byte MAX_QUALITY_SCORE = 60;
+    private final byte MIN_QUALITY_SCORE = 0;
+
     /**
      * constructor to generate bcl file input stream
      *  and read the number of clusters
@@ -81,6 +85,11 @@ public class BCLFileReader extends IlluminaFileReader {
 
             //the rest base are quality
             byte qul = ( byte) ( (nextBase & 0xFC) >> 2 ) ;
+            if(qul < this.MIN_QUALITY_SCORE || qul >this.MAX_QUALITY_SCORE ){
+               throw new IllegalArgumentException("Invalid quality score: "
+                       + qul + " in bcl file " + this.fileName
+                       + " in position " + this.getCurrentCluster());
+            }
 
             //convert base to char or unknow
             byte base = (qul != 0) ? this.BASE_ARRAY[baseIndex] : this.UNKNOWN_BASE;

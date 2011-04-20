@@ -74,4 +74,26 @@ public class BCLFileReaderTest {
         assertFalse(bclFileReader.hasNext());
         assertEquals(bclFileReader.next(), null);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkCorruptedFileReading() throws Exception{
+        //total cluster in header is correct but the cluster in the scecond half are corrupted
+        String testBCLFileCorrupt = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/BaseCalls/L003/C59.1/s_3_1101.bcl";
+        BCLFileReader bclFileReaderCorrupt = new BCLFileReader(testBCLFileCorrupt);
+        int totalCluster = bclFileReaderCorrupt.getTotalClusters();
+        while( bclFileReaderCorrupt.getCurrentCluster() < totalCluster ) {
+           byte[] cluster = bclFileReaderCorrupt.next();
+        }
+
+    }
+
+    @Test
+    public void checkCorruptedFileReadingWringHeader() throws Exception{
+        //total cluster in header is wrong
+        String testBCLFileCorrupt = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/BaseCalls/L003/C59.1/s_3_1105.bcl";
+        BCLFileReader bclFileReaderCorrupt = new BCLFileReader(testBCLFileCorrupt);
+        int totalCluster = bclFileReaderCorrupt.getTotalClusters();
+        assertEquals(totalCluster, 0);
+
+    }
 }
