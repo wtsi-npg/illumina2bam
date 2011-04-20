@@ -23,7 +23,7 @@ public class Tile {
     //fields must be given
     private final String intensityDir;
     private final String id;
-    private final int lane;
+    private final int laneNumber;
     private final int tileNumber;
 
     private final HashMap<String, int[]> cycleRangeByRead;
@@ -50,7 +50,7 @@ public class Tile {
      * 
      * @param intensityDir intensities directory
      * @param id instrument with run id, which will be used for read name
-     * @param lane the run lane number
+     * @param laneNumber the run laneNumber number
      * @param tileNumber this tile number
      * @param cycleRangeByRead cycle range for each read, the hash key could be read1, read2 or readIndex
      * @param secondCall include second base call or not
@@ -58,14 +58,14 @@ public class Tile {
      */
     public Tile(String intensityDir,
             String id,
-            int lane,
+            int laneNumber,
             int tileNumber,
             HashMap<String, int[]> cycleRangeByRead,
             boolean secondCall,
             boolean pfFilter) {
 
         this.id = id;
-        this.lane = lane;
+        this.laneNumber = laneNumber;
         this.tileNumber = tileNumber;
         this.intensityDir = intensityDir;
 
@@ -98,8 +98,8 @@ public class Tile {
             this.indexed = false;
         }
 
-        this.laneSubDir = "L00" + this.lane;
-        this.tileName = "s_" + this.lane + "_" + this.tileNumber;
+        this.laneSubDir = "L00" + this.laneNumber;
+        this.tileName = "s_" + this.laneNumber + "_" + this.tileNumber;
         this.baseCallDir = this.intensityDir
                 + File.separator
                 + "BaseCalls";
@@ -483,7 +483,7 @@ public class Tile {
      */
     public String getReadName(String [] pos){
         return this.id
-                + ":" + this.lane
+                + ":" + this.laneNumber
                 + ":" + this.tileNumber
                 + ":" + pos[0]
                 + ":" + pos[1];
