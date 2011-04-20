@@ -90,4 +90,32 @@ public class CLocsFileReaderTest {
         assertFalse(cLocsFileReader.hasNext());
         assertNull(cLocsFileReader.next());
     }
+
+    @Test
+    public void testCorruptionFile() throws Exception{
+        //the final part of the file corruped, the positions not avalible
+       String testCLocsFile2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/L003/s_3_1101.clocs";
+       CLocsFileReader cLocsFileReader2 = new CLocsFileReader(testCLocsFile2);
+       while(cLocsFileReader2.getCurrentTotalClusters()<3658339){
+          String[] pos = cLocsFileReader2.next();
+          if(pos == null){
+              break;
+          }
+       }
+      assertEquals(cLocsFileReader2.getCurrentTotalClusters(), 3658310);
+      cLocsFileReader2.close();
+    }
+
+    @Test
+    public void testCorruptionFile2() throws Exception{
+        //the final part of the file corruped, the positions not avalible
+       String testCLocsFile2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/L003/s_3_1101.clocs";
+       CLocsFileReader cLocsFileReader2 = new CLocsFileReader(testCLocsFile2);
+       String[] pos = null;
+       while(cLocsFileReader2.hasNext()){
+          pos = cLocsFileReader2.next();
+       }
+       assertEquals(cLocsFileReader2.getCurrentTotalClusters(), 3658310);
+       cLocsFileReader2.close();
+    }
 }
