@@ -99,7 +99,7 @@ public class Tile {
         }
 
         this.laneSubDir = "L00" + this.lane;
-        this.tileName = "s_1_" + this.tileNumber;
+        this.tileName = "s_" + this.lane + "_" + this.tileNumber;
         this.baseCallDir = this.intensityDir
                 + File.separator
                 + "BaseCalls";
