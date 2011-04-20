@@ -27,18 +27,18 @@ public class IlluminaFileReaderTest {
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorExpectedException3() throws Exception {
         IlluminaFileReader fileReader = new IlluminaFileReader(testBCLDir);
-        assertEquals(fileReader, null);
+        assertNull(fileReader);
     }
 
     @Test(expected = FileNotFoundException.class)
     public void testConstructorExpectedException2() throws Exception {
         IlluminaFileReader fileReader = new IlluminaFileReader("nonexisted.file");
-        assertEquals(fileReader, null);
+        assertNull(fileReader);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorExpectedException1() throws Exception {
         IlluminaFileReader fileReader = new IlluminaFileReader(null);
-        assertEquals(fileReader, null);
+        assertNull(fileReader);
     }
 }

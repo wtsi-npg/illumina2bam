@@ -72,7 +72,7 @@ public class BCLFileReaderTest {
         assertEquals(bclFileReader.getCurrentCluster(), 2609912);
         assertEquals(bclFileReader.getTotalClusters(), 2609912);
         assertFalse(bclFileReader.hasNext());
-        assertEquals(bclFileReader.next(), null);
+        assertNull(bclFileReader.next());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -82,7 +82,7 @@ public class BCLFileReaderTest {
         BCLFileReader bclFileReaderCorrupt = new BCLFileReader(testBCLFileCorrupt);
         int totalCluster = bclFileReaderCorrupt.getTotalClusters();
         while( bclFileReaderCorrupt.getCurrentCluster() < totalCluster ) {
-           byte[] cluster = bclFileReaderCorrupt.next();
+           bclFileReaderCorrupt.next();
         }
         bclFileReaderCorrupt.close();
     }

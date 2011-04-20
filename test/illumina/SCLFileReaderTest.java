@@ -71,6 +71,6 @@ public class SCLFileReaderTest {
         assertEquals(sclFileReader.getCurrentCluster(), 2609912);
         assertEquals(sclFileReader.getTotalClusters(), 2609912);
         assertFalse(sclFileReader.hasNext());
-        assertEquals(sclFileReader.next(), null);
+        assertNull(sclFileReader.next());
     }
 }

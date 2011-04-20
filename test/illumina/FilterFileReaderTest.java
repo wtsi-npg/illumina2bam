@@ -72,6 +72,6 @@ public class FilterFileReaderTest {
         assertEquals(filterFileReader.getTotalClusters(), 2609912);
         assertEquals(filterFileReader.getCurrentPFClusters(), 2425954);
         assertFalse(filterFileReader.hasNext());
-        assertEquals(filterFileReader.next(), null);
+        assertNull(filterFileReader.next());
     }
 }
