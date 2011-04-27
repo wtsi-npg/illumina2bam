@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 public class TileTest {
 
     private static String intensityDir = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities";
+    private static String baseCallDir  = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls";
     private static String id = "HS13_6000";
     private static int lane = 1;
     private static int tileNumber = 1101;
@@ -43,7 +44,7 @@ public class TileTest {
         cycleRangeByRead.put("read1", cycleRangeRead1);
         cycleRangeByRead.put("read2", cycleRangeRead2);
         cycleRangeByRead.put("readIndex", cycleRangeIndex);
-        tile = new Tile(intensityDir, id, lane, tileNumber, cycleRangeByRead, true, true);
+        tile = new Tile(intensityDir, baseCallDir, id, lane, tileNumber, cycleRangeByRead, true, true);
     }
 
     @AfterClass
@@ -147,6 +148,7 @@ public class TileTest {
         SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, tempBamFile);
 
         String intensityDir_2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities";
+        String baseCallDir_2  = intensityDir_2 + File.separator + "BaseCalls";
         String id_2 = "HS17_6067";
         int lane_2 = 3;
         int tileNumber_2 = 1101;
@@ -155,7 +157,7 @@ public class TileTest {
         HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(1);
         cycleRangeByRead.put("read1", cycleRangeRead_1);
 
-        Tile tile2 = new Tile(intensityDir_2, id_2, lane_2, tileNumber_2, cycleRangeByRead, false, true);
+        Tile tile2 = new Tile(intensityDir_2, baseCallDir_2, id_2, lane_2, tileNumber_2, cycleRangeByRead, false, true);
         tile2.openBaseCallFiles();
         tile2.processTile(outputSam);
         tile2.closeBaseCallFiles();
@@ -172,6 +174,7 @@ public class TileTest {
         SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, tempBamFile);
 
         String intensityDir_2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities";
+        String baseCallDir_2  = intensityDir_2 + File.separator + "BaseCalls";
         String id_2 = "HS17_6067";
         int lane_2 = 3;
         int tileNumber_2 = 1101;
@@ -180,7 +183,7 @@ public class TileTest {
         HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(1);
         cycleRangeByRead.put("read1", cycleRangeRead_1);
 
-        Tile tile2 = new Tile(intensityDir_2, id_2, lane_2, tileNumber_2, cycleRangeByRead, false, false);
+        Tile tile2 = new Tile(intensityDir_2, baseCallDir_2, id_2, lane_2, tileNumber_2, cycleRangeByRead, false, false);
         tile2.openBaseCallFiles();
         tile2.processTile(outputSam);
         tile2.closeBaseCallFiles();

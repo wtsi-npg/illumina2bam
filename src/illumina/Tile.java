@@ -22,6 +22,7 @@ public class Tile {
 
     //fields must be given
     private final String intensityDir;
+    private final String baseCallDir;
     private final String id;
     private final int laneNumber;
     private final int tileNumber;
@@ -31,8 +32,7 @@ public class Tile {
     private final boolean includeSecondCall;
     private final boolean pfFilter;
 
-    //temp fields
-    private final String baseCallDir;
+    //temp fields    
     private final String laneSubDir;
     private final String tileName;
     private final boolean pairedRead;
@@ -57,6 +57,7 @@ public class Tile {
      * @param pfFilter include PF filtered reads or not
      */
     public Tile(String intensityDir,
+            String baseCallDir,
             String id,
             int laneNumber,
             int tileNumber,
@@ -68,6 +69,7 @@ public class Tile {
         this.laneNumber = laneNumber;
         this.tileNumber = tileNumber;
         this.intensityDir = intensityDir;
+        this.baseCallDir  = baseCallDir;
 
         this.includeSecondCall = secondCall;
         this.pfFilter = pfFilter;
@@ -100,9 +102,6 @@ public class Tile {
 
         this.laneSubDir = "L00" + this.laneNumber;
         this.tileName = "s_" + this.laneNumber + "_" + this.tileNumber;
-        this.baseCallDir = this.intensityDir
-                + File.separator
-                + "BaseCalls";
 
         this.cLocsFileName = this.intensityDir
                 + File.separator
@@ -583,6 +582,7 @@ public class Tile {
     public static void main (String [] args) throws Exception{
 
         String intensityDir = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities";
+        String baseCallDir  = intensityDir + "/BaseCalls";
         if(args.length > 0  && args[0] != null){
             intensityDir = args[0];
         }
@@ -600,13 +600,14 @@ public class Tile {
         cycleRangeByRead.put("read2", cycleRangeRead2);
         cycleRangeByRead.put("readIndex", cycleRangeIndex);
 
-        Tile tile = new Tile(intensityDir, id, lane, tileNumber, cycleRangeByRead, true, true);
+        Tile tile = new Tile(intensityDir, baseCallDir, id, lane, tileNumber, cycleRangeByRead, true, true);
 
+        File outBam = new File("test.bam");
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
         factory.setCreateMd5File(true);
         SAMFileHeader header = new SAMFileHeader();
         SAMFileWriter outputSam = factory
-                .makeSAMOrBAMWriter(header, true, new File("test.bam"));
+                .makeSAMOrBAMWriter(header, true, outBam);
 
         tile.openBaseCallFiles();
         tile.processTile(outputSam);
