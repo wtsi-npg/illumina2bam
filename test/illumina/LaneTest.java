@@ -28,7 +28,9 @@ public class LaneTest {
     private static String baseCallDir = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls";
     private static int laneNumber = 1;
     private static boolean includeSecondCall = true;
-    private static boolean pfFilter = true;    
+    private static boolean pfFilter = true;
+
+    private static String output = "testdata/6000_1.bam";
 
     private static Lane lane;
 
@@ -37,7 +39,7 @@ public class LaneTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {        
-        lane = new Lane(intensityDir, baseCallDir, laneNumber, includeSecondCall, pfFilter);
+        lane = new Lane(intensityDir, baseCallDir, laneNumber, includeSecondCall, pfFilter, output);
     }
 
     @AfterClass
@@ -101,7 +103,7 @@ public class LaneTest {
         boolean includeSecondCall2 = true;
         boolean pfFilter2 = true;
 
-        Lane lane2 = new Lane(intensityDir2, baseCallDir2, laneNumber2, includeSecondCall2, pfFilter2);
+        Lane lane2 = new Lane(intensityDir2, baseCallDir2, laneNumber2, includeSecondCall2, pfFilter2, output);
 
         int [] barCodeCycleList = lane2.readBarCodeIndexCycles();
         int [] expected = {76,77,78,79,80,81,82,83};
@@ -129,6 +131,41 @@ public class LaneTest {
     @Test
     public void readConfigsOK() throws Exception{
         assertTrue(lane.readConfigs());
+    }
+
+    @Test
+    public void generateHeaderOK() throws Exception{
+
+        SAMFileHeader header = lane.generateHeader();
+        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
+        tempBamFile.deleteOnExit();
+
+        SAMFileWriterFactory factory = new SAMFileWriterFactory();
+        factory.setCreateMd5File(true);
+        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, tempBamFile);
+
+        outputSam.close();
+
+        File md5File = new File(tempBamFile.getAbsolutePath() + ".md5");
+        md5File.deleteOnExit();
+        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
+        String md5 = md5Stream.readLine();
+        assertEquals(md5, "91006c6f261a94bd15896f3d0e8028bd");
+    }
+
+    @Test
+    public void generateOutputSamStreamOK() throws Exception{
+        SAMFileWriter outputSam = lane.generateOutputSamStream();
+        assertNotNull(outputSam);
+        outputSam.close();
+        File outputFile = new File(output);
+        outputFile.deleteOnExit();
+
+        File md5File = new File(output + ".md5");
+        md5File.deleteOnExit();
+        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
+        String md5 = md5Stream.readLine();
+        assertEquals(md5, "91006c6f261a94bd15896f3d0e8028bd");
     }
 
     @Test

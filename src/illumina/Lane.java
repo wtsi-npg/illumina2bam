@@ -20,6 +20,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import net.sf.samtools.SAMFileHeader;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -27,7 +28,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import net.sf.samtools.SAMFileWriter;
+import net.sf.samtools.SAMFileWriterFactory;
 import net.sf.samtools.SAMProgramRecord;
+import net.sf.samtools.SAMReadGroupRecord;
 
 
 /**
@@ -44,6 +47,9 @@ public class Lane {
     //fields must be given about what to output
     private final boolean includeSecondCall;
     private final boolean pfFilter;
+
+    //fields must be given for output bam
+    private final String output;
 
     //config xml file name and XML Documetns
     private final String baseCallsConfig;
@@ -74,13 +80,15 @@ public class Lane {
                 String baseCallDir,
                 int laneNumber,
                 boolean secondCall,
-                boolean pfFilter){
+                boolean pfFilter,
+                String output){
 
         this.intensityDir      = intensityDir;
         this.baseCallDir       = baseCallDir;
         this.laneNumber        = laneNumber;
         this.includeSecondCall = secondCall;
         this.pfFilter          = pfFilter;
+        this.output            = output;
 
         this.baseCallsConfig = this.baseCallDir
                              + File.separator
@@ -106,6 +114,24 @@ public class Lane {
         this.readBaseCallsConfig();
         this.readIntensityConfig();
         return true;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public SAMFileWriter generateOutputSamStream(){
+
+        File outputBamFile = new File(this.output);
+
+        SAMFileWriterFactory factory = new SAMFileWriterFactory();
+        factory.setCreateMd5File(true);
+
+        SAMFileHeader header = this.generateHeader();
+
+        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, outputBamFile);
+
+        return outputSam;
     }
 
     /**
@@ -425,6 +451,24 @@ public class Lane {
         instrumentProgramConfig.setAttribute("DS", "Controlling software on instrument");
 
         return instrumentProgramConfig;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public SAMFileHeader generateHeader(){
+         SAMFileHeader header = new SAMFileHeader();
+
+         header.addProgramRecord(this.instrumentProgram);
+
+         this.baseCallProgram.setPreviousProgramGroupId(this.instrumentProgram.getId());
+         header.addProgramRecord(baseCallProgram);
+
+         SAMReadGroupRecord readGroup = new SAMReadGroupRecord("1");
+         header.addReadGroup(readGroup);
+
+         return header;
     }
 
     /**
