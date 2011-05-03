@@ -155,6 +155,7 @@ public class LaneTest {
 
     @Test
     public void generateOutputSamStreamOK() throws Exception{
+        SAMFileWriterFactory.setDefaultCreateMd5File(true);
         SAMFileWriter outputSam = lane.generateOutputSamStream();
         assertNotNull(outputSam);
         outputSam.close();

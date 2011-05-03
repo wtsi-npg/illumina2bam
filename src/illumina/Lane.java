@@ -123,7 +123,6 @@ public class Lane {
     public SAMFileWriter generateOutputSamStream(){
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
-        factory.setCreateMd5File(true);
 
         SAMFileHeader header = this.generateHeader();
 
