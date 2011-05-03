@@ -67,11 +67,11 @@ public class Illumina2bam extends CommandLineProgram {
             lane.processTiles(outBam);
         } catch (Exception ex) {
             Logger.getLogger(Illumina2bam.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
+            return 1;
         }
         outBam.close();
 
-        return 1;
+        return 0;
     }
 
     /** Stock main method. */
