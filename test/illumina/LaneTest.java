@@ -30,7 +30,7 @@ public class LaneTest {
     private static boolean includeSecondCall = true;
     private static boolean pfFilter = true;
 
-    private static String output = "testdata/6000_1.bam";
+    private static File output = new File("testdata/6000_1.bam");
 
     private static Lane lane;
 
@@ -158,8 +158,7 @@ public class LaneTest {
         SAMFileWriter outputSam = lane.generateOutputSamStream();
         assertNotNull(outputSam);
         outputSam.close();
-        File outputFile = new File(output);
-        outputFile.deleteOnExit();
+        output.deleteOnExit();
 
         File md5File = new File(output + ".md5");
         md5File.deleteOnExit();

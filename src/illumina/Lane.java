@@ -49,7 +49,7 @@ public class Lane {
     private final boolean pfFilter;
 
     //fields must be given for output bam
-    private final String output;
+    private final File output;
 
     //config xml file name and XML Documetns
     private final String baseCallsConfig;
@@ -81,7 +81,7 @@ public class Lane {
                 int laneNumber,
                 boolean secondCall,
                 boolean pfFilter,
-                String output){
+                File output){
 
         this.intensityDir      = intensityDir;
         this.baseCallDir       = baseCallDir;
@@ -122,14 +122,12 @@ public class Lane {
      */
     public SAMFileWriter generateOutputSamStream(){
 
-        File outputBamFile = new File(this.output);
-
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
         factory.setCreateMd5File(true);
 
         SAMFileHeader header = this.generateHeader();
 
-        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, outputBamFile);
+        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, output);
 
         return outputSam;
     }
