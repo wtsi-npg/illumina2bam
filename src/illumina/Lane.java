@@ -51,6 +51,8 @@ public class Lane {
     //fields must be given for output bam
     private final File output;
 
+    private SAMReadGroupRecord readGroup;
+
     //config xml file name and XML Documetns
     private final String baseCallsConfig;
     private final String intensityConfig;
@@ -462,8 +464,9 @@ public class Lane {
          this.baseCallProgram.setPreviousProgramGroupId(this.instrumentProgram.getId());
          header.addProgramRecord(baseCallProgram);
 
-         SAMReadGroupRecord readGroup = new SAMReadGroupRecord("1");
-         header.addReadGroup(readGroup);
+         if(this.readGroup != null){
+           header.addReadGroup(readGroup);
+         }
 
          return header;
     }
@@ -487,5 +490,12 @@ public class Lane {
      */
     public void setTileList(int[] tileList) {
         this.tileList = tileList;
+    }
+
+    /**
+     * @param readGroup the readGroup to set
+     */
+    public void setReadGroup(SAMReadGroupRecord readGroup) {
+        this.readGroup = readGroup;
     }
 }

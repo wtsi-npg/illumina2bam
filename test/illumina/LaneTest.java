@@ -4,6 +4,7 @@
  */
 package illumina;
 
+import net.sf.samtools.SAMReadGroupRecord;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import net.sf.samtools.SAMFileWriter;
@@ -136,6 +137,9 @@ public class LaneTest {
     @Test
     public void generateHeaderOK() throws Exception{
 
+        SAMReadGroupRecord readGroup = new SAMReadGroupRecord("1");
+        lane.setReadGroup(readGroup);
+
         SAMFileHeader header = lane.generateHeader();
         File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
         tempBamFile.deleteOnExit();
@@ -155,6 +159,7 @@ public class LaneTest {
 
     @Test
     public void generateOutputSamStreamOK() throws Exception{
+
         SAMFileWriterFactory.setDefaultCreateMd5File(true);
         SAMFileWriter outputSam = lane.generateOutputSamStream();
         assertNotNull(outputSam);
