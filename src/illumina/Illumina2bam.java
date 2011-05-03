@@ -12,13 +12,15 @@ import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.Usage;
 import net.sf.samtools.SAMFileWriter;
 
+import net.sf.picard.io.IoUtil;
+
 /**
  *
  * @author Guoying Qi
  */
 public class Illumina2bam extends CommandLineProgram {
     
-    @Usage public final String USAGE ="Covert BCL to BAM or SAM file";
+    @Usage public final String USAGE ="Covert Illumina BCL to BAM or SAM file";
 
     @Option(shortName="I", doc="Illumina intensities diretory including config xml file and clocs files under lane directory")
     public String INTENSITY_DIR;
@@ -50,18 +52,21 @@ public class Illumina2bam extends CommandLineProgram {
     @Option(shortName="PF", doc="Filter cluster or not, default true", optional=true)
     public boolean PF_FILTER = true;
 
-    public boolean FORCE_GC = false;
 
     @Override
     protected int doWork() {
 
-        Lane lane = new Lane(this.INTENSITY_DIR, this.BASECALLS_DIR, this.LANE, this.GENERATE_SECONDARY_BASE_CALLS, this.PF_FILTER, this.OUTPUT.getAbsolutePath());
+        IoUtil.assertFileIsWritable(OUTPUT);
+
+        Lane lane = new Lane(this.INTENSITY_DIR, this.BASECALLS_DIR, this.LANE, this.GENERATE_SECONDARY_BASE_CALLS, this.PF_FILTER, OUTPUT);
+
         try {
             lane.readConfigs();
         } catch (Exception ex) {
             Logger.getLogger(Illumina2bam.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
+            return 1;
         }
+
         SAMFileWriter outBam = lane.generateOutputSamStream();
         try {
             lane.processTiles(outBam);
@@ -69,6 +74,7 @@ public class Illumina2bam extends CommandLineProgram {
             Logger.getLogger(Illumina2bam.class.getName()).log(Level.SEVERE, null, ex);
             return 1;
         }
+
         outBam.close();
 
         return 0;
