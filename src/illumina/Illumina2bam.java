@@ -103,6 +103,10 @@ public class Illumina2bam extends CommandLineProgram {
             return 1;
         }
 
+        if( this.FIRST_TILE != null ){
+            lane.reduceTileList(this.FIRST_TILE, this.TILE_LIMIT);
+        }
+
         SAMFileWriter outBam = lane.generateOutputSamStream();
         try {
             lane.processTiles(outBam);

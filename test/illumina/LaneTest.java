@@ -20,6 +20,7 @@
 
 package illumina;
 
+import net.sf.picard.PicardException;
 import net.sf.samtools.SAMReadGroupRecord;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -79,9 +80,54 @@ public class LaneTest {
             1101,1102,1103,1104,1105,1106,1107,1108,
             1201,1202,1203,1204,1205,1206,1207,1208,
             2101,2102,2103,2104,2105,2106,2107,2108,
-            2201,2202,2203,2204,2205,2206,2207,2208,
+            2201,2202,2203,2204,2205,2206,2207,2208
         };
         assertArrayEquals(expectedTileList, lane.readTileList());
+    }
+
+    @Test
+    public void reduceTileListOK(){
+
+        int [] givenTileList = {
+            1101,1102,1103,1104,1105,1106,1107,1108,
+            1201,1202,1203,1204,1205,1206,1207,1208,
+            2101,2102,2103,2104,2105,2106,2107,2108,
+            2201,2202,2203,2204,2205,2206,2207,2208
+        };
+        lane.setTileList(givenTileList);
+
+        lane.reduceTileList(1102, 2);
+        
+        int [] expectedTileList = {1102,1103};
+        assertArrayEquals(lane.getTileList(), expectedTileList);
+    }
+
+    @Test (expected = PicardException.class)
+    public void reduceTileListFirstTileException(){
+
+        int [] givenTileList = {
+            1101,1102,1103,1104,1105,1106,1107,1108,
+            1201,1202,1203,1204,1205,1206,1207,1208,
+            2101,2102,2103,2104,2105,2106,2107,2108,
+            2201,2202,2203,2204,2205,2206,2207,2208
+        };
+        lane.setTileList(givenTileList);
+
+        lane.reduceTileList(3308, 2);
+    }
+
+    @Test (expected = PicardException.class)
+    public void reduceTileListTileLimitException(){
+
+        int [] givenTileList = {
+            1101,1102,1103,1104,1105,1106,1107,1108,
+            1201,1202,1203,1204,1205,1206,1207,1208,
+            2101,2102,2103,2104,2105,2106,2107,2108,
+            2201,2202,2203,2204,2205,2206,2207,2208
+        };
+        lane.setTileList(givenTileList);
+
+        lane.reduceTileList(1103, 33);
     }
 
     @Test

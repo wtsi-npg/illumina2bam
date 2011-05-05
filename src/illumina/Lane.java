@@ -21,8 +21,10 @@ package illumina;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +37,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import net.sf.picard.PicardException;
 import net.sf.samtools.SAMFileHeader;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -84,6 +87,7 @@ public class Lane {
 
     //xpath
     private final XPath xpath;
+
 
     /**
      *
@@ -487,6 +491,43 @@ public class Lane {
     }
 
     /**
+     * 
+     * @param firstTile
+     * @param tileLimit
+     */
+    public void reduceTileList(Integer firstTile, Integer tileLimit){
+
+        ArrayList<Integer> reducedTileList = new ArrayList<Integer>();
+
+        for (int tileNumber : this.tileList){
+            if( tileNumber >= firstTile.intValue() ){
+                reducedTileList.add(tileNumber);
+            }
+        }
+
+        if(reducedTileList.isEmpty()){
+            throw new PicardException("The Given first tile number " + firstTile + " was not found.");
+        }
+
+        List<Integer> limitedTileList = reducedTileList;
+        if(tileLimit != null && tileLimit > 0){
+            if(tileLimit > reducedTileList.size()){
+                throw new PicardException("The Given first tile limit " + tileLimit + " was too big.");
+            }
+            limitedTileList = reducedTileList.subList(0, tileLimit.intValue());
+        }
+
+        int [] newTileList = new int[limitedTileList.size()];
+        int i = 0;
+        for(Integer tileNumber : limitedTileList){
+            newTileList[i] = tileNumber.intValue();
+            i++;
+        }
+
+        this.tileList = newTileList;
+    }
+
+    /**
      * @param id the id to set
      */
     public void setId(String id) {
@@ -505,6 +546,13 @@ public class Lane {
      */
     public void setTileList(int[] tileList) {
         this.tileList = tileList;
+    }
+
+    /**
+     * @return the tileList
+     */
+    public int[] getTileList() {
+        return tileList;
     }
 
     /**
