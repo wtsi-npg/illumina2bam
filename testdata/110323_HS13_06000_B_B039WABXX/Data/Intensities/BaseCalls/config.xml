@@ -72,11 +72,11 @@
       <MinCycle>0</MinCycle>
       <Reads Index="1">
         <FirstCycle>1</FirstCycle>
-        <LastCycle>50</LastCycle>
+        <LastCycle>2</LastCycle>
       </Reads>
       <Reads Index="2">
         <FirstCycle>51</FirstCycle>
-        <LastCycle>100</LastCycle>
+        <LastCycle>52</LastCycle>
         <RunFolder>110323_HS13_06000_B_B039WABXX</RunFolder>
       </Reads>
       <RunFolder>110323_HS13_06000_B_B039WABXX</RunFolder>

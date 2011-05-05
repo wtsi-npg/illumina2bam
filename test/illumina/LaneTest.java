@@ -138,8 +138,8 @@ public class LaneTest {
     @Test
     public void reaCycleRangeByReadOK(){
         int[][] expected = {
-            {1,50},
-            {51,100}
+            {1,2},
+            {51,52}
         };
         assertArrayEquals(lane.readCycleRangeByRead(), expected);
     }
@@ -152,9 +152,9 @@ public class LaneTest {
     @Test
     public void checkCycleRangeByReadOK() throws Exception{
         HashMap<String, int[]> cycleRangeByRead = lane.checkCycleRangeByRead();
-        int [] read1CycleRange = {1, 50};
+        int [] read1CycleRange = {1, 2};
         assertArrayEquals(cycleRangeByRead.get("read1"), read1CycleRange);
-        int [] read2CycleRange = {51, 100};
+        int [] read2CycleRange = {51, 52};
         assertArrayEquals(cycleRangeByRead.get("read2"), read2CycleRange);
     }
     
