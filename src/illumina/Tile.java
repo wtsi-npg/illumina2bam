@@ -194,10 +194,10 @@ public class Tile {
             //write to bam
             if(!(this.pfFilter && filtered == 0)){
                 SAMRecord recordRead1 = this.getSAMRecord(samFileHeader, readName, clusterIndex, basesQuals1, secondBases1, basesQualsIndex, filtered, pairedRead, true);
-                outputSam.addAlignment(recordRead1);
+                this.writeToBam(outputSam, recordRead1);
                 if(this.pairedRead){
                     SAMRecord recordRead2 = this.getSAMRecord(samFileHeader, readName, clusterIndex, basesQuals2, secondBases2, null, filtered, pairedRead, false);
-                    outputSam.addAlignment(recordRead2);
+                    this.writeToBam(outputSam, recordRead2);
                 }
             }
         }
@@ -221,6 +221,10 @@ public class Tile {
         //close clocs and filter file
         clocsFileReader.close();
         filterFileReader.close();
+    }
+    
+    private void writeToBam(SAMFileWriter outputSam, SAMRecord recordRead ){
+        outputSam.addAlignment(recordRead);
     }
 
     /**
