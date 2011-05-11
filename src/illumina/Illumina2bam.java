@@ -40,16 +40,16 @@ import net.sf.samtools.SAMReadGroupRecord;
 public class Illumina2bam extends CommandLineProgram {
     
     private final String programName = "illumina2bam";
-    private final String programDS = "Covert Illumina BCL to BAM or SAM file";
+    private final String programDS = "Convert Illumina BCL to BAM or SAM file";
     
     @Usage(programVersion="0.01") public final String USAGE = this.getStandardUsagePreamble()
                                                      + this.programDS;
     
     @Option(shortName="I", doc="Illumina intensities diretory including config xml file and clocs files under lane directory")
-    public String INTENSITY_DIR;
+    public File INTENSITY_DIR;
 
-    @Option(shortName="B", doc="Illumina basecalls diretory including config xml file, and filter files, bcl and scl files under lane cycle directory")
-    public String BASECALLS_DIR;
+    @Option(shortName="B", doc="Illumina basecalls diretory including config xml file, and filter files, bcl and scl files under lane cycle directory, using BaseCalls directory under intensities if not given", optional=true)
+    public File BASECALLS_DIR;
     
     @Option(shortName="L", doc="Lane number")
     public Integer LANE;
@@ -66,25 +66,25 @@ public class Illumina2bam extends CommandLineProgram {
     @Option(shortName="RG", doc="ID used to link RG header record with RG tag in SAM record, default 1", optional=true)
     public String READ_GROUP_ID = "1";
 
-    @Option(shortName="SM", doc="The name of the sequenced sample", optional=true)
+    @Option(shortName="SM", doc="The name of the sequenced sample, using library name if not given", optional=true)
     public String SAMPLE_ALIAS;
 
-    @Option(shortName="LB", doc="The name of the sequenced library", optional=true)
-    public String LIBRARY_NAME;
+    @Option(shortName="LB", doc="The name of the sequenced library, default unknown", optional=true)
+    public String LIBRARY_NAME = "unknown";
 
     @Option(shortName="ST", doc="The name of the study", optional=true)
     public String STUDY_NAME;
 
-    @Option(shortName="PU", doc="The platform unit", optional=true)
+    @Option(shortName="PU", doc="The platform unit, using runfolder name plus lane number if not given", optional=true)
     public String PLATFORM_UNIT;
 
-    @Option(doc="The start date of the run.", optional=true)
+    @Option(doc="The start date of the run, read from config file if not given", optional=true)
     public Date RUN_START_DATE;
 
     @Option(shortName="SC", doc="Sequence center name, default SC for Sanger Center", optional=true)
     public String SEQUENCING_CENTER = "SC";
 
-    @Option(doc="The name of the sequencing technology that produced the read.", optional=true)
+    @Option(doc="The name of the sequencing technology that produced the read, default ILLUMINA", optional=true)
     public String PLATFORM = "ILLUMINA";
 
     @Option(doc="If set, this is the first tile to be processed (for debugging).  Note that tiles are not processed in numerical order.",
@@ -98,8 +98,12 @@ public class Illumina2bam extends CommandLineProgram {
     protected int doWork() {
 
         IoUtil.assertFileIsWritable(OUTPUT);
+        
+        if(this.BASECALLS_DIR == null){
+          this.BASECALLS_DIR = new File(INTENSITY_DIR.getAbsoluteFile() + File.separator + "BaseCalls");
+        }
 
-        Lane lane = new Lane(this.INTENSITY_DIR, this.BASECALLS_DIR, this.LANE, this.GENERATE_SECONDARY_BASE_CALLS, this.PF_FILTER, OUTPUT);
+        Lane lane = new Lane(this.INTENSITY_DIR.getAbsolutePath(), this.BASECALLS_DIR.getAbsolutePath(), this.LANE, this.GENERATE_SECONDARY_BASE_CALLS, this.PF_FILTER, OUTPUT);
 
         try {
             lane.readConfigs();
@@ -109,6 +113,7 @@ public class Illumina2bam extends CommandLineProgram {
         }
         
         lane.setIllumina2bamProgram(this.getThisProgramRecord());
+        lane.setReadGroup(this.generateSamReadGroupRecord(null, null));
 
         if( this.FIRST_TILE != null ){
             lane.reduceTileList(this.FIRST_TILE, this.TILE_LIMIT);
@@ -127,6 +132,10 @@ public class Illumina2bam extends CommandLineProgram {
         return 0;
     }
     
+    /**
+     * 
+     * @return 
+     */
     public SAMProgramRecord getThisProgramRecord(){        
         
         SAMProgramRecord programRecord = new SAMProgramRecord(this.programName);
@@ -139,7 +148,47 @@ public class Illumina2bam extends CommandLineProgram {
         return programRecord;
     }
 
-
+    /**
+     * 
+     * @param platformUnitConfig
+     * @param runDateConfig
+     * @return 
+     */
+    public SAMReadGroupRecord generateSamReadGroupRecord(String platformUnitConfig, Date runDateConfig){
+        
+        SAMReadGroupRecord readGroup = new SAMReadGroupRecord(this.READ_GROUP_ID);
+        
+        readGroup.setLibrary(this.LIBRARY_NAME);
+        
+        if(this.SAMPLE_ALIAS == null){
+           readGroup.setSample(this.LIBRARY_NAME);
+        }else{
+            readGroup.setSample(this.SAMPLE_ALIAS);
+        }
+        
+        if( this.STUDY_NAME != null ){
+            readGroup.setDescription("Study " + this.STUDY_NAME);
+        }
+        
+        if(this.PLATFORM_UNIT != null){
+            readGroup.setPlatformUnit(this.PLATFORM_UNIT);
+        }else if(platformUnitConfig !=null){
+            readGroup.setPlatformUnit(platformUnitConfig);
+        }
+        
+        if(this.RUN_START_DATE != null){
+            readGroup.setRunDate(RUN_START_DATE);
+        }else if(runDateConfig != null){
+            readGroup.setRunDate(runDateConfig);
+        }
+                
+        readGroup.setPlatform(this.PLATFORM);
+        
+        readGroup.setSequencingCenter(this.SEQUENCING_CENTER);
+        
+        return readGroup;
+    }
+    
     /** Stock main method. */
     public static void main(final String[] args) {
         

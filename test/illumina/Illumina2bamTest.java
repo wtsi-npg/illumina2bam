@@ -31,14 +31,17 @@ public class Illumina2bamTest {
     public void testMain() throws FileNotFoundException, IOException {
         System.out.println("instanceMane and this program recordd");
         String[] args = {"INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities",
-            "BASECALLS_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls",
             "LANE=1",
             "OUTPUT=testdata/6000_1.sam",
             "VALIDATION_STRINGENCY=STRICT",
             "CREATE_MD5_FILE=true",
             "FIRST_TILE=1101",
             "COMPRESSION_LEVEL=1",
-            "TILE_LIMIT=1"};
+            "TILE_LIMIT=1",
+            "LB=Test library",
+            "SM=Test Sample",
+            "ST=testStudy",
+        };
         illumina2bam.instanceMain(args);
 
         File samFile = new File("testdata/6000_1.sam");
@@ -48,15 +51,21 @@ public class Illumina2bamTest {
         md5File.deleteOnExit();
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
-        assertEquals(md5, "86af96c99eb9a785cf2811b23b01cb23");
+        assertEquals(md5, "84bbfee44cbdda7a75013ce0530ed363");
 
         SAMProgramRecord result = illumina2bam.getThisProgramRecord();
 
-        assertEquals(result.getCommandLine(), "illumina.Illumina2bam INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities BASECALLS_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls LANE=1 OUTPUT=testdata/6000_1.sam FIRST_TILE=1101 TILE_LIMIT=1 VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1 CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1 SEQUENCING_CENTER=SC PLATFORM=ILLUMINA TMP_DIR=/tmp/gq1 VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        assertEquals(result.getCommandLine(), "illumina.Illumina2bam "
+                + "INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities "
+                + "LANE=1 OUTPUT=testdata/6000_1.sam "
+                + "SAMPLE_ALIAS=Test Sample LIBRARY_NAME=Test library STUDY_NAME=testStudy "
+                + "FIRST_TILE=1101 TILE_LIMIT=1 VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1 "
+                + "CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true "
+                + "READ_GROUP_ID=1 SEQUENCING_CENTER=SC PLATFORM=ILLUMINA TMP_DIR=/tmp/gq1 VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
         assertEquals(result.getId(), "illumina2bam");
         assertEquals(result.getProgramName(), "illumina2bam");
         assertEquals(result.getProgramVersion(), illumina2bam.getProgramVersion());
-        assertEquals(result.getAttribute("DS"), "Covert Illumina BCL to BAM or SAM file");
+        assertEquals(result.getAttribute("DS"), "Convert Illumina BCL to BAM or SAM file");
     }
 
 }
