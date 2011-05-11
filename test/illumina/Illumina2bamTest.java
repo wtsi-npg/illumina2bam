@@ -48,7 +48,7 @@ public class Illumina2bamTest {
         md5File.deleteOnExit();
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
-        assertEquals(md5, "6647186945f56fab2f300c59ae0c4c50");
+        assertEquals(md5, "86af96c99eb9a785cf2811b23b01cb23");
 
         SAMProgramRecord result = illumina2bam.getThisProgramRecord();
 

@@ -84,6 +84,8 @@ public class Lane {
     private int [] tileList;
     private SAMProgramRecord baseCallProgram;
     private SAMProgramRecord instrumentProgram;
+    
+    private SAMProgramRecord illumina2bamProgram;
 
     //xpath
     private final XPath xpath;
@@ -482,6 +484,11 @@ public class Lane {
 
          this.baseCallProgram.setPreviousProgramGroupId(this.instrumentProgram.getId());
          header.addProgramRecord(baseCallProgram);
+         
+         if(this.illumina2bamProgram != null){
+             this.illumina2bamProgram.setPreviousProgramGroupId(this.baseCallProgram.getId());
+             header.addProgramRecord(this.illumina2bamProgram);
+         }
 
          if(this.readGroup != null){
            header.addReadGroup(readGroup);
@@ -553,6 +560,20 @@ public class Lane {
      */
     public int[] getTileList() {
         return tileList;
+    }
+
+    /**
+     * @return the illumina2bamProgram
+     */
+    public SAMProgramRecord getIllumina2bamProgram() {
+        return illumina2bamProgram;
+    }
+
+    /**
+     * @param illumina2bamProgram the illumina2bamProgram to set
+     */
+    public void setIllumina2bamProgram(SAMProgramRecord illumina2bamProgram) {
+        this.illumina2bamProgram = illumina2bamProgram;
     }
 
     /**

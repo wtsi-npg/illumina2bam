@@ -107,6 +107,8 @@ public class Illumina2bam extends CommandLineProgram {
             Logger.getLogger(Illumina2bam.class.getName()).log(Level.SEVERE, null, ex);
             return 1;
         }
+        
+        lane.setIllumina2bamProgram(this.getThisProgramRecord());
 
         if( this.FIRST_TILE != null ){
             lane.reduceTileList(this.FIRST_TILE, this.TILE_LIMIT);
