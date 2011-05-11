@@ -38,8 +38,9 @@ import net.sf.samtools.SAMReadGroupRecord;
  */
 public class Illumina2bam extends CommandLineProgram {
     
-    @Usage public final String USAGE ="Covert Illumina BCL to BAM or SAM file";
-
+    @Usage(programVersion="0.01") public final String USAGE = this.getStandardUsagePreamble()
+                                                     + "Covert Illumina BCL to BAM or SAM file";
+    
     @Option(shortName="I", doc="Illumina intensities diretory including config xml file and clocs files under lane directory")
     public String INTENSITY_DIR;
 
@@ -123,6 +124,7 @@ public class Illumina2bam extends CommandLineProgram {
 
     /** Stock main method. */
     public static void main(final String[] args) {
+        
         System.exit(new Illumina2bam().instanceMain(args));
     }
 }
