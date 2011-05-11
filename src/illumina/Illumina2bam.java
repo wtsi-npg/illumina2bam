@@ -30,6 +30,7 @@ import net.sf.picard.cmdline.Usage;
 import net.sf.samtools.SAMFileWriter;
 
 import net.sf.picard.io.IoUtil;
+import net.sf.samtools.SAMProgramRecord;
 import net.sf.samtools.SAMReadGroupRecord;
 
 /**
@@ -38,8 +39,11 @@ import net.sf.samtools.SAMReadGroupRecord;
  */
 public class Illumina2bam extends CommandLineProgram {
     
+    private final String programName = "illumina2bam";
+    private final String programDS = "Covert Illumina BCL to BAM or SAM file";
+    
     @Usage(programVersion="0.01") public final String USAGE = this.getStandardUsagePreamble()
-                                                     + "Covert Illumina BCL to BAM or SAM file";
+                                                     + this.programDS;
     
     @Option(shortName="I", doc="Illumina intensities diretory including config xml file and clocs files under lane directory")
     public String INTENSITY_DIR;
@@ -119,6 +123,18 @@ public class Illumina2bam extends CommandLineProgram {
         outBam.close();
 
         return 0;
+    }
+    
+    public SAMProgramRecord getThisProgramRecord(){        
+        
+        SAMProgramRecord programRecord = new SAMProgramRecord(this.programName);
+        
+        programRecord.setProgramName(this.programName);
+        programRecord.setCommandLine(this.getCommandLine());
+        programRecord.setProgramVersion(this.getProgramVersion());
+        programRecord.setAttribute("DS", this.programDS);
+        
+        return programRecord;
     }
 
 
