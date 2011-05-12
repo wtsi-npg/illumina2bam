@@ -22,14 +22,13 @@ package illumina;
 
 import java.io.File;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.picard.cmdline.CommandLineProgram;
 import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.Usage;
 import net.sf.samtools.SAMFileWriter;
 
 import net.sf.picard.io.IoUtil;
+import net.sf.picard.util.Log;
 import net.sf.samtools.SAMProgramRecord;
 import net.sf.samtools.SAMReadGroupRecord;
 
@@ -39,52 +38,54 @@ import net.sf.samtools.SAMReadGroupRecord;
  */
 public class Illumina2bam extends CommandLineProgram {
     
+    private final Log log = Log.getInstance(Illumina2bam.class);
+    
     private final String programName = "illumina2bam";
     private final String programDS = "Convert Illumina BCL to BAM or SAM file";
     
     @Usage(programVersion="0.01")
     public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". ";
     
-    @Option(shortName="I", doc="Illumina intensities diretory including config xml file and clocs files under lane directory")
+    @Option(shortName="I", doc="Illumina intensities directory including config xml file, and clocs files under lane directory.")
     public File INTENSITY_DIR;
 
-    @Option(shortName="B", doc="Illumina basecalls diretory including config xml file, and filter files, bcl, maybe scl files under lane cycle directory, using BaseCalls directory under intensities if not given", optional=true)
+    @Option(shortName="B", doc="Illumina basecalls directory including config xml file, and filter files, bcl, maybe scl files under lane cycle directory, using BaseCalls directory under intensities if not given. ", optional=true)
     public File BASECALLS_DIR;
     
-    @Option(shortName="L", doc="Lane number")
+    @Option(shortName="L", doc="Lane number.")
     public Integer LANE;
 
-    @Option(shortName="O", doc="Output file name")
+    @Option(shortName="O", doc="Output file name.")
     public File OUTPUT;
 
-    @Option(shortName="E2", doc="Including second base call or not, default false", optional=true)
+    @Option(shortName="E2", doc="Including second base call or not, default false.", optional=true)
     public boolean GENERATE_SECONDARY_BASE_CALLS = false;
 
-    @Option(shortName="PF", doc="Filter cluster or not, default true", optional=true)
+    @Option(shortName="PF", doc="Filter cluster or not, default true.", optional=true)
     public boolean PF_FILTER = true;
 
-    @Option(shortName="RG", doc="ID used to link RG header record with RG tag in SAM record, default 1", optional=true)
+    @Option(shortName="RG", doc="ID used to link RG header record with RG tag in SAM record, default 1.", optional=true)
     public String READ_GROUP_ID = "1";
 
-    @Option(shortName="SM", doc="The name of the sequenced sample, using library name if not given", optional=true)
+    @Option(shortName="SM", doc="The name of the sequenced sample, using library name if not given.", optional=true)
     public String SAMPLE_ALIAS;
 
-    @Option(shortName="LB", doc="The name of the sequenced library, default unknown", optional=true)
+    @Option(shortName="LB", doc="The name of the sequenced library, default unknown.", optional=true)
     public String LIBRARY_NAME = "unknown";
 
-    @Option(shortName="ST", doc="The name of the study", optional=true)
+    @Option(shortName="ST", doc="The name of the study.", optional=true)
     public String STUDY_NAME;
 
-    @Option(shortName="PU", doc="The platform unit, using runfolder name plus lane number if not given", optional=true)
+    @Option(shortName="PU", doc="The platform unit, using runfolder name plus lane number if not given.", optional=true)
     public String PLATFORM_UNIT;
 
-    @Option(doc="The start date of the run, read from config file if not given", optional=true)
+    @Option(doc="The start date of the run, read from config file if not given.", optional=true)
     public Date RUN_START_DATE;
 
-    @Option(shortName="SC", doc="Sequence center name, default SC for Sanger Center", optional=true)
+    @Option(shortName="SC", doc="Sequence center name, default SC for Sanger Center.", optional=true)
     public String SEQUENCING_CENTER = "SC";
 
-    @Option(doc="The name of the sequencing technology that produced the read, default ILLUMINA", optional=true)
+    @Option(doc="The name of the sequencing technology that produced the read, default ILLUMINA.", optional=true)
     public String PLATFORM = "ILLUMINA";
 
     @Option(doc="If set, this is the first tile to be processed (for debugging).  Note that tiles are not processed in numerical order.",
@@ -100,50 +101,64 @@ public class Illumina2bam extends CommandLineProgram {
         IoUtil.assertFileIsWritable(OUTPUT);
         
         if(this.BASECALLS_DIR == null){
+            
           this.BASECALLS_DIR = new File(INTENSITY_DIR.getAbsoluteFile() + File.separator + "BaseCalls");
+          log.info("BaseCalls directory not given, using " + this.BASECALLS_DIR);
         }
 
         Lane lane = new Lane(this.INTENSITY_DIR.getAbsolutePath(), this.BASECALLS_DIR.getAbsolutePath(), this.LANE, this.GENERATE_SECONDARY_BASE_CALLS, this.PF_FILTER, OUTPUT);
 
         try {
+            log.info("Reading config xml file");
             lane.readConfigs();
         } catch (Exception ex) {
-            Logger.getLogger(Illumina2bam.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Problems to read config xml file: " + ex.getMessage());
             return 1;
         }
         
+        log.info("Generating illumina2bam program record");
         lane.setIllumina2bamProgram(this.getThisProgramRecord());
         
+        
+        log.info("Generating read group header");
         String runfolderConfig = lane.getRunfolderConfig();
         String platformUnitConfig = null;
         if(runfolderConfig != null){
             platformUnitConfig = runfolderConfig + "_" + this.LANE;
-        }
-        
-        Date runDateConfig   = lane.getRunDateConfig();
-        
+        }        
+        Date runDateConfig   = lane.getRunDateConfig();        
         lane.setReadGroup(this.generateSamReadGroupRecord(platformUnitConfig, runDateConfig));
 
         if( this.FIRST_TILE != null ){
+            log.info("Trying to limit the number tiles from " + this.FIRST_TILE);
+            if(this.TILE_LIMIT != null){
+                log.info("Only process " + this.TILE_LIMIT + " tiles");
+            }
             lane.reduceTileList(this.FIRST_TILE, this.TILE_LIMIT);
         }
 
+        log.info("Generationg bam or sam file output stream with header");
         SAMFileWriter outBam = lane.generateOutputSamStream();
+        
+        log.info("Writing BCL file to bam");
         try {
             lane.processTiles(outBam);
         } catch (Exception ex) {
-            Logger.getLogger(Illumina2bam.class.getName()).log(Level.SEVERE, null, ex);
+            log.error( "Problems to process tiles " + ex.getMessage() );
             return 1;
         }
 
         outBam.close();
+        
+        log.info("BAM or SAM file generated: " + this.OUTPUT);
 
         return 0;
     }
     
     /**
+     * Generate Program Record for this program itself
      * 
-     * @return 
+     * @return this program itself as Program Record
      */
     public SAMProgramRecord getThisProgramRecord(){        
         
@@ -158,10 +173,11 @@ public class Illumina2bam extends CommandLineProgram {
     }
 
     /**
+     * Generate read group record
      * 
-     * @param platformUnitConfig
-     * @param runDateConfig
-     * @return 
+     * @param platformUnitConfig default platform unit from configure XML, which will be used if not given from command line, and could be null
+     * @param runDateConfig default run date from configure XML, which will be used if not given from command line, and could be null
+     * @return read group record for BAM header
      */
     public SAMReadGroupRecord generateSamReadGroupRecord(String platformUnitConfig, Date runDateConfig){
         
@@ -198,7 +214,10 @@ public class Illumina2bam extends CommandLineProgram {
         return readGroup;
     }
     
-    /** Stock main method. */
+    /**
+     * 
+     * @param args example INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities BASECALLS_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls LANE=1 OUTPUT=testdata/6000_1.sam  VALIDATION_STRINGENCY=STRICT CREATE_INDEX=false CREATE_MD5_FILE=true FIRST_TILE=1101 COMPRESSION_LEVEL=1 TILE_LIMIT=1
+     */
     public static void main(final String[] args) {
         
         System.exit(new Illumina2bam().instanceMain(args));

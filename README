@@ -13,7 +13,6 @@ Help
 
 java -jar "illumina2bam.jar" -h
 
-
 USAGE: Illumina2bam [options]
 
 Convert Illumina BCL to BAM or SAM file. Version: 0.01
@@ -29,56 +28,57 @@ Options:
                               tools.
 
 INTENSITY_DIR=File
-I=File                        Illumina intensities diretory including config xml file and clocs files under lane 
-                              directory  Required. 
+I=File                        Illumina intensities directory including config xml file, and clocs files under lane 
+                              directory.  Required. 
 
 BASECALLS_DIR=File
-B=File                        Illumina basecalls diretory including config xml file, and filter files, bcl and scl 
+B=File                        Illumina basecalls directory including config xml file, and filter files, bcl, maybe scl 
                               files under lane cycle directory, using BaseCalls directory under intensities if not 
-                              given  Default value: null. 
+                              given.   Default value: null. 
 
 LANE=Integer
-L=Integer                     Lane number  Required. 
+L=Integer                     Lane number.  Required. 
 
 OUTPUT=File
-O=File                        Output file name  Required. 
+O=File                        Output file name.  Required. 
 
 GENERATE_SECONDARY_BASE_CALLS=Boolean
-E2=Boolean                    Including second base call or not, default false  Default value: false. This option can 
+E2=Boolean                    Including second base call or not, default false.  Default value: false. This option can 
                               be set to 'null' to clear the default value. Possible values: {true, false} 
 
 PF_FILTER=Boolean
-PF=Boolean                    Filter cluster or not, default true  Default value: true. This option can be set to 
+PF=Boolean                    Filter cluster or not, default true.  Default value: true. This option can be set to 
                               'null' to clear the default value. Possible values: {true, false} 
 
 READ_GROUP_ID=String
-RG=String                     ID used to link RG header record with RG tag in SAM record, default 1  Default value: 1. 
+RG=String                     ID used to link RG header record with RG tag in SAM record, default 1.  Default value: 1. 
                               This option can be set to 'null' to clear the default value. 
 
 SAMPLE_ALIAS=String
-SM=String                     The name of the sequenced sample, using library name if not given  Default value: null. 
+SM=String                     The name of the sequenced sample, using library name if not given.  Default value: null. 
 
 LIBRARY_NAME=String
-LB=String                     The name of the sequenced library, default unknown  Default value: unknown. This option 
+LB=String                     The name of the sequenced library, default unknown.  Default value: unknown. This option 
                               can be set to 'null' to clear the default value. 
 
 STUDY_NAME=String
-ST=String                     The name of the study  Default value: null. 
+ST=String                     The name of the study.  Default value: null. 
 
 PLATFORM_UNIT=String
-PU=String                     The platform unit, using runfolder name plus lane number if not given  Default value: 
+PU=String                     The platform unit, using runfolder name plus lane number if not given.  Default value: 
                               null. 
 
-RUN_START_DATE=Date           The start date of the run, read from config file if not given  Default value: null. 
+RUN_START_DATE=Date           The start date of the run, read from config file if not given.  Default value: null. 
 
 SEQUENCING_CENTER=String
-SC=String                     Sequence center name, default SC for Sanger Center  Default value: SC. This option can be 
-                              set to 'null' to clear the default value. 
+SC=String                     Sequence center name, default SC for Sanger Center.  Default value: SC. This option can 
+                              be set to 'null' to clear the default value. 
 
-PLATFORM=String               The name of the sequencing technology that produced the read, default ILLUMINA  Default 
+PLATFORM=String               The name of the sequencing technology that produced the read, default ILLUMINA.  Default 
                               value: ILLUMINA. This option can be set to 'null' to clear the default value. 
 
 FIRST_TILE=Integer            If set, this is the first tile to be processed (for debugging).  Note that tiles are not 
                               processed in numerical order.  Default value: null. 
 
 TILE_LIMIT=Integer            If set, process no more than this many tiles (for debugging).  Default value: null.
+
