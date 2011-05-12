@@ -43,7 +43,7 @@ public class Illumina2bam extends CommandLineProgram {
     private final String programDS = "Convert Illumina BCL to BAM or SAM file";
     
     @Usage(programVersion="0.01") public final String USAGE = this.getStandardUsagePreamble()
-                                                     + this.programDS;
+                                                     + this.programDS + ". ";
     
     @Option(shortName="I", doc="Illumina intensities diretory including config xml file and clocs files under lane directory")
     public File INTENSITY_DIR;
