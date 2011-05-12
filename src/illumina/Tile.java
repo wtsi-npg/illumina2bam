@@ -20,7 +20,9 @@
 package illumina;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +30,7 @@ import java.util.logging.Logger;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFileWriterFactory;
+import net.sf.samtools.SAMReadGroupRecord;
 import net.sf.samtools.SAMRecord;
 
 /**
@@ -466,7 +469,20 @@ public class Tile {
         samRecord.setReadBases(baseQuals[0]);
         samRecord.setBaseQualities(baseQuals[1]);
         samRecord.setReadUnmappedFlag(true);
-        samRecord.setAttribute("RG", "1");
+        
+        String rgId = "1";
+        
+        List<SAMReadGroupRecord> readGroupList = null;
+        if(fileHeader != null) {
+            readGroupList = fileHeader.getReadGroups();
+        }
+
+        if (readGroupList != null && !readGroupList.isEmpty()) {
+            SAMReadGroupRecord readGroup = readGroupList.get(0);
+            rgId = readGroup.getId();
+        }
+        
+        samRecord.setAttribute("RG", rgId);
 
         if(filter == 0){
             samRecord.setReadFailsVendorQualityCheckFlag(true);
