@@ -23,21 +23,22 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFileWriterFactory;
 import net.sf.samtools.SAMReadGroupRecord;
 import net.sf.samtools.SAMRecord;
+import net.sf.picard.util.Log;
 
 /**
  *
  * @author Guoying Qi
  */
 public class Tile {
-
+    
+    private final Log log = Log.getInstance(Tile.class);
+    
     //fields must be given
     private final String intensityDir;
     private final String baseCallDir;
@@ -103,7 +104,7 @@ public class Tile {
         }
 
         if (cycleRangeByRead.get("read1") == null) {
-            Logger.getLogger(Tile.class.getName()).log(Level.SEVERE, "Read 1 must be given");
+            log.error("Read 1 must be given");
         }
 
         if (cycleRangeByRead.get("read2") != null) {
@@ -140,14 +141,17 @@ public class Tile {
      * @throws Exception
      */
     public void processTile(SAMFileWriter outputSam) throws Exception {
-
         
+        log.info("Open filter file: " + this.getFilterFileName());
         FilterFileReader filterFileReader = new FilterFileReader(this.getFilterFileName());
+        
+        log.info("open clocs file: " + this.getcLocsFileName());
         CLocsFileReader clocsFileReader = new CLocsFileReader(this.getcLocsFileName());
 
         SAMFileHeader samFileHeader = outputSam.getFileHeader();
 
         int totalClusterInTile = filterFileReader.getTotalClusters();
+        log.info("Total cluster from filter file: " + totalClusterInTile);
 
         //the number of cluster in each bcl or scl checked here
         this.checkBCLClusterNumber(totalClusterInTile);
@@ -225,6 +229,11 @@ public class Tile {
         filterFileReader.close();
     }
     
+    /**
+     * 
+     * @param outputSam where to write bam record
+     * @param recordRead bam record
+     */
     private void writeToBam(SAMFileWriter outputSam, SAMRecord recordRead ){
         outputSam.addAlignment(recordRead);
     }
@@ -232,7 +241,7 @@ public class Tile {
     /**
      *
      * @param expectedClusterNumber
-     * @return
+     * @return true if cluster number in bcl file match the one in filter file
      * @throws Exception
      */
     public boolean checkBCLClusterNumber(int expectedClusterNumber) throws Exception{
@@ -257,7 +266,7 @@ public class Tile {
     /**
      *
      * @param expectedClusterNumber
-     * @return
+     * @return true if cluster number in scl file match the one in filter file
      * @throws Exception
      */
     public boolean checkSCLClusterNumber(int expectedClusterNumber) throws Exception {
@@ -277,6 +286,7 @@ public class Tile {
         }
         return true;
     }
+    
     /**
      * open all BCL or SCL files
      *
@@ -304,7 +314,7 @@ public class Tile {
      *
      * open a list of BCL file for a range of cycles
      * @param cycleRange
-     * @return
+     * @return an array of BCLFileReader
      * @throws Exception
      */
     private BCLFileReader[] openBCLFileByCycles(int[] cycleRange) throws Exception {
@@ -326,7 +336,7 @@ public class Tile {
      * open a list of SCL file for a range of cycles
      *
      * @param cycleRange
-     * @return
+     * @return an array of SCLFileReader
      * @throws Exception
      */
     private SCLFileReader[] openSCLFileByCycles(int[] cycleRange) throws Exception {
@@ -374,7 +384,7 @@ public class Tile {
     /**
      * read bases and qualities for next cluster of one read
      * @param read
-     * @return
+     * @return next cluster base and quality value as byte array for a read 
      * @throws Exception
      */
     public byte[][] getNextClusterBaseQuals(String read) throws Exception {
@@ -385,7 +395,7 @@ public class Tile {
     /**
      * read bases and qualities for next cluster of one read from its BCL file list
      * @param bclFileList
-     * @return
+     * @return next cluster base and quality value as byte array from BCL file list
      * @throws Exception
      */
     public byte [][] getNextClusterBaseQuals(BCLFileReader[] bclFileList) throws Exception {
@@ -407,7 +417,7 @@ public class Tile {
     /**
      * read second bases for next cluster of one read
      * @param read
-     * @return
+     * @return get next cluster second bases for a read
      * @throws Exception
      */
 
@@ -419,7 +429,7 @@ public class Tile {
     /**
      * read second bases for next cluster of one read from its BCL file list
      * @param sclFileList
-     * @return
+     * @return get next cluster second bases from SCL file list
      * @throws Exception
      */
     public String getNextClusterSecondBases(SCLFileReader[] sclFileList) throws Exception {
@@ -448,7 +458,7 @@ public class Tile {
      * @param filter
      * @param paired
      * @param firstRead
-     * @return
+     * @return SAM record
      */
     public SAMRecord getSAMRecord(
             SAMFileHeader fileHeader,
@@ -513,7 +523,7 @@ public class Tile {
      * form read name for one cluster
      *
      * @param pos
-     * @return
+     * @return whole read name
      */
     public String getReadName(String [] pos){
         return this.id
@@ -527,7 +537,7 @@ public class Tile {
      *
      * @param cycle
      * @param firstCall
-     * @return
+     * @return BCL or SCL base call file name 
      */
     public String getBaseCallFileName(int cycle, boolean firstCall) {
         String cycleDir = this.baseCallDir
@@ -543,7 +553,7 @@ public class Tile {
     /**
      *
      * @param array
-     * @return
+     * @return fastq quality string from phred qual byte array
      */
     public String covertPhredQulByteArrayToFastqString(byte [] array){
         StringBuilder builder = new StringBuilder(array.length);
@@ -556,7 +566,7 @@ public class Tile {
     /**
      * 
      * @param array
-     * @return
+     * @return string from a byte array
      */
     public String covertByteArrayToString(byte [] array){
         StringBuilder builder = new StringBuilder(array.length);

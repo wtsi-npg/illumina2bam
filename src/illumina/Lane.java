@@ -177,11 +177,19 @@ public class Lane {
 
         for(int tileNumber : this.tileList){
             
+            log.info("Tile: " + tileNumber);
+            
             Tile tile = new Tile(intensityDir, baseCallDir, id, laneNumber, tileNumber,
                                  cycleRangeByRead,
                                  this.includeSecondCall, this.pfFilter);
+            
+            log.info("Opening all basecall files");
             tile.openBaseCallFiles();
+            
+            log.info("Reading all base call files");
             tile.processTile(outputSam);
+            
+            log.info("Closing base call files");
             tile.closeBaseCallFiles();
         }
 
