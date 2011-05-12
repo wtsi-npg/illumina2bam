@@ -20,6 +20,7 @@
 
 package illumina;
 
+import java.util.Date;
 import net.sf.picard.PicardException;
 import net.sf.samtools.SAMReadGroupRecord;
 import java.io.FileReader;
@@ -130,6 +131,18 @@ public class LaneTest {
         lane.reduceTileList(1103, 33);
     }
 
+    @Test
+    public void readRunfolderOK(){
+        assertEquals(lane.readRunfoder(), "110323_HS13_06000_B_B039WABXX");
+    }
+ 
+    @Test
+    public void readRunDateOK(){
+        Date runDate = lane.readRunDate();
+        long expected = 1300838400000L;
+        assertEquals(runDate.getTime(), expected);
+    }
+    
     @Test
     public void readInstrumentAndRunIDOK(){
         assertEquals(lane.readInstrumentAndRunID(), "HS13_6000");

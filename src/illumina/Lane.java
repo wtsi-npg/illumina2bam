@@ -21,8 +21,11 @@ package illumina;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,7 +72,7 @@ public class Lane {
     //fields must be given for output bam
     private final File output;
 
-    private SAMReadGroupRecord readGroup;
+
 
     //config xml file name and XML Documetns
     private final String baseCallsConfig;
@@ -85,9 +88,13 @@ public class Lane {
     private SAMProgramRecord baseCallProgram;
     private SAMProgramRecord instrumentProgram;
     
+    private Date runDateConfig;
+    private String runfolderConfig;
+    
+    //other fields    
     private SAMProgramRecord illumina2bamProgram;
+    private SAMReadGroupRecord readGroup;
 
-    //xpath
     private final XPath xpath;
 
 
@@ -236,6 +243,9 @@ public class Lane {
         }
 
         this.cycleRangeByRead = this.checkCycleRangeByRead();
+        
+        this.runfolderConfig = this.readRunfoder();
+        this.runDateConfig = this.readRunDate();
 
     }
 
@@ -472,7 +482,40 @@ public class Lane {
 
         return instrumentProgramConfig;
     }
+    
+    
+    public String readRunfoder(){
+        
+        String runfolder = null;
+        try {
+            XPathExpression exprRunfolder = xpath.compile("/BaseCallAnalysis/Run/RunParameters/RunFolder/text()");
+            Node runfolderNode = (Node) exprRunfolder.evaluate(baseCallsConfigDoc, XPathConstants.NODE);
+            runfolder = runfolderNode.getNodeValue();
+        } catch (XPathExpressionException ex) {
+            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return runfolder;
+    }
+    
+    public Date readRunDate(){
 
+        Date runDate = null;
+        try {
+            XPathExpression exprRunDate = xpath.compile("/BaseCallAnalysis/Run/RunParameters/RunFolderDate/text()");
+            Node runDateNode = (Node) exprRunDate.evaluate(baseCallsConfigDoc, XPathConstants.NODE);
+            String runDateString = runDateNode.getNodeValue();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+            runDate = formatter.parse(runDateString);
+        } catch (ParseException ex) {
+            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (XPathExpressionException ex) {
+            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return runDate;
+    }
+        
     /**
      * 
      * @return
@@ -581,5 +624,19 @@ public class Lane {
      */
     public void setReadGroup(SAMReadGroupRecord readGroup) {
         this.readGroup = readGroup;
+    }
+
+    /**
+     * @return the runDateConfig
+     */
+    public Date getRunDateConfig() {
+        return runDateConfig;
+    }
+
+    /**
+     * @return the runfolderConfig
+     */
+    public String getRunfolderConfig() {
+        return runfolderConfig;
     }
 }

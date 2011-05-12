@@ -113,7 +113,7 @@ public class Illumina2bam extends CommandLineProgram {
         }
         
         lane.setIllumina2bamProgram(this.getThisProgramRecord());
-        lane.setReadGroup(this.generateSamReadGroupRecord(null, null));
+        lane.setReadGroup(this.generateSamReadGroupRecord(lane.getRunfolderConfig(), lane.getRunDateConfig()));
 
         if( this.FIRST_TILE != null ){
             lane.reduceTileList(this.FIRST_TILE, this.TILE_LIMIT);
