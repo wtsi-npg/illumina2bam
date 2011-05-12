@@ -42,13 +42,13 @@ public class Illumina2bam extends CommandLineProgram {
     private final String programName = "illumina2bam";
     private final String programDS = "Convert Illumina BCL to BAM or SAM file";
     
-    @Usage(programVersion="0.01") public final String USAGE = this.getStandardUsagePreamble()
-                                                     + this.programDS + ". ";
+    @Usage(programVersion="0.01")
+    public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". ";
     
     @Option(shortName="I", doc="Illumina intensities diretory including config xml file and clocs files under lane directory")
     public File INTENSITY_DIR;
 
-    @Option(shortName="B", doc="Illumina basecalls diretory including config xml file, and filter files, bcl and scl files under lane cycle directory, using BaseCalls directory under intensities if not given", optional=true)
+    @Option(shortName="B", doc="Illumina basecalls diretory including config xml file, and filter files, bcl, maybe scl files under lane cycle directory, using BaseCalls directory under intensities if not given", optional=true)
     public File BASECALLS_DIR;
     
     @Option(shortName="L", doc="Lane number")
@@ -113,7 +113,16 @@ public class Illumina2bam extends CommandLineProgram {
         }
         
         lane.setIllumina2bamProgram(this.getThisProgramRecord());
-        lane.setReadGroup(this.generateSamReadGroupRecord(lane.getRunfolderConfig(), lane.getRunDateConfig()));
+        
+        String runfolderConfig = lane.getRunfolderConfig();
+        String platformUnitConfig = null;
+        if(runfolderConfig != null){
+            platformUnitConfig = runfolderConfig + "_" + this.LANE;
+        }
+        
+        Date runDateConfig   = lane.getRunDateConfig();
+        
+        lane.setReadGroup(this.generateSamReadGroupRecord(platformUnitConfig, runDateConfig));
 
         if( this.FIRST_TILE != null ){
             lane.reduceTileList(this.FIRST_TILE, this.TILE_LIMIT);
