@@ -21,7 +21,6 @@
 package illumina;
 
 import java.util.Date;
-import net.sf.picard.PicardException;
 import net.sf.samtools.SAMReadGroupRecord;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -103,7 +102,7 @@ public class LaneTest {
         assertArrayEquals(lane.getTileList(), expectedTileList);
     }
 
-    @Test (expected = PicardException.class)
+    @Test (expected = RuntimeException.class)
     public void reduceTileListFirstTileException(){
 
         int [] givenTileList = {
@@ -117,7 +116,7 @@ public class LaneTest {
         lane.reduceTileList(3308, 2);
     }
 
-    @Test (expected = PicardException.class)
+    @Test (expected = RuntimeException.class)
     public void reduceTileListTileLimitException(){
 
         int [] givenTileList = {

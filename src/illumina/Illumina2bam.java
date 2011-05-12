@@ -109,7 +109,7 @@ public class Illumina2bam extends CommandLineProgram {
         Lane lane = new Lane(this.INTENSITY_DIR.getAbsolutePath(), this.BASECALLS_DIR.getAbsolutePath(), this.LANE, this.GENERATE_SECONDARY_BASE_CALLS, this.PF_FILTER, OUTPUT);
 
         try {
-            log.info("Reading config xml file");
+            log.info("Reading config xml files");
             lane.readConfigs();
         } catch (Exception ex) {
             log.error("Problems to read config xml file: " + ex.getMessage());

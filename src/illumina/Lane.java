@@ -29,9 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -40,8 +37,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import net.sf.picard.PicardException;
-import net.sf.samtools.SAMFileHeader;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -50,8 +46,11 @@ import org.xml.sax.SAXException;
 
 import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFileWriterFactory;
+import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMProgramRecord;
 import net.sf.samtools.SAMReadGroupRecord;
+import net.sf.picard.util.Log;
+
 
 
 /**
@@ -59,7 +58,9 @@ import net.sf.samtools.SAMReadGroupRecord;
  * @author Guoying Qi
  */
 public class Lane {
-
+    
+    private final Log log = Log.getInstance(Lane.class);
+    
     //fields must be given about input data
     private final String intensityDir;
     private final String baseCallDir;
@@ -100,11 +101,13 @@ public class Lane {
 
     /**
      *
-     * @param intensityDir
-     * @param baseCallDir
-     * @param laneNumber
-     * @param secondCall
-     * @param pfFilter
+     * @param intensityDir Illumina intensities directory including config xml file and clocs files under lane directory. Required.
+     * @param baseCallDir Illumina basecalls directory including config xml file, and filter files, bcl, maybe scl 
+     * files under lane cycle directory, using BaseCalls directory under intensities if not given.
+     * @param laneNumber lane number
+     * @param secondCall including second base call or not, default false.
+     * @param pfFilter Filter cluster or not, default true.
+     * @param output Output file
      */
     public Lane(String intensityDir,
                 String baseCallDir,
@@ -135,7 +138,8 @@ public class Lane {
     }
 
     /**
-     *
+     * read both config XML files under BaseCalls and Intensities.
+     * 
      * @return true if successfully
      * @throws Exception
      */
@@ -143,12 +147,13 @@ public class Lane {
 
         this.readBaseCallsConfig();
         this.readIntensityConfig();
+
         return true;
     }
 
     /**
      *
-     * @return
+     * @return outputSam with header to write bam records
      */
     public SAMFileWriter generateOutputSamStream(){
 
@@ -162,9 +167,10 @@ public class Lane {
     }
 
     /**
-     *
+     * write BCL file to output stream tile by tile
+     * 
      * @param outputSam
-     * @return
+     * @return true if successfully
      * @throws Exception
      */
     public boolean processTiles(SAMFileWriter outputSam) throws Exception{
@@ -194,32 +200,35 @@ public class Lane {
         try {
             db = dbf.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex, "Problems to generate XML DocumentBuilder");
         }
 
         try {
             baseCallsConfigDoc = db.parse(new File(this.baseCallsConfig));
         } catch (SAXException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex, "Problems to parsing basecalls config xml file " + this.baseCallsConfig);
         } catch (IOException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex, "Problems to read basecall config file " + this.baseCallsConfig );
         }
 
         try {
             intensityConfigDoc = db.parse(new File(this.intensityConfig));
         } catch (SAXException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex, "Problems to parsing intensity config xml file " + this.intensityConfig);
         } catch (IOException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex, "Problems to read intensity config xml file " + this.intensityConfig);
         }
    
     }
 
     /**
      * read base calls configure XML file
+     * 
      * @throws Exception
      */
     private void readBaseCallsConfig() throws Exception {
+        
+        log.info("Reading BaseCalls config xml file " + this.baseCallsConfig);
 
         if (baseCallsConfigDoc == null) {
             throw new Exception("Problems to read baseCalls config file: " + this.baseCallsConfig);
@@ -229,23 +238,37 @@ public class Lane {
         this.baseCallProgram = this.readBaseCallProgramRecord();
         if(baseCallProgram == null){
             throw new Exception("Problems to get base call software version from config file: " + this.baseCallsConfig);
+        }else{
+            log.info("BaseCall Program: " + baseCallProgram.getProgramName() + " " + baseCallProgram.getProgramVersion());
         }
 
         //read tile list
         this.tileList = this.readTileList();
         if(tileList == null){
             throw new Exception("Problems to read tile list from config file:" + this.baseCallsConfig);
+        }else{
+            log.info("Number of Tiles: " + tileList.length);
         }
 
         this.id = this.readInstrumentAndRunID();
         if(id == null){
             throw new Exception("Problems to read run id and instruament name from config file:" + this.baseCallsConfig);
+        }else{
+            log.info("Instrument name and run id to be used as part of read name: " + this.id );
         }
 
+        log.info("Check number of Reads and cycle numbers for each read");
         this.cycleRangeByRead = this.checkCycleRangeByRead();
         
         this.runfolderConfig = this.readRunfoder();
+        if(this.runfolderConfig != null ){
+            log.info("Runfolder: " + runfolderConfig);
+        }
+        
         this.runDateConfig = this.readRunDate();
+        if(this.runDateConfig != null){
+            log.info("Run date: " + runDateConfig);
+        }
 
     }
 
@@ -255,6 +278,8 @@ public class Lane {
      */
     private void readIntensityConfig() throws Exception {
 
+        log.info("Reading intensity config XML file " + this.intensityConfig );
+        
         if (intensityConfigDoc == null) {
             throw new Exception("Problems to read intensity config file: " + this.intensityConfig);
         }
@@ -263,12 +288,14 @@ public class Lane {
         this.instrumentProgram = this.readInstrumentProgramRecord();
         if(instrumentProgram == null){
             throw new Exception("Problems to get instrument software version from config file: " + this.intensityConfig);
+        }else{
+            log.info("Instrument Program: " + instrumentProgram.getProgramName() + " " + instrumentProgram.getProgramVersion());
         }
 
     }
     /**
      *
-     * @return
+     * @return an object of SAMProgramRecord for base calling program
      */
     public SAMProgramRecord readBaseCallProgramRecord (){
 
@@ -277,14 +304,18 @@ public class Lane {
             XPathExpression exprBaseCallSoftware = xpath.compile("/BaseCallAnalysis/Run/Software");
             nodeSoftware = (Node) exprBaseCallSoftware.evaluate(baseCallsConfigDoc, XPathConstants.NODE);
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex, "Problems to read base calling program /BaseCallAnalysis/Run/Software");
             return null;
         }
 
         NamedNodeMap nodeMapSoftware = nodeSoftware.getAttributes();
         String softwareName = nodeMapSoftware.getNamedItem("Name").getNodeValue();
         String softwareVersion = nodeMapSoftware.getNamedItem("Version").getNodeValue();
-
+    
+        if(softwareName == null || softwareVersion == null){
+            log.warn("No base calling program name or version returned");
+        }
+        
         SAMProgramRecord baseCallProgramConfig = new SAMProgramRecord("basecalling");
         baseCallProgramConfig.setProgramName(softwareName);
         baseCallProgramConfig.setProgramVersion(softwareVersion);
@@ -295,7 +326,7 @@ public class Lane {
 
     /**
      *
-     * @return
+     * @return a list of tile number
      */
     public int[] readTileList() {
 
@@ -304,7 +335,7 @@ public class Lane {
             XPathExpression exprLane = xpath.compile("/BaseCallAnalysis/Run/TileSelection/Lane[@Index=" + this.laneNumber + "]/Tile/text()");
             tilesForLane = (NodeList) exprLane.evaluate(baseCallsConfigDoc, XPathConstants.NODESET);
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex, "Problems to got a list of tiles from config files." );
             return null;
         }       
 
@@ -324,7 +355,7 @@ public class Lane {
 
     /**
      *
-     * @return
+     * @return instrument name with id_run as part of read name, for example, HS13_6000
      */
     public String readInstrumentAndRunID(){
 
@@ -338,13 +369,14 @@ public class Lane {
             XPathExpression exprInstrument = xpath.compile("/BaseCallAnalysis/Run/RunParameters/Instrument/text()");
             nodeInstrument = (Node) exprInstrument.evaluate(baseCallsConfigDoc, XPathConstants.NODE);
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Problems to read instrument name and id run from config file: " + ex.getMessage() );
             return null;
         }
 
         String runID = nodeRunID.getNodeValue();
         String instrument = nodeInstrument.getNodeValue();
         if(runID == null || instrument ==null){
+            log.warn("No instrument name or id run returned.");
             return null;
         }
         return instrument + "_" + runID;
@@ -352,16 +384,19 @@ public class Lane {
 
     /**
      *
-     * @return
+     * @return the cycle range for each read
+     * 
      * @throws Exception
      */
     public HashMap<String, int[]> checkCycleRangeByRead() throws Exception {
+        
         HashMap<String, int[]> cycleRangeByReadMap = new HashMap<String, int[]>();
 
         int [][] cycleRangeByReadConfig = this.readCycleRangeByRead();
         int [] barCodeCycleList = this.readBarCodeIndexCycles();
 
         int numberOfReads = cycleRangeByReadConfig.length;
+        log.info("There are " + numberOfReads + " reads returned");
 
         if( (numberOfReads  > 3
                 || numberOfReads <1
@@ -382,9 +417,11 @@ public class Lane {
                 
                 indexReadFound = true;
                 cycleRangeByReadMap.put("readIndex", cycleRangeByReadConfig[i]);
+                log.info("Indexing read cycle range: " + cycleRangeByReadConfig[i][0] + "-" +cycleRangeByReadConfig[i][1] );
             }else{
                 countActualReads++;
                 cycleRangeByReadMap.put("read"+ countActualReads, cycleRangeByReadConfig[i]);
+                log.info("read"+ countActualReads + " cycle range: " + cycleRangeByReadConfig[i][0] + "-" +cycleRangeByReadConfig[i][1] );
             }
         }
 
@@ -397,10 +434,12 @@ public class Lane {
 
     /**
      *
-     * @return
+     * @return cycle range for a list of reads
      */
     public int [][] readCycleRangeByRead(){
 
+        log.info("Reading cycle number for each reads");
+        
         int [][] cycleRangeByReadConfig = null;
         NodeList readList = null;
         try {
@@ -426,7 +465,7 @@ public class Lane {
             }
 
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex, "Problems to read cycles numbers");
             return null;
         }
         return cycleRangeByReadConfig;
@@ -434,9 +473,11 @@ public class Lane {
 
     /**
      *
-     * @return
+     * @return indexing cycle number list
      */
     public int [] readBarCodeIndexCycles(){
+        
+        log.info("Reading bar code indexing cycle number");
         
         int [] barCodeCycleList = null;
         try {
@@ -451,14 +492,14 @@ public class Lane {
             }
             Arrays.sort(barCodeCycleList);
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.info("There is no bar code cycle");
         }
         return barCodeCycleList;
     }
 
     /**
      * 
-     * @return 
+     * @return instrument Program record
      */
     public SAMProgramRecord readInstrumentProgramRecord(){
 
@@ -467,13 +508,17 @@ public class Lane {
             XPathExpression exprBaseCallSoftware = xpath.compile("/ImageAnalysis/Run/Software");
             nodeSoftware = (Node) exprBaseCallSoftware.evaluate(intensityConfigDoc, XPathConstants.NODE);
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex, "Problems to read instrument software");
             return null;
         }
 
         NamedNodeMap nodeMapSoftware = nodeSoftware.getAttributes();
         String softwareName = nodeMapSoftware.getNamedItem("Name").getNodeValue();
         String softwareVersion = nodeMapSoftware.getNamedItem("Version").getNodeValue();
+        
+        if(softwareName == null || softwareVersion == null){
+            log.warn("No instrument software name or version returned");
+        }
 
         SAMProgramRecord instrumentProgramConfig = new SAMProgramRecord("SCS");
         instrumentProgramConfig.setProgramName(softwareName);
@@ -483,7 +528,10 @@ public class Lane {
         return instrumentProgramConfig;
     }
     
-    
+    /**
+     * 
+     * @return  runfolder name
+     */
     public String readRunfoder(){
         
         String runfolder = null;
@@ -492,12 +540,16 @@ public class Lane {
             Node runfolderNode = (Node) exprRunfolder.evaluate(baseCallsConfigDoc, XPathConstants.NODE);
             runfolder = runfolderNode.getNodeValue();
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.warn(ex, "Problems to read runfolder");
         }
         
         return runfolder;
     }
     
+    /**
+     *  
+     * @return run date
+     */
     public Date readRunDate(){
 
         Date runDate = null;
@@ -508,9 +560,9 @@ public class Lane {
             SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
             runDate = formatter.parse(runDateString);
         } catch (ParseException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.warn(ex, "Problems to parse run date");
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(Lane.class.getName()).log(Level.SEVERE, null, ex);
+            log.warn(ex, "Problems to read run date");
         }
 
         return runDate;
@@ -518,9 +570,11 @@ public class Lane {
         
     /**
      * 
-     * @return
+     * @return BAM header
      */
     public SAMFileHeader generateHeader(){
+        
+         log.info("Generate BAM header");
          SAMFileHeader header = new SAMFileHeader();
 
          header.addProgramRecord(this.instrumentProgram);
@@ -542,8 +596,9 @@ public class Lane {
 
     /**
      * 
-     * @param firstTile
-     * @param tileLimit
+     * @param firstTile first tile number
+     * 
+     * @param tileLimit the number of tiles to process
      */
     public void reduceTileList(Integer firstTile, Integer tileLimit){
 
@@ -556,13 +611,13 @@ public class Lane {
         }
 
         if(reducedTileList.isEmpty()){
-            throw new PicardException("The Given first tile number " + firstTile + " was not found.");
+            throw new RuntimeException("The Given first tile number " + firstTile + " was not found.");
         }
 
         List<Integer> limitedTileList = reducedTileList;
         if(tileLimit != null && tileLimit > 0){
             if(tileLimit > reducedTileList.size()){
-                throw new PicardException("The Given first tile limit " + tileLimit + " was too big.");
+                throw new RuntimeException("The Given first tile limit " + tileLimit + " was too big.");
             }
             limitedTileList = reducedTileList.subList(0, tileLimit.intValue());
         }
