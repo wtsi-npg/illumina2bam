@@ -60,7 +60,7 @@ public class SCLFileReader extends IlluminaFileReader {
 
         //first four bytes - unsigned 32bits little endian integer
         this.totalClusters = this.readFourBytes(inputStream);
-        log.info("The total number of clusters: " + this.getTotalClusters() + " in " + this.fileName);
+        log.debug("The total number of clusters: " + this.getTotalClusters() + " in " + this.fileName);
     }
 
     /**
