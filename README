@@ -20,6 +20,8 @@ Config XML files under Intensities and BaseCalls directory are used to get tile 
 
 CLOCS and filter files are also needed.
 
+All reads are supposed in one read group, by default, which id is 1. Sample and library name can be passed from command line, otherwise use unknown.
+
 -----------------------------------------------
 
 Example to run:
