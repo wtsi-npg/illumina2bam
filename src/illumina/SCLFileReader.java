@@ -48,6 +48,7 @@ public class SCLFileReader extends IlluminaFileReader {
         super(sclFileName);
 
         this.readFileHeader();
+        //TODO: stop read all bases to memory if using too much memory
         this.readBases();
 
     }

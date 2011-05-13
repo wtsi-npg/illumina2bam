@@ -94,6 +94,11 @@ public class Illumina2bam extends CommandLineProgram {
     
     @Option(doc="If set, process no more than this many tiles (for debugging).", optional=true)
     public Integer TILE_LIMIT;
+    
+    //TODO: add command option to add ci tag
+    
+    //TODO: add command option to overwrite cycle range per read   
+    
 
     @Override
     protected int doWork() {
