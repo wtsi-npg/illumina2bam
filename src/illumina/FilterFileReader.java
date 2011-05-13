@@ -20,16 +20,16 @@
 package illumina;
 
 import java.io.IOException;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.sf.picard.util.Log;
 
 /**
  *
  * @author Guoying Qi
  */
 public class FilterFileReader extends IlluminaFileReader {
-
+    
+    private final Log log = Log.getInstance(FilterFileReader.class);
+    
     private final int EXPECTED_FILTER_VERSION = 3;
     private int currentCluster = 0;
     private int totalClusters = 0;
@@ -55,20 +55,20 @@ public class FilterFileReader extends IlluminaFileReader {
         //fisrt four bytes are empty and should be zero, backward compatibility
         int emptyBytes = this.readFourBytes(inputStream);
         if (emptyBytes != 0) {
-            Logger.getLogger(FilterFileReader.class.getName()).log(Level.SEVERE, "The first four bytes are not zero: {0}", emptyBytes);
+            log.error("The first four bytes are not zero: " + emptyBytes);
             throw new Exception("The first four bytes in filter file are not empty");
         }
 
         //next four bytes should be version and greater or equal to the expected
         int version = this.readFourBytes(inputStream);
         if (version != this.EXPECTED_FILTER_VERSION) {
-            Logger.getLogger(FilterFileReader.class.getName()).log(Level.SEVERE, "Unexpected version byte {0}", version);
+            log.error("Unexpected version byte: " + version);
             throw new Exception("Unexpected version number in filter file");
         }
 
         //next four bytes should be the total number of clusters
         this.totalClusters = this.readFourBytes(inputStream);
-        Logger.getLogger(FilterFileReader.class.getName()).log(Level.INFO, "The total number of clusters: {0}", this.getTotalClusters());
+        log.info("The total number of clusters: " + this.getTotalClusters());
     }
 
     @Override
@@ -84,7 +84,7 @@ public class FilterFileReader extends IlluminaFileReader {
             int nextByte = this.inputStream.read();
 
             if (nextByte == -1) {
-                Logger.getLogger(FilterFileReader.class.getName()).log(Level.SEVERE, "There is no mroe cluster in BCL file after cluster {1}: {0} ", new Object[]{this.fileName, this.getCurrentCluster()});
+                log.warn("There is no mroe cluster in Filter file after cluster " + this.getCurrentCluster() + " in file " + this.fileName);
                 return null;
             }
 
@@ -97,7 +97,7 @@ public class FilterFileReader extends IlluminaFileReader {
             return new Integer(nextByte);
 
         } catch (IOException ex) {
-            Logger.getLogger(FilterFileReader.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex, "Problems to read filter file");
         }
 
         return null;

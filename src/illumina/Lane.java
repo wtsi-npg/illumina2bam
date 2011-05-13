@@ -446,7 +446,7 @@ public class Lane {
      */
     public int [][] readCycleRangeByRead(){
 
-        log.info("Reading cycle number for each reads");
+        log.info("Reading cycle numbers for each read");
         
         int [][] cycleRangeByReadConfig = null;
         NodeList readList = null;
@@ -485,7 +485,7 @@ public class Lane {
      */
     public int [] readBarCodeIndexCycles(){
         
-        log.info("Reading bar code indexing cycle number");
+        log.info("Reading barcode indexing cycle numbers");
         
         int [] barCodeCycleList = null;
         try {

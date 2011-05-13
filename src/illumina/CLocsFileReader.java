@@ -22,15 +22,16 @@ package illumina;
 import java.io.IOException;
 
 import java.text.DecimalFormat;
+import net.sf.picard.util.Log;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Guoying Qi
  */
 public class CLocsFileReader extends IlluminaFileReader {
+    
+    private final Log log = Log.getInstance(CLocsFileReader.class);
 
     private final int EXPECTED_CLOCS_VERSION = 1;
     private final int BLOCK_SIZE = 25;
@@ -66,13 +67,13 @@ public class CLocsFileReader extends IlluminaFileReader {
         //check file version number from first byte
         int clocsVersion = this.inputStream.readUnsignedByte();
         if (this.EXPECTED_CLOCS_VERSION != clocsVersion) {
-            Logger.getLogger(CLocsFileReader.class.getName()).log(Level.SEVERE, "Unexpected version byte {0}", clocsVersion);
+            log.error("Unexpected version byte" + clocsVersion);
             throw new Exception("Unexpected version: " + clocsVersion);
         }
 
         //read blocksCount from next four bytes
         totalBlocks = this.readFourBytes(inputStream);
-        Logger.getLogger(CLocsFileReader.class.getName()).log(Level.INFO, "Total blocks count: {0}", this.getTotalBlocks());
+        log.info("Total blocks count " + this.getTotalBlocks());
 
         //read first block from next byte
         this.currentBlockUnreadClusters = inputStream.readUnsignedByte();
@@ -116,7 +117,7 @@ public class CLocsFileReader extends IlluminaFileReader {
             }
 
             if (this.currentBlockUnreadClusters < 0) {
-                Logger.getLogger(CLocsFileReader.class.getName()).log(Level.INFO, "There is no mroe block in the file {1}: {0} ", new Object[]{this.fileName, this.getCurrentBlock()});
+                log.warn("There is no mroe block in " + this.fileName + ". Current block: " + this.getCurrentBlock());
                 return null;
             }
 
@@ -136,7 +137,7 @@ public class CLocsFileReader extends IlluminaFileReader {
             return pos;
 
         } catch (IOException ex) {
-            Logger.getLogger(CLocsFileReader.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Problem to read clock file");
         }
 
         return null;
@@ -183,7 +184,7 @@ public class CLocsFileReader extends IlluminaFileReader {
         try{
            String[] next = fr.next();
         } catch (Exception ex){
-            ex.printStackTrace();
+           System.err.println(ex.getMessage());
         }
 
     }

@@ -28,16 +28,17 @@ import java.io.File;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import net.sf.picard.util.Log;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 
  * @author Guoying Qi
  */
 public class IlluminaFileReader implements Iterator<Object>, Closeable {
-
+    
+    private final Log log = Log.getInstance(IlluminaFileReader.class);
+    
     protected final String fileName;
     protected DataInputStream inputStream;
 
@@ -100,7 +101,7 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
             try {
                 this.inputStream.close();
             } catch (IOException ex) {
-                Logger.getLogger(IlluminaFileReader.class.getName()).log(Level.SEVERE, "Cannot close file", ex);
+                log.error(ex, "Cannot close file");
             }
         }
     }

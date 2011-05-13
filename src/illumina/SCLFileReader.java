@@ -20,16 +20,16 @@
 package illumina;
 
 import java.io.IOException;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.sf.picard.util.Log;
 
 /**
  *
  * @author Guoying Qi
  */
 public class SCLFileReader extends IlluminaFileReader {
-
+    
+    private final Log log = Log.getInstance(SCLFileReader.class);
+    
     private final char[] BASE_ARRAY = {'A', 'C', 'G', 'T'};
     private char[] bases;
     private int currentCluster = 0;
@@ -60,7 +60,7 @@ public class SCLFileReader extends IlluminaFileReader {
 
         //first four bytes - unsigned 32bits little endian integer
         this.totalClusters = this.readFourBytes(inputStream);
-        Logger.getLogger(SCLFileReader.class.getName()).log(Level.INFO, "The total number of clusters: {0} in file {1}", new Object[]{this.getTotalClusters(), this.fileName});
+        log.info("The total number of clusters: " + this.getTotalClusters() + " in " + this.fileName);
     }
 
     /**
@@ -77,7 +77,7 @@ public class SCLFileReader extends IlluminaFileReader {
         int read = this.inputStream.read(baseBytes);
 
         if (read == -1) {
-            Logger.getLogger(SCLFileReader.class.getName()).log(Level.SEVERE, "The file does not have the required number of clusters: {0}", this.getTotalClusters());
+            log.error("The file does not have the required number of clusters: " + this.getTotalClusters());
             throw new Exception("The file does not have the required number of clusters");
         }
 
@@ -123,7 +123,7 @@ public class SCLFileReader extends IlluminaFileReader {
     public Character next() {
 
         if (!this.hasNext()) {
-            Logger.getLogger(SCLFileReader.class.getName()).log(Level.SEVERE, "The required cluster out of range: {0}", this.getCurrentCluster());
+            log.error("The required cluster out of range: " + this.getCurrentCluster());
             return null;
         }
 

@@ -151,7 +151,7 @@ public class Tile {
         SAMFileHeader samFileHeader = outputSam.getFileHeader();
 
         int totalClusterInTile = filterFileReader.getTotalClusters();
-        log.info("Total cluster from filter file: " + totalClusterInTile);
+        //log.info("Total cluster from filter file: " + totalClusterInTile);
 
         //the number of cluster in each bcl or scl checked here
         this.checkBCLClusterNumber(totalClusterInTile);
@@ -159,6 +159,7 @@ public class Tile {
             this.checkSCLClusterNumber(totalClusterInTile);
         }
 
+        log.info("Reading cluster one by one");
         int clusterIndex = 0;
         while (filterFileReader.hasNext()) {
 
@@ -245,7 +246,8 @@ public class Tile {
      * @throws Exception
      */
     public boolean checkBCLClusterNumber(int expectedClusterNumber) throws Exception{
-
+ 
+        log.debug("Checking cluster number in BCL files");
         for (Map.Entry<String, BCLFileReader []> entry : this.bclFileReaderListByRead.entrySet()) {
               BCLFileReader [] bclFileReaderList = entry.getValue();
               for(BCLFileReader bclFileReader: bclFileReaderList){
@@ -270,6 +272,8 @@ public class Tile {
      * @throws Exception
      */
     public boolean checkSCLClusterNumber(int expectedClusterNumber) throws Exception {
+        
+        log.debug("Checking cluster number in SCL Files");
 
         for (Map.Entry<String, SCLFileReader[]> entry : this.sclFileReaderListByRead.entrySet()) {
             SCLFileReader[] sclFileReaderList = entry.getValue();
@@ -299,10 +303,13 @@ public class Tile {
             String read = entry.getKey();
             int[] cycleRange = entry.getValue();
 
+            log.info("Opening BCL Files for " + read );
             BCLFileReader[] bclFileReaderListRead = this.openBCLFileByCycles(cycleRange);
             this.getBclFileReaderListByRead().put(read, bclFileReaderListRead);
 
             if (this.includeSecondCall) {
+                
+                log.info("Opening SCL Files for " + read);
                 SCLFileReader[] sclFileReaderListRead = this.openSCLFileByCycles(cycleRange);
                 this.getSclFileReaderListByRead().put(read, sclFileReaderListRead);
             }

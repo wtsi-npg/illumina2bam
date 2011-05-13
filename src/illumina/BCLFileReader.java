@@ -22,14 +22,15 @@ package illumina;
 import java.io.EOFException;
 import java.io.IOException;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.sf.picard.util.Log;
 
 /**
  * @author Guoying Qi
  */
 public class BCLFileReader extends IlluminaFileReader {
-
+    
+    private final Log log = Log.getInstance(BCLFileReader.class);
+    
     private final byte[] BASE_ARRAY = {65, 67, 71, 84}; //A C G T
     private final byte UNKNOWN_BASE = 78;
     private int currentCluster = 0;
@@ -60,7 +61,7 @@ public class BCLFileReader extends IlluminaFileReader {
 
         //first four bytes - unsigned 32bits little endian integer
         this.totalClusters = this.readFourBytes();
-        Logger.getLogger(BCLFileReader.class.getName()).log(Level.INFO, "The total number of clusters: {0} in file {1}", new Object[]{this.getTotalClusters(), this.fileName});
+        log.info("The total number of clusters:" + this.getTotalClusters() + " in " + this.fileName );
     }
 
     /**
@@ -89,10 +90,8 @@ public class BCLFileReader extends IlluminaFileReader {
                 nextBase = this.inputStream.readByte();
             } catch( EOFException ex) {
                 //end of the file
-                Logger.getLogger(BCLFileReader.class.getName()).log(Level.SEVERE,
-                        "There is no mroe cluster in BCL file after cluster {1}: {0}\n{2} ",
-                        new Object[]{this.fileName, this.getCurrentCluster(), ex}
-                );
+                log.error(ex, "There is no mroe cluster in BCL file after cluster " + this.getCurrentCluster()
+                        + " in file " + this.fileName );
                 return null;
             }
 
@@ -118,7 +117,7 @@ public class BCLFileReader extends IlluminaFileReader {
             return currentClusterPair;
 
         } catch (IOException ex) {
-            Logger.getLogger(BCLFileReader.class.getName()).log(Level.SEVERE, "There is problems to read the file: {0}", ex);
+            log.error(ex, "There is problems to read the file" + this.fileName);
         }
 
         return null;

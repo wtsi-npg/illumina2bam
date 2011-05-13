@@ -120,7 +120,7 @@ public class Illumina2bam extends CommandLineProgram {
         lane.setIllumina2bamProgram(this.getThisProgramRecord());
         
         
-        log.info("Generating read group header");
+        log.info("Generating read group record");
         String runfolderConfig = lane.getRunfolderConfig();
         String platformUnitConfig = null;
         if(runfolderConfig != null){
@@ -140,7 +140,7 @@ public class Illumina2bam extends CommandLineProgram {
         log.info("Generationg bam or sam file output stream with header");
         SAMFileWriter outBam = lane.generateOutputSamStream();
         
-        log.info("Writing BCL file to bam");
+        log.info("Writing Basecall files to bam");
         try {
             lane.processTiles(outBam);
         } catch (Exception ex) {
