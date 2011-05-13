@@ -216,6 +216,8 @@ public class Tile {
                     + filterFileReader.fileName
                     + " is incorrect");
         }
+        log.debug("Correct number of clusters processed in filter file: " + filterFileReader.getCurrentCluster());
+       
 
         //check number of clusters from filter file match the cluster nubmer in clocs file
         if (clocsFileReader.getCurrentTotalClusters() != totalClusterInTile) {
@@ -223,6 +225,11 @@ public class Tile {
                     + filterFileReader.getTotalClusters() + " "
                     + clocsFileReader.getCurrentTotalClusters());
         }
+        log.debug("Correct number of clusters processed in clocs file: " + clocsFileReader.getCurrentTotalClusters());
+        if(clocsFileReader.hasNext()){
+            log.debug("There may be more clusters in clocs file");
+        }
+
 
 
         //close clocs and filter file
