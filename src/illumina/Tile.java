@@ -230,7 +230,7 @@ public class Tile {
             log.debug("There may be more clusters in clocs file");
         }
 
-
+        log.info(filterFileReader.getCurrentPFClusters() + " PF clusters in this tile out of total " + totalClusterInTile);
 
         //close clocs and filter file
         clocsFileReader.close();
