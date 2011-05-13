@@ -1,12 +1,32 @@
 illumina2bam
 
----------
+This tool converts Illumina BCL files directly to bam files using Picard JAVA API.
+
+It will create a bam file for an entire lane.
+
+It puts an indexing read quality and sequence in tags (we're suggesting the use of) "QT" and "RT" e.g. QT:Z:HHHHHHHH   RT:Z:ATCACGTT, on the first read record.
+
+It does no deplexing at the moment.
+
+It puts what preceding Illumina code has run e.g. RTA, in PG headers.
+
+By default it only puts in PF filtered reads. Default bcl2qseq will also exclude sequence identified as TruSeq controls from passing the qseq filter field. There's an option to put all reads in the BAM.
+
+We expect read qualities to differ from those produced via default bcl2qseq as we'll give Ns a quality of 0 (rather than 2 which we're not convinced about), and we'll not do the EAMSS(?) flattening of the 3' tail of read to  qvals of 2 a.k.a. "The Killer Bs".
+
+There's also an option to record the second basecall from SCL files.
+
+Config XML files under Intensities and BaseCalls directory are used to get tile list, cycle ranges per read and other meta data.
+
+CLOCS and filter files are also needed.
+
+-----------------------------------------------
 
 Example to run:
 
 java -jar "illumina2bam.jar" INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities LANE=1 OUTPUT=testdata/6000_1.bam  VALIDATION_STRINGENCY=STRICT CREATE_INDEX=false CREATE_MD5_FILE=true FIRST_TILE=1101 TILE_LIMIT=1  COMPRESSION_LEVEL=1
 
-----------
+-----------------------------------------------
 
 Help
 
@@ -82,3 +102,42 @@ FIRST_TILE=Integer            If set, this is the first tile to be processed (fo
 
 TILE_LIMIT=Integer            If set, process no more than this many tiles (for debugging).  Default value: null.
 
+
+-----------------------------------------------
+
+Standard Picard Options
+
+TMP_DIR=File                  Default value: /tmp/username. This option can be set to 'null' to clear the default value. 
+
+VERBOSITY=LogLevel            Control verbosity of logging.  Default value: INFO. This option can be set to 'null' to 
+                              clear the default value. Possible values: {ERROR, WARNING, INFO, DEBUG} 
+
+QUIET=Boolean                 Whether to suppress job-summary info on System.err.  Default value: false. This option 
+                              can be set to 'null' to clear the default value. Possible values: {true, false} 
+
+VALIDATION_STRINGENCY=ValidationStringency
+                              Validation stringency for all SAM files read by this program.  Setting stringency to 
+                              SILENT can improve performance when processing a BAM file in which variable-length data 
+                              (read, qualities, tags) do not otherwise need to be decoded.  Default value: STRICT. This 
+                              option can be set to 'null' to clear the default value. Possible values: {STRICT, 
+                              LENIENT, SILENT} 
+
+COMPRESSION_LEVEL=Integer     Compression level for all compressed files created (e.g. BAM and GELI).  Default value: 
+                              5. This option can be set to 'null' to clear the default value. 
+
+MAX_RECORDS_IN_RAM=Integer    When writing SAM files that need to be sorted, this will specify the number of records 
+                              stored in RAM before spilling to disk. Increasing this number reduces the number of file 
+                              handles needed to sort a SAM file, and increases the amount of RAM needed.  Default 
+                              value: 500000. This option can be set to 'null' to clear the default value. 
+
+CREATE_INDEX=Boolean          Whether to create a BAM index when writing a coordinate-sorted BAM file.  Default value: 
+                              false. This option can be set to 'null' to clear the default value. Possible values: 
+                              {true, false} 
+
+CREATE_MD5_FILE=Boolean       Whether to create an MD5 digest for any BAM files created.    Default value: false. This 
+                              option can be set to 'null' to clear the default value. Possible values: {true, false} 
+
+OPTIONS_FILE=File             File of OPTION_NAME=value pairs.  No positional parameters allowed.  Unlike command-line 
+                              options, unrecognized options are ignored.  A single-valued option set in an options file 
+                              may be overridden by a subsequent command-line option.  A line starting with '#' is 
+                              considered a comment.  This option may be specified 0 or more times. 
