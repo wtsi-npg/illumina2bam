@@ -180,12 +180,13 @@ public class TileTest {
         outputSam.close();
     }
 
-    @Test(expected = RuntimeException.class)
-    public void checkCorruptedClocsFile() throws Exception {
+    @Test
+    public void checkClocsFile() throws Exception {
         File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
         tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
+        factory.setCreateMd5File(true);
         SAMFileHeader header = new SAMFileHeader();
         SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, tempBamFile);
 
@@ -204,5 +205,13 @@ public class TileTest {
         tile2.processTile(outputSam);
         tile2.closeBaseCallFiles();
         outputSam.close();
+        
+        File md5File = new File(tempBamFile.getAbsolutePath() + ".md5");
+        md5File.deleteOnExit();
+        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
+        String md5 = md5Stream.readLine();
+
+        assertEquals(md5, "7d72f9d8702d4b4440cc207e3d2f80a3");  
+        
     }
 }
