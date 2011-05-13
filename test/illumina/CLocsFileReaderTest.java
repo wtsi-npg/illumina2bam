@@ -111,26 +111,15 @@ public class CLocsFileReaderTest {
         assertNull(cLocsFileReader.next());
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testCorruptionFile() throws Exception {
-        //the final part of the file corruped, the positions not avalible
-        String testCLocsFile2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/L003/s_3_1101.clocs";
-        CLocsFileReader cLocsFileReader2 = new CLocsFileReader(testCLocsFile2);
-        while (cLocsFileReader2.getCurrentTotalClusters() < 3658339) {
-            cLocsFileReader2.next();
-        }
-        cLocsFileReader2.close();
-    }
-
     @Test
     public void testCorruptionFile2() throws Exception{
-        //the final part of the file corruped, the positions not avalible
+        //the BCL file corruped, but clocs file ok and some clusters in last block
        String testCLocsFile2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/L003/s_3_1101.clocs";
        CLocsFileReader cLocsFileReader2 = new CLocsFileReader(testCLocsFile2);
        while(cLocsFileReader2.hasNext()){
           cLocsFileReader2.next();
        }
-       assertEquals(cLocsFileReader2.getCurrentTotalClusters(), 3658310);
+       assertEquals(cLocsFileReader2.getCurrentTotalClusters(), 3658339);
        cLocsFileReader2.close();
     }
 }

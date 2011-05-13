@@ -89,7 +89,9 @@ public class CLocsFileReader extends IlluminaFileReader {
     @Override
     public boolean hasNext() {
 
-        return (this.getCurrentBlock() < this.getTotalBlocks()) ? true : false;
+        return (this.getCurrentBlock() < this.getTotalBlocks()
+                || ( this.getCurrentBlock() == this.getTotalBlocks() && this.currentBlockUnreadClusters > 0)
+                ) ? true : false;
     }
 
     /**
@@ -99,7 +101,7 @@ public class CLocsFileReader extends IlluminaFileReader {
     @Override
     public String[] next() {
 
-        if (this.getCurrentBlock() >= this.getTotalBlocks()) {
+        if (!this.hasNext()) {
            throw new RuntimeException("Try to read a block "
                     + getCurrentBlock()
                     + " out of range:"
@@ -137,7 +139,7 @@ public class CLocsFileReader extends IlluminaFileReader {
             return pos;
 
         } catch (IOException ex) {
-            log.error("Problem to read clock file");
+            log.error(ex, "Problem to read clock file");
         }
 
         return null;
@@ -176,11 +178,12 @@ public class CLocsFileReader extends IlluminaFileReader {
         while (fr.hasNext()) {
             String[] pos = fr.next();
             count++;
-            if (count % 100000 == 1) {
+            if (count % 100000 == 1 && pos != null ) {
                 System.out.println(pos[0] + " " + pos[1]);
             }
         }
         System.err.println(fr.getCurrentTotalClusters());
+        
         try{
            String[] next = fr.next();
         } catch (Exception ex){
