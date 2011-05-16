@@ -161,7 +161,7 @@ public class Lane {
 
         SAMFileHeader header = this.generateHeader();
 
-        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, output);
+        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, false, output);
 
         return outputSam;
     }
