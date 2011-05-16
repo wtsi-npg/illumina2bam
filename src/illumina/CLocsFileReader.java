@@ -84,7 +84,9 @@ public class CLocsFileReader extends IlluminaFileReader {
      * this method should mean has Next Block
      * Maybe no any cluster available anymore and return null when next method called
      * in
-     * @return
+     * 
+     * @return true if there is next cluster
+     * but next method will return null and this method will return true as well when in last block but no cluster there
      */
     @Override
     public boolean hasNext() {

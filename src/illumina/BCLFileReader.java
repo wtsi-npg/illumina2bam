@@ -66,7 +66,7 @@ public class BCLFileReader extends IlluminaFileReader {
 
     /**
      * check any more clusters in the file stream
-     * @return
+     * @return true if there is next cluster available 
      */
     @Override
     public boolean hasNext() {

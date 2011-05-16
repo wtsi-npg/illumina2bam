@@ -108,7 +108,7 @@ public class SCLFileReader extends IlluminaFileReader {
 
     /**
      * check any more clusters in the file stream
-     * @return
+     * @return true if there is next cluster
      */
     @Override
     public boolean hasNext() {
