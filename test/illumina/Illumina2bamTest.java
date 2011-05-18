@@ -44,7 +44,7 @@ public class Illumina2bamTest {
      */
     @Test
     public void testMain() throws FileNotFoundException, IOException {
-        System.out.println("instanceMane and this program recordd");
+        System.out.println("instanceMain and this program record");
         String[] args = {"INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities",
             "LANE=1",
             "OUTPUT=testdata/6000_1.sam",
