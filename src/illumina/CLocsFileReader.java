@@ -20,8 +20,6 @@
 package illumina;
 
 import java.io.IOException;
-
-import java.text.DecimalFormat;
 import net.sf.picard.util.Log;
 
 
@@ -37,7 +35,6 @@ public class CLocsFileReader extends IlluminaFileReader {
     private final int BLOCK_SIZE = 25;
     private final int IMAGE_WIDTH = 2048;
     private final int BLOCKS_PER_LINE = (IMAGE_WIDTH + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    private final DecimalFormat myFormatter = new DecimalFormat("#0");
     private int totalBlocks;
     private int currentBlock = 0;
     private int currentBlockUnreadClusters;
@@ -128,14 +125,14 @@ public class CLocsFileReader extends IlluminaFileReader {
             int dx = inputStream.readUnsignedByte();
             int dy = inputStream.readUnsignedByte();
 
-            double x = BLOCK_SIZE * ((getCurrentBlock() - 1) % BLOCKS_PER_LINE) + dx / 10.0;
-            double y = BLOCK_SIZE * ((getCurrentBlock() - 1) / BLOCKS_PER_LINE) + dy / 10.0;
+            int x = 10 * BLOCK_SIZE * ((getCurrentBlock() - 1) % BLOCKS_PER_LINE) + dx + 1000;
+            int y = 10 * BLOCK_SIZE * ((getCurrentBlock() - 1) / BLOCKS_PER_LINE) + dy + 1000;
 
             String[] pos = new String[2];
-            //pos[0] = this.myFormatter.format(x);
-            //pos[1] = this.myFormatter.format(y);
-            pos[0] = this.myFormatter.format(1000 + x*10);
-            pos[1] = this.myFormatter.format(1000 + y*10);
+            
+            pos[0] = Integer.toString(x);
+            pos[1] = Integer.toString(y);
+
             this.currentTotalClusters++;
 
             return pos;
