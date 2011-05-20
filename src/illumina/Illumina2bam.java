@@ -22,28 +22,26 @@ package illumina;
 
 import java.io.File;
 import java.util.Date;
-import net.sf.picard.cmdline.CommandLineProgram;
 import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.Usage;
 import net.sf.samtools.SAMFileWriter;
 
 import net.sf.picard.io.IoUtil;
 import net.sf.picard.util.Log;
-import net.sf.samtools.SAMProgramRecord;
 import net.sf.samtools.SAMReadGroupRecord;
 
 /**
  *
  * @author Guoying Qi
  */
-public class Illumina2bam extends CommandLineProgram {
+public class Illumina2bam extends Illumina2bamCommandLine {
     
     private final Log log = Log.getInstance(Illumina2bam.class);
     
     private final String programName = "illumina2bam";
     private final String programDS = "Convert Illumina BCL to BAM or SAM file";
     
-    @Usage(programVersion="0.01")
+    @Usage(programVersion=version)
     public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". ";
     
     @Option(shortName="I", doc="Illumina intensities directory including config xml file, and clocs files under lane directory.")
@@ -122,7 +120,7 @@ public class Illumina2bam extends CommandLineProgram {
         }
         
         log.info("Generating illumina2bam program record");
-        lane.setIllumina2bamProgram(this.getThisProgramRecord());
+        lane.setIllumina2bamProgram(this.getThisProgramRecord(this.programName, this.programDS));
         
         
         log.info("Generating read group record");
@@ -159,23 +157,7 @@ public class Illumina2bam extends CommandLineProgram {
 
         return 0;
     }
-    
-    /**
-     * Generate Program Record for this program itself
-     * 
-     * @return this program itself as Program Record
-     */
-    public SAMProgramRecord getThisProgramRecord(){        
-        
-        SAMProgramRecord programRecord = new SAMProgramRecord(this.programName);
-        
-        programRecord.setProgramName(this.programName);
-        programRecord.setCommandLine(this.getCommandLine());
-        programRecord.setProgramVersion(this.getProgramVersion());
-        programRecord.setAttribute("DS", this.programDS);
-        
-        return programRecord;
-    }
+
 
     /**
      * Generate read group record
