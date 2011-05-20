@@ -18,6 +18,9 @@
  */
 package illumina;
 
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Test;
@@ -61,16 +64,17 @@ public class BamReadTrimmerTest {
                 + "VERBOSITY=INFO QUIET=false VALIDATION_STRINGENCY=STRICT "
                 + "COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
               );
-//
-//        File trimmedBamFile = new File("testdata/6210_8_trimmed.bam");
-//        trimmedBamFile.deleteOnExit();
-//
-//        File md5File = new File("testdata/6210_8_trimmed.ba.md5");
-//        md5File.deleteOnExit();
-//        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
-//        String md5 = md5Stream.readLine();
-//        
-//        assertEquals(md5, "");        
+
+        File trimmedBamFile = new File("testdata/6210_8_trimmed.bam");
+        trimmedBamFile.deleteOnExit();
+
+        File md5File = new File("testdata/6210_8_trimmed.bam.md5");
+        md5File.deleteOnExit();
+        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
+        String md5 = md5Stream.readLine();
+        
+        System.out.println("checking bam md5");
+        assertEquals(md5, "36c93432a0b6fbcee266b499dfd0e24a");        
 
         
 

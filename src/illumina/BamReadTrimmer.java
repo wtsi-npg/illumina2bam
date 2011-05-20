@@ -23,7 +23,12 @@ import net.sf.picard.cmdline.CommandLineProgram;
 import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.StandardOptionDefinitions;
 import net.sf.picard.cmdline.Usage;
+import net.sf.picard.io.IoUtil;
 import net.sf.picard.util.Log;
+import net.sf.samtools.SAMFileHeader;
+import net.sf.samtools.SAMFileReader;
+import net.sf.samtools.SAMFileWriter;
+import net.sf.samtools.SAMFileWriterFactory;
 
 /**
  * The class to strip part of a read (fixed position) - typically a prefix of the forward read,
@@ -32,17 +37,17 @@ import net.sf.picard.util.Log;
  * @author Guoying Qi
  */
 
-public class BamReadTrimmer extends CommandLineProgram {
+public class BamReadTrimmer extends Illumina2bamCommandLine {
     
-    private final Log log = Log.getInstance(Illumina2bam.class);
+    private final Log log = Log.getInstance(BamReadTrimmer.class);
     
     private final String programName = "bamReadTrimmer";
     
     private final String programDS = "Strip part of a read in fixed positionos, optionally place this and its quality in BAM tags";
-    
-    @Usage(programVersion="0.01")
-    public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". ";
-    
+   
+    @Usage(programVersion= version)
+    public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". "; 
+ 
     @Option(shortName= StandardOptionDefinitions.INPUT_SHORT_NAME, doc="The input SAM or BAM file to trim.")
     public File INPUT;
 
@@ -66,13 +71,31 @@ public class BamReadTrimmer extends CommandLineProgram {
     
     @Option(shortName="QS", doc="Tag name to be used for timmed qualities.", optional=true)
     public String TRIM_QUALITY_TAG = "qs";   
-    
+
 
     @Override
     protected int doWork() {
+      
+        this.log.info("Checking input and output file");
+        IoUtil.assertFileIsReadable(INPUT);
+        IoUtil.assertFileIsWritable(OUTPUT);
+        
+        log.info("Open input file: " + INPUT.getName());
+        final SAMFileReader in  = new SAMFileReader(INPUT);
+        
+        final SAMFileHeader header = in.getFileHeader();
+        final SAMFileHeader outputHeader = header.clone();
+        this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
+        
+        log.info("Open output file with header: " + OUTPUT.getName());
+        final SAMFileWriter out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader,  true, OUTPUT);
+        
+        out.close();
         
         return 0;
     }
+    
+    
     
     /**
      * 
