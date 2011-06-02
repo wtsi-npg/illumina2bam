@@ -20,6 +20,7 @@
 
 package illumina;
 
+import java.util.TimeZone;
 import java.util.Date;
 import net.sf.samtools.SAMReadGroupRecord;
 import java.io.FileReader;
@@ -53,6 +54,7 @@ public class LaneTest {
     private static Lane lane;
 
     public LaneTest() {
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
 
     @BeforeClass
