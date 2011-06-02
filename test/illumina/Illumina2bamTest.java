@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.TimeZone;
 import net.sf.samtools.SAMProgramRecord;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -37,6 +38,7 @@ public class Illumina2bamTest {
     Illumina2bam illumina2bam = new Illumina2bam();
     
     public Illumina2bamTest() {
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
     
     /**
