@@ -29,6 +29,7 @@ import net.sf.samtools.SAMFileWriter;
 import net.sf.picard.io.IoUtil;
 import net.sf.picard.util.Log;
 import net.sf.samtools.SAMReadGroupRecord;
+import net.sf.samtools.util.Iso8601Date;
 
 /**
  *
@@ -78,7 +79,7 @@ public class Illumina2bam extends Illumina2bamCommandLine {
     public String PLATFORM_UNIT;
 
     @Option(doc="The start date of the run, read from config file if not given.", optional=true)
-    public Date RUN_START_DATE;
+    public Iso8601Date RUN_START_DATE;
 
     @Option(shortName="SC", doc="Sequence center name, default SC for Sanger Center.", optional=true)
     public String SEQUENCING_CENTER = "SC";
@@ -189,7 +190,8 @@ public class Illumina2bam extends Illumina2bamCommandLine {
         }
         
         if(this.RUN_START_DATE != null){
-            readGroup.setRunDate(RUN_START_DATE);
+            final Iso8601Date date = new Iso8601Date(RUN_START_DATE);
+            readGroup.setRunDate(date);
         }else if(runDateConfig != null){
             readGroup.setRunDate(runDateConfig);
         }

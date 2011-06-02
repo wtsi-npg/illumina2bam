@@ -56,22 +56,24 @@ public class Illumina2bamTest {
             "LB=Test library",
             "SM=Test Sample",
             "ST=testStudy",
-            "TMP_DIR=testdata/"
+            "TMP_DIR=testdata/",
+            "RUN_START_DATE=2011-03-23T00:00:00+0000"
         };
         illumina2bam.instanceMain(args);
+        
 
         File samFile = new File("testdata/6000_1.sam");
-        samFile.deleteOnExit();
+        samFile.deleteOnExit();      
 
         File md5File = new File("testdata/6000_1.sam.md5");
         md5File.deleteOnExit();
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
-        assertEquals(md5, "3368d78c9ba271fe499e72d4e49642a7");
+        assertEquals(md5, "12b542a6b19097ca6ea559d9d1bd5cf7");
 
         assertEquals(illumina2bam.getCommandLine(), "illumina.Illumina2bam INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities "
                 + "LANE=1 OUTPUT=testdata/6000_1.sam SAMPLE_ALIAS=Test Sample LIBRARY_NAME=Test library "
-                + "STUDY_NAME=testStudy FIRST_TILE=1101 TILE_LIMIT=1 TMP_DIR=testdata "
+                + "STUDY_NAME=testStudy RUN_START_DATE=2011-03-23T00:00:00+0000 FIRST_TILE=1101 TILE_LIMIT=1 TMP_DIR=testdata "
                 + "VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1 CREATE_MD5_FILE=true    "
                 + "GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1 SEQUENCING_CENTER=SC "
                 + "PLATFORM=ILLUMINA VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
