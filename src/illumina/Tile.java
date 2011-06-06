@@ -570,11 +570,7 @@ public class Tile {
      * @return fastq quality string from phred qual byte array
      */
     public String covertPhredQulByteArrayToFastqString(byte [] array){
-        StringBuilder builder = new StringBuilder(array.length);
-        for (byte b : array){
-            builder.append( (char) (b + 33) );
-        }
-        return builder.toString();
+        return Illumina2bamUtils.covertPhredQulByteArrayToFastqString(array);
     }
 
     /**
@@ -583,11 +579,7 @@ public class Tile {
      * @return string from a byte array
      */
     public String covertByteArrayToString(byte [] array){
-        StringBuilder builder = new StringBuilder(array.length);
-        for (byte b : array){
-            builder.append((char) b);
-        }
-        return builder.toString();
+        return Illumina2bamUtils.covertByteArrayToString(array);
     }
 
     /**
