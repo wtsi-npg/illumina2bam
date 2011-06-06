@@ -18,6 +18,8 @@
  */
 package illumina;
 
+import net.sf.samtools.SAMFileHeader;
+import net.sf.samtools.SAMRecord;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,13 +45,15 @@ public class BamReadTrimmerTest {
     public void testMain() throws FileNotFoundException, IOException {
         
         System.out.println("instanceMain");
+        
         String[] args = {
             "I=testdata/bam/6210_8.sam",
             "O=testdata/6210_8_trimmed.bam",
             "POS=1",
             "LEN=3",
             "CREATE_MD5_FILE=true",
-            "TMP_DIR=testdata/"
+            "TMP_DIR=testdata/",
+            "VALIDATION_STRINGENCY=SILENT"
         };
 
         trimmer.instanceMain(args);
@@ -58,13 +62,45 @@ public class BamReadTrimmerTest {
                 + "INPUT=testdata/bam/6210_8.sam "
                 + "OUTPUT=testdata/6210_8_trimmed.bam "
                 + "FIRST_POSITION_TO_TRIM=1 TRIM_LENGTH=3 "
-                + "TMP_DIR=testdata CREATE_MD5_FILE=true    "
-                + "ONLY_FORWARD_READ=true SAVE_TRIM=true "
-                + "TRIM_BASE_TAG=rs TRIM_QUALITY_TAG=qs "
-                + "VERBOSITY=INFO QUIET=false VALIDATION_STRINGENCY=STRICT "
-                + "COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
+                + "TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT "
+                + "CREATE_MD5_FILE=true    ONLY_FORWARD_READ=true "
+                + "SAVE_TRIM=true TRIM_BASE_TAG=rs TRIM_QUALITY_TAG=qs "
+                + "VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 "
+                + "MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
               );
 
+    }
+    
+     /**
+     * Test trimming sam record methods
+     */
+    @Test
+    public void testTrimmingSamRecord(){
+        System.out.println("Testing trimming reads");
+        
+        String bases     = "CCCTCCTACTACCACCAAAATTT";
+        String qualities = "!998997<99DDDDD<>>><<><";
+        
+        SAMFileHeader header = new SAMFileHeader();        
+        SAMRecord record = new SAMRecord(header);
+        record.setReadString(bases);
+        record.setBaseQualityString(qualities);
+        
+        trimmer.trimSAMRecord(record, 1, 5, true);
+        
+        assertEquals(record.getReadString(), "CTACTACCACCAAAATTT");
+        assertEquals(record.getBaseQualityString(), "97<99DDDDD<>>><<><");
+        
+        assertEquals(record.getAttribute("rs"),"CCCTC");
+        assertEquals(record.getAttribute("qs"),"!9989");
+    }
+    
+    /**
+     * Test output bam MD5
+     */
+    @Test
+    public void testOutputBam() throws FileNotFoundException, IOException {
+        System.out.println("checking bam md5");
         File trimmedBamFile = new File("testdata/6210_8_trimmed.bam");
         trimmedBamFile.deleteOnExit();
 
@@ -72,12 +108,8 @@ public class BamReadTrimmerTest {
         md5File.deleteOnExit();
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
-        
-        System.out.println("checking bam md5");
-        assertEquals(md5, "36c93432a0b6fbcee266b499dfd0e24a");        
 
-        
-
+        assertEquals(md5, "444d73a00306ae87ebd1ff61da2ad1d1");
     }
 
 }

@@ -19,7 +19,6 @@
 package illumina;
 
 import java.io.File;
-import net.sf.picard.cmdline.CommandLineProgram;
 import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.StandardOptionDefinitions;
 import net.sf.picard.cmdline.Usage;
@@ -29,6 +28,8 @@ import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFileWriterFactory;
+import net.sf.samtools.SAMRecord;
+
 
 /**
  * The class to strip part of a read (fixed position) - typically a prefix of the forward read,
@@ -90,15 +91,74 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
         log.info("Open output file with header: " + OUTPUT.getName());
         final SAMFileWriter out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader,  true, OUTPUT);
         
+        log.info("Trimming records");
+        for(SAMRecord record: in){
+            SAMRecord trimmedRecord = this.trimSAMRecord(record, this.FIRST_POSITION_TO_TRIM, this.TRIM_LENGTH, this.SAVE_TRIM);
+            out.addAlignment(trimmedRecord);
+        }
+        
         out.close();
+        log.info("Trimming finished, trimmied file: " + this.OUTPUT);
         
         return 0;
+    }
+    
+    public SAMRecord trimSAMRecord(SAMRecord record, int firstPos, int trimLength, boolean saveTrim){
+
+        byte[] bases = record.getReadBases();
+        byte[] qualities = record.getBaseQualities();
+
+        final int readLength = bases.length;
+        if(readLength != qualities.length){
+            throw new RuntimeException("Read bases and qualities are not the same in lenght");
+        }
+
+        final int newReadLength = readLength - trimLength;
+        
+        byte[] basesTrimmed = new byte[trimLength];
+        byte[] qualitiesTrimmed = new byte[trimLength];
+        
+        byte[] newBases = new byte[newReadLength];
+        byte[] newQualities= new byte[newReadLength];
+        
+        
+        int j = 0;
+        int k = 0;
+        
+        for(int i = 0; i<readLength; i++){
+            
+            if((i+1) >= firstPos &&  k < trimLength) {                
+                basesTrimmed[k] = bases[i];
+                qualitiesTrimmed[k] = qualities[i];
+                k++;
+            }else{
+                newBases[j] = bases[i];
+                newQualities[j] = qualities[i];
+                j++;
+            }
+        }
+        record.setReadBases(newBases);
+        record.setBaseQualities(newQualities);
+        if(saveTrim){
+            record.setAttribute(this.TRIM_BASE_TAG,   Illumina2bamUtils.covertByteArrayToString( basesTrimmed));
+            record.setAttribute(this.TRIM_QUALITY_TAG, Illumina2bamUtils.covertPhredQulByteArrayToFastqString(qualitiesTrimmed));
+        }
+
+        return record;
     }
     
     
     
     /**
-     * 
+     * example:
+     * INPUT=testdata/bam/6210_8.sam
+     * OUTPUT=testdata/6210_8_trimmed.bam
+     * FIRST_POSITION_TO_TRIM=1 TRIM_LENGTH=3
+     * CREATE_MD5_FILE=true
+     * ONLY_FORWARD_READ=true
+     * SAVE_TRIM=true TRIM_BASE_TAG=rs TRIM_QUALITY_TAG=qs
+     * VERBOSITY=INFO QUIET=false VALIDATION_STRINGENCY=SILENT
+     *
      * @param args 
      */
     public static void main(final String[] args) {
