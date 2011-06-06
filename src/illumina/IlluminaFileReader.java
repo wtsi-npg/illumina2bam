@@ -19,6 +19,7 @@
  */
 package illumina;
 
+import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.util.Iterator;
 
@@ -71,7 +72,11 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
             } else if (!file.canRead()) {
                 throw new FileNotFoundException("File cannot be read: " + fileName);
             } else {
-                this.inputStream = new DataInputStream(new FileInputStream(file));
+                this.inputStream = new DataInputStream(
+                        new BufferedInputStream(
+                          new FileInputStream(file)
+                        )
+                );
             }
         }
     }
