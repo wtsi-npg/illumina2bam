@@ -159,6 +159,8 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
      * SAVE_TRIM=true TRIM_BASE_TAG=rs TRIM_QUALITY_TAG=qs
      * VERBOSITY=INFO QUIET=false VALIDATION_STRINGENCY=SILENT
      *
+     * INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_trimmed.bam FIRST_POSITION_TO_TRIM=1 TRIM_LENGTH=3 TMP_DIR=testdata CREATE_MD5_FILE=true ONLY_FORWARD_READ=true SAVE_TRIM=true TRIM_BASE_TAG=rs TRIM_QUALITY_TAG=qs VALIDATION_STRINGENCY=SILENT
+     *
      * @param args 
      */
     public static void main(final String[] args) {
