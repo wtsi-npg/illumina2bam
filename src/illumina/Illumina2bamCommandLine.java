@@ -30,7 +30,7 @@ import net.sf.samtools.SAMProgramRecord;
  */
 public abstract class Illumina2bamCommandLine extends CommandLineProgram {
     
-    public static final String version = "0.01";
+    public static final String version = "0.02";
     
     /**
      * Generate Program Record for this program itself
@@ -57,7 +57,7 @@ public abstract class Illumina2bamCommandLine extends CommandLineProgram {
      * @param programRecord 
      */
     public void addProgramRecordToHead(SAMFileHeader header, SAMProgramRecord programRecord){
-        
+        //TODO: check the new program ID does not exist in the old list
         List<SAMProgramRecord> programList = header.getProgramRecords();
         if(programList != null && ! programList.isEmpty() ){
             String previousProgramId =  programList.get(programList.size() - 1 ).getProgramGroupId();

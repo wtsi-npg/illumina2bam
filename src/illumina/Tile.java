@@ -122,12 +122,14 @@ public class Tile {
         this.laneSubDir = "L00" + this.laneNumber;
         this.tileName = "s_" + this.laneNumber + "_" + this.tileNumber;
 
+        //TODO: use pos file if clocs file does not exist
         this.cLocsFileName = this.intensityDir
                 + File.separator
                 + this.laneSubDir
                 + File.separator
                 + this.tileName + ".clocs";
 
+        //TODO try different location for filter file if no exist here, format different as well
         this.filterFileName = this.baseCallDir
                 + File.separator
                 + this.laneSubDir

@@ -89,6 +89,8 @@ public class BamMerger extends Illumina2bamCommandLine {
         final SAMFileReader alignments  = new SAMFileReader(ALIGNED_BAM);
         SAMFileHeader headerAlignments = alignments.getFileHeader();
         SAMSequenceDictionary sequenceDictionary = headerAlignments.getSequenceDictionary();
+        
+        //TODO: only keep aligner program records, we will lose any other head information in this file
         SAMProgramRecord alignmentProgram = null;
         if(this.ALIGNMENT_PROGRAM_ID != null){
            alignmentProgram = headerAlignments.getProgramRecord(this.ALIGNMENT_PROGRAM_ID);
