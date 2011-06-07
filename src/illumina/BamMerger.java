@@ -68,7 +68,7 @@ public class BamMerger extends Illumina2bamCommandLine {
     @Option(shortName= "ALIGNED", doc="The input SAM or BAM file with alignment.")
     public File ALIGNED_BAM;
     
-    @Option(shortName= "PG", doc="The alignment program ID in the header of the SAM or BAM file with alignment, default bwa.")
+    @Option(shortName= "PG", doc="The alignment program ID in the header of the SAM or BAM file with alignment.")
     public String ALIGNMENT_PROGRAM_ID = "bwa";
     
     @Option(shortName= StandardOptionDefinitions.INPUT_SHORT_NAME, doc="The input SAM or BAM file to merge.")
@@ -89,8 +89,10 @@ public class BamMerger extends Illumina2bamCommandLine {
         final SAMFileReader alignments  = new SAMFileReader(ALIGNED_BAM);
         SAMFileHeader headerAlignments = alignments.getFileHeader();
         SAMSequenceDictionary sequenceDictionary = headerAlignments.getSequenceDictionary();
-        SAMProgramRecord alignmentProgram = headerAlignments.getProgramRecord(this.ALIGNMENT_PROGRAM_ID);
-        
+        SAMProgramRecord alignmentProgram = null;
+        if(this.ALIGNMENT_PROGRAM_ID != null){
+           alignmentProgram = headerAlignments.getProgramRecord(this.ALIGNMENT_PROGRAM_ID);
+        }
         log.info("Open input file to merge " + INPUT.getName());
         final SAMFileReader in  = new SAMFileReader(INPUT);        
         final SAMFileHeader header = in.getFileHeader();
