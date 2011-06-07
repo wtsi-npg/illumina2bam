@@ -18,6 +18,7 @@
  */
 package illumina;
 
+import java.util.TimeZone;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMRecord;
 import java.io.FileReader;
@@ -37,6 +38,10 @@ import static org.junit.Assert.*;
 public class BamReadTrimmerTest {
     
     BamReadTrimmer trimmer = new BamReadTrimmer();
+    
+    public BamReadTrimmerTest() {
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+    }
 
     /**
      * Test of instanceMain method and program record.
@@ -109,7 +114,7 @@ public class BamReadTrimmerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "444d73a00306ae87ebd1ff61da2ad1d1");
+        assertEquals(md5, "bd346d482492d090ccc5258747d7179d");
     }
 
 }

@@ -19,6 +19,7 @@
  */
 package illumina;
 
+import java.util.TimeZone;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,6 +38,9 @@ public class BamMergerTest {
     
     BamMerger merger = new BamMerger();
 
+    public BamMergerTest() {
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+    }
     /**
      * Test of instanceMain method and program record.
      */
@@ -75,7 +79,7 @@ public class BamMergerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "3bb42fe2f2b18934ae41df46e4a13571");
+        assertEquals(md5, "eb6889f7157698b2a38901f848e6423a");
     }
 
 }
