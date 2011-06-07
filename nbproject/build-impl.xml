@@ -726,7 +726,7 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="init,compile,-pre-jar,-do-jar-with-manifest,-do-jar-without-manifest,-do-jar-with-mainclass,-do-jar-with-libraries,-post-jar" description="Build JAR." name="jar"/>
+    <target depends="init,compile,-pre-jar,-do-jar-with-manifest,-do-jar-without-manifest,-do-jar-with-mainclass,-do-jar-with-libraries,bamMerger-jar,bamReadTrimmer-jar,-post-jar" description="Build JAR." name="jar"/>
     <!--
                 =================
                 EXECUTION SECTION
@@ -1063,4 +1063,27 @@ is divided into following sections:
             </propertyset>
         </ant>
     </target>
+    
+    <target name="bamMerger-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds BamMerger jar for command line"> 
+       <jar destfile="${dist.dir}/BamMerger.jar" compress="no">
+          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
+    	   <manifest>
+    	      <attribute name="Implementation-Title" value="BamMerger"/>
+              <attribute name="Main-Class" value="illumina.BamMerger"/>
+              <attribute name="Class-Path" value="${jar.classpath}"/>
+           </manifest>
+       </jar>
+    </target>
+    
+    <target name="bamReadTrimmer-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds BamReadTrimmer jar for command line"> 
+       <jar destfile="${dist.dir}/BamReadTrimmer.jar" compress="no">
+          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
+    	   <manifest>
+    	      <attribute name="Implementation-Title" value="BamReadTrimmer"/>
+              <attribute name="Main-Class" value="illumina.BamReadTrimmer"/> 
+              <attribute name="Class-Path" value="${jar.classpath}"/> 
+           </manifest>
+       </jar>
+    </target>
+    
 </project>
