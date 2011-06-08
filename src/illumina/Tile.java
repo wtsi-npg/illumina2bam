@@ -18,6 +18,11 @@
  */
 package illumina;
 
+import illumina.file.reader.FilterFileReader;
+import illumina.file.reader.CLocsFileReader;
+import illumina.file.reader.BCLFileReader;
+import illumina.file.reader.SCLFileReader;
+import illumina.file.reader.IlluminaFileReader;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -215,7 +220,7 @@ public class Tile {
 
         if(totalClusterInTile != filterFileReader.getCurrentCluster()){
             throw new Exception("Number of clusters in filter file "
-                    + filterFileReader.fileName
+                    + filterFileReader.getFileName()
                     + " is incorrect");
         }
         log.debug("Correct number of clusters processed in filter file: " + filterFileReader.getCurrentCluster());
@@ -262,7 +267,7 @@ public class Tile {
               for(BCLFileReader bclFileReader: bclFileReaderList){
                   if( bclFileReader.getTotalClusters() != expectedClusterNumber){
                       throw new Exception("Number of Clusters in BCL file "
-                              + bclFileReader.fileName
+                              + bclFileReader.getFileName()
                               + " "
                               + bclFileReader.getTotalClusters()
                               + " not as expected:"
@@ -289,7 +294,7 @@ public class Tile {
             for (SCLFileReader sclFileReader : sclFileReaderList) {
                 if (sclFileReader.getTotalClusters() != expectedClusterNumber) {
                     throw new Exception("Number of Clusters in SCL file "
-                            + sclFileReader.fileName
+                            + sclFileReader.getFileName()
                             + " "
                             + sclFileReader.getTotalClusters()
                             + " not as expected:"

@@ -16,7 +16,7 @@
  * 
  * 
  */
-package illumina;
+package illumina.file.reader;
 
 import java.io.IOException;
 import net.sf.picard.util.Log;
@@ -61,7 +61,7 @@ public class SCLFileReader extends IlluminaFileReader {
 
         //first four bytes - unsigned 32bits little endian integer
         this.totalClusters = this.readFourBytes(inputStream);
-        log.debug("The total number of clusters: " + this.getTotalClusters() + " in " + this.fileName);
+        log.debug("The total number of clusters: " + this.getTotalClusters() + " in " + this.getFileName());
     }
 
     /**

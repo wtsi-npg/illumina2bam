@@ -16,7 +16,7 @@
  * 
  * 
  */
-package illumina;
+package illumina.file.reader;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -62,7 +62,7 @@ public class BCLFileReader extends IlluminaFileReader {
 
         //first four bytes - unsigned 32bits little endian integer
         this.totalClusters = this.readFourBytes();
-        log.debug("The total number of clusters:" + this.getTotalClusters() + " in " + this.fileName );
+        log.debug("The total number of clusters:" + this.getTotalClusters() + " in " + this.getFileName() );
     }
 
     /**
@@ -92,7 +92,7 @@ public class BCLFileReader extends IlluminaFileReader {
             } catch( EOFException ex) {
                 //end of the file
                 log.error(ex, "There is no mroe cluster in BCL file after cluster " + this.getCurrentCluster()
-                        + " in file " + this.fileName );
+                        + " in file " + this.getFileName() );
                 return null;
             }
 
@@ -103,7 +103,7 @@ public class BCLFileReader extends IlluminaFileReader {
             byte qul = ( byte) ( (nextBase & 0xFC) >> 2 ) ;
             if(qul < this.MIN_QUALITY_SCORE || qul >this.MAX_QUALITY_SCORE ){
                throw new IllegalArgumentException("Invalid quality score: "
-                       + qul + " in bcl file " + this.fileName
+                       + qul + " in bcl file " + this.getFileName()
                        + " in position " + this.getCurrentCluster());
             }
 
@@ -118,7 +118,7 @@ public class BCLFileReader extends IlluminaFileReader {
             return currentClusterPair;
 
         } catch (IOException ex) {
-            log.error(ex, "There is problems to read the file" + this.fileName);
+            log.error(ex, "There is problems to read the file" + this.getFileName());
         }
 
         return null;

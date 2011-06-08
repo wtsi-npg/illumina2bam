@@ -16,7 +16,7 @@
  *
  * 
  */
-package illumina;
+package illumina.file.reader;
 
 import java.io.BufferedInputStream;
 import java.io.Closeable;
@@ -138,5 +138,12 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
         }
 
         return unsignedInt;
+    }
+
+    /**
+     * @return the fileName
+     */
+    public String getFileName() {
+        return fileName;
     }
 }

@@ -16,8 +16,9 @@
  *
  * The test class of FilterFileReader class
  */
-package illumina;
+package illumina.file.reader;
 
+import illumina.file.reader.FilterFileReader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -17,8 +17,9 @@
  * this is the test class for CLocsFileReader
  * 
  */
-package illumina;
+package illumina.file.reader;
 
+import illumina.file.reader.CLocsFileReader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

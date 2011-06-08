@@ -16,8 +16,9 @@
  *
  * the test class for BCLFileReader
  */
-package illumina;
+package illumina.file.reader;
 
+import illumina.file.reader.BCLFileReader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

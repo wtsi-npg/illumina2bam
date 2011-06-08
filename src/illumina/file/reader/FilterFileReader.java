@@ -16,7 +16,7 @@
  *
  * 
  */
-package illumina;
+package illumina.file.reader;
 
 import java.io.IOException;
 import net.sf.picard.util.Log;
@@ -85,7 +85,7 @@ public class FilterFileReader extends IlluminaFileReader {
             int nextByte = this.inputStream.read();
 
             if (nextByte == -1) {
-                log.warn("There is no mroe cluster in Filter file after cluster " + this.getCurrentCluster() + " in file " + this.fileName);
+                log.warn("There is no mroe cluster in Filter file after cluster " + this.getCurrentCluster() + " in file " + this.getFileName());
                 return null;
             }
 

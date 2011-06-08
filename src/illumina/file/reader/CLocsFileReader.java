@@ -16,7 +16,7 @@
  * 
  * 
  */
-package illumina;
+package illumina.file.reader;
 
 import java.io.IOException;
 import net.sf.picard.util.Log;
@@ -117,7 +117,7 @@ public class CLocsFileReader extends IlluminaFileReader {
             }
 
             if (this.currentBlockUnreadClusters < 0) {
-                log.warn("There is no mroe block in " + this.fileName + ". Current block: " + this.getCurrentBlock());
+                log.warn("There is no mroe block in " + this.getFileName() + ". Current block: " + this.getCurrentBlock());
                 return null;
             }
 
