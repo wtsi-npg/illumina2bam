@@ -1,0 +1,6 @@
+release-0.02
+ - a new BamReadTrimmer tool added to strip part of a read (fixed position) - typically a prefix of the forward read, and optionally place this and its quality in BAM tags.
+ - a new BamMerger tool added to merge BAM/SAM alignment info in a bam with the data in an unmapped BAM file, producing a third BAM file that has alignment data and all the additional data from the unmapped BAM. The SQ records and alignment PG records in the aligned bam file will be added to the header of unmampped bam file to form the new header of output file.
+ - stop using decimal format for position coordinates to improve clocs file reading.
+ - use BufferedInputStream for file input streams to improve file reading speed.
+ - set default timezone to a fixed timezone GMT in order for the run start date fixed in test sam/bam file.

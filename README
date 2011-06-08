@@ -1,3 +1,13 @@
+Here is a collection of tools to generate or process BAM/SAM files using Picard Java API. It includs illumina2bam, BamReadTrimmer and BamMerger currently.
+
+It is a NetBeans Java project. You should be able to open it from NetBeans directly.
+
+To test: ant test.
+
+To generate jar files: ant jar.
+
+---------------------------------------------------
+
 illumina2bam
 
 This tool converts Illumina BCL files directly to bam files using Picard JAVA API.
@@ -22,23 +32,17 @@ CLOCS and filter files are also needed.
 
 All reads are supposed in one read group, by default, which id is 1. Sample and library name can be passed from command line, otherwise use unknown.
 
------------------------------------------------
-
-Example to run:
+EXAMPLE TO RUN:
 
 java -jar "illumina2bam.jar" INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities LANE=1 OUTPUT=testdata/6000_1.bam  VALIDATION_STRINGENCY=STRICT CREATE_INDEX=false CREATE_MD5_FILE=true FIRST_TILE=1101 TILE_LIMIT=1  COMPRESSION_LEVEL=1
 
------------------------------------------------
-
-Help
-
+HELP:
 
 java -jar "illumina2bam.jar" -h
 
 USAGE: Illumina2bam [options]
 
-Convert Illumina BCL to BAM or SAM file. Version: 0.01
-
+Convert Illumina BCL to BAM or SAM file. Version: 0.02
 
 Options:
 
@@ -104,10 +108,29 @@ FIRST_TILE=Integer            If set, this is the first tile to be processed (fo
 
 TILE_LIMIT=Integer            If set, process no more than this many tiles (for debugging).  Default value: null.
 
+-----------------------------------------------
+
+BamReadTrimmer
+
+Strip part of a read (fixed position) - typically a prefix of the forward read, and optionally place this and its quality in BAM tags.
+
+EXAMPLE TO RUN:
+
+java -jar "BamReadTrimmer.jar" INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_trimmed.bam FIRST_POSITION_TO_TRIM=1 TRIM_LENGTH=3 TMP_DIR=testdata CREATE_MD5_FILE=true ONLY_FORWARD_READ=true SAVE_TRIM=true TRIM_BASE_TAG=rs TRIM_QUALITY_TAG=qs VALIDATION_STRINGENCY=SILENT
 
 -----------------------------------------------
 
-Standard Picard Options
+BamMerger
+
+Merge BAM/SAM alignment info in a bam with the data in an unmapped BAM file, producing a third BAM file that has alignment data and all the additional data from the unmapped BAM. The SQ records and alignment PG records in the aligned bam file will be added to the header of unmampped bam file to form the new header of output file.
+
+EXAMPLE TO RUN:
+
+java -jar "BamMerger.jar" ALIGNED=testdata/bam/6210_8_aligned.sam I=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_merged.bam  TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT
+
+-----------------------------------------------
+
+STANDARD PICARD OPTIONS:
 
 TMP_DIR=File                  Default value: /tmp/username. This option can be set to 'null' to clear the default value. 
 
