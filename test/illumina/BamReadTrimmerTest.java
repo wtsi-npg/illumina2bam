@@ -114,7 +114,7 @@ public class BamReadTrimmerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "bd346d482492d090ccc5258747d7179d");
+        assertEquals(md5, "deffcf137a4768e855dba3d39d5aa33a");
     }
 
 }

@@ -92,9 +92,15 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
         final SAMFileWriter out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader,  true, OUTPUT);
         
         log.info("Trimming records");
-        for(SAMRecord record: in){
-            SAMRecord trimmedRecord = this.trimSAMRecord(record, this.FIRST_POSITION_TO_TRIM, this.TRIM_LENGTH, this.SAVE_TRIM);
-            out.addAlignment(trimmedRecord);
+        for (SAMRecord record : in) {
+            if (this.ONLY_FORWARD_READ && record.getReadPairedFlag() && record.getFirstOfPairFlag()) {
+                
+                SAMRecord trimmedRecord = this.trimSAMRecord(record, this.FIRST_POSITION_TO_TRIM, this.TRIM_LENGTH, this.SAVE_TRIM);
+                out.addAlignment(trimmedRecord);
+            } else {
+                
+                out.addAlignment(record);
+            }
         }
         
         out.close();
