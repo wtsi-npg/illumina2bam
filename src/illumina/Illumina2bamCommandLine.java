@@ -25,7 +25,8 @@ import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMProgramRecord;
 
 /**
- *
+ * This is the base class for any command line program class
+ * 
  * @author Guoying Qi
  */
 public abstract class Illumina2bamCommandLine extends CommandLineProgram {

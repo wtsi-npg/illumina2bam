@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * This is the main class to covert Illumina BCL file to BAM
  *
  */
 
@@ -33,6 +32,8 @@ import net.sf.samtools.util.Iso8601Date;
 
 /**
  *
+ * This is the main class to covert Illumina BCL files to BAM
+ * 
  * @author Guoying Qi
  */
 public class Illumina2bam extends Illumina2bamCommandLine {

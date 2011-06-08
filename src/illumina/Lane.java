@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * The class to process an illumina lane
  */
 
 package illumina;
@@ -54,7 +53,8 @@ import net.sf.picard.util.Log;
 
 
 /**
- *
+ * Process an illumina lane
+ * 
  * @author Guoying Qi
  */
 public class Lane {

@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * this class is a reader of a filter file
  * 
  */
 package illumina;
@@ -24,6 +23,8 @@ import net.sf.picard.util.Log;
 
 /**
  *
+ * This class is a reader of a filter file
+ * 
  * @author Guoying Qi
  */
 public class FilterFileReader extends IlluminaFileReader {

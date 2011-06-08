@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * This class try to open a Illumina file into a data input stream
  * 
  */
 package illumina;
@@ -33,6 +32,7 @@ import net.sf.picard.util.Log;
 
 
 /**
+ * This class try to open a Illumina file into a data input stream, base class for all file reader classes
  * 
  * @author Guoying Qi
  */

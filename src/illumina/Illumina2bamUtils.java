@@ -1,5 +1,3 @@
-package illumina;
-
 
 /*
  * Copyright (C) 2011 GRL
@@ -19,7 +17,11 @@ package illumina;
  * 
  *
  */
+
+package illumina;
+
 /**
+ * illumina2bam util class
  *
  * @author Guoying Qi
  */

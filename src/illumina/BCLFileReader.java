@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * This class is a reader of a bcl file
  * 
  */
 package illumina;
@@ -25,6 +24,8 @@ import java.io.IOException;
 import net.sf.picard.util.Log;
 
 /**
+ * This class is a reader of a bcl file
+ * 
  * @author Guoying Qi
  */
 public class BCLFileReader extends IlluminaFileReader {

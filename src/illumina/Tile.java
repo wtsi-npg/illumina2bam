@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * The class to process an illumina tile
  * 
  */
 package illumina;
@@ -32,7 +31,8 @@ import net.sf.samtools.SAMRecord;
 import net.sf.picard.util.Log;
 
 /**
- *
+ * Process an illumina tile
+ * 
  * @author Guoying Qi
  */
 public class Tile {
