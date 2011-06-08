@@ -57,10 +57,10 @@ public class BamMerger extends Illumina2bamCommandLine {
     
     private final String programName = "bamMerger";
     
-    private final String programDS = "A command-line tool to merge BAM/SAM alignment info in the first input fie"
+    private final String programDS = "A command-line tool to merge BAM/SAM alignment info in the first input file"
             + " with the data in an unmapped BAM file,"
             + " producing a third BAM file that has alignment data"
-            + " and all the additional datafrom the unmapped BAM";
+            + " and all the additional data from the unmapped BAM";
    
     @Usage(programVersion= version)
     public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". "; 
