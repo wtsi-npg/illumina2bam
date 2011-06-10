@@ -18,7 +18,6 @@
  */
 package illumina.file.reader;
 
-import illumina.file.reader.FilterFileReader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -89,5 +88,20 @@ public class FilterFileReaderTest {
         assertEquals(filterFileReader.getCurrentPFClusters(), 2425954);
         assertFalse(filterFileReader.hasNext());
         assertNull(filterFileReader.next());
+    }
+    
+    @Test
+    public void checkGAFilterFileReading() throws Exception{
+        System.out.println("Testing old format filter file");
+        String gaFilterFile = "testdata/110519_IL33_06284/Data/Intensities/BaseCalls/s_8_0112.filter";
+        FilterFileReader gaFilterFileReader = new FilterFileReader(gaFilterFile);
+        assertEquals(gaFilterFileReader.getTotalClusters(), 353693);
+        while(gaFilterFileReader.hasNext()){
+           gaFilterFileReader.next();
+        }
+        assertEquals(gaFilterFileReader.getTotalClusters(), 353693);
+        
+        //TODO: This number of pf clusters from RTA possibly doesn't match the one from Bustard
+        assertEquals(gaFilterFileReader.getCurrentPFClusters(), 308795);
     }
 }

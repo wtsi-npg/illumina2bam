@@ -53,11 +53,14 @@ public class FilterFileReader extends IlluminaFileReader {
      */
     private void readFileHeader() throws Exception {
 
-        //fisrt four bytes are empty and should be zero, backward compatibility
+        //fisrt four bytes are empty
+        //it should be zero for new version of filter file, backward compatibility
         int emptyBytes = this.readFourBytes(inputStream);
         if (emptyBytes != 0) {
-            log.error("The first four bytes are not zero: " + emptyBytes);
-            throw new Exception("The first four bytes in filter file are not empty");
+            
+            log.warn("The first four bytes are not zero: " + emptyBytes + ". This is an old format filter file.");
+            this.totalClusters = emptyBytes;
+            return;
         }
 
         //next four bytes should be version and greater or equal to the expected
