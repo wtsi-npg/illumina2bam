@@ -19,7 +19,6 @@
  */
 package illumina.file.reader;
 
-import illumina.file.reader.SCLFileReader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -19,7 +19,6 @@
  */
 package illumina.file.reader;
 
-import illumina.file.reader.IlluminaFileReader;
 import java.io.FileNotFoundException;
 import org.junit.Test;
 import static org.junit.Assert.*;
