@@ -50,8 +50,8 @@ public class PosFileReader implements Closeable {
      * 
      * @return cluster position coordinates as an array
      */
-    public int [] next() {
-        int [] pos = new int [2];
+    public String [] next() {
+        String [] pos = new String [2];
         try {
             String nextLine = this.fileReader.readLine();
             if(nextLine == null){
@@ -64,7 +64,7 @@ public class PosFileReader implements Closeable {
             }
             for (int i= 0; i<2; i++){
                 double tempCoor = Math.round( Double.parseDouble(coordinates[i]) * 10.0 );
-                pos [i] = (int)tempCoor + 1000;
+                pos [i] = Integer.toString ( (int)tempCoor + 1000 );
             }
             this.currentTotalClusters++;
         } catch (IOException ex) {
@@ -94,8 +94,8 @@ public class PosFileReader implements Closeable {
            System.err.println(ex);
         }
         for(int i =0; i< 353693; i++){
-            int [] pos = posFileReader.next();
-            System.out.println(pos[0] + " " + pos[1]);
+            String [] pos = posFileReader.next();
+            //System.out.println(pos[0] + " " + pos[1]);
         }
     }
     

@@ -55,9 +55,9 @@ public class PosFileReaderTest {
     @Test
     public void testNext() throws FileNotFoundException{
         System.out.println("test next method");
-        int [] firstPos = posFileReader.next();
-        assertEquals(firstPos[0], 1547);
-        assertEquals(firstPos[1], 997);
+        String [] firstPos = posFileReader.next();
+        assertEquals(firstPos[0], "1547");
+        assertEquals(firstPos[1], "997");
         assertEquals(posFileReader.getCurrentTotalClusters(), 1);
         for(int i = 0; i< 353692; i++){
             posFileReader.next();
@@ -68,7 +68,7 @@ public class PosFileReaderTest {
     @Test
     public void testNoMoreNext(){
         System.out.println("test no more next method");
-        int [] firstPos = posFileReader.next();
+        String [] firstPos = posFileReader.next();
         assertNull(firstPos);
     }
 }
