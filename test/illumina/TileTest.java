@@ -22,6 +22,7 @@ package illumina;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileWriterFactory;
@@ -72,6 +73,12 @@ public class TileTest {
     public void checkBclSclFileName() {
         assertEquals(tile.getBaseCallFileName(100, true), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C100.1/s_1_1101.bcl");
         assertEquals(tile.getBaseCallFileName(100, false), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C100.1/s_1_1101.scl");
+    }
+    
+    @Test
+    public void checkFilterFileName(){
+        System.out.println("Checking filter file name in base call lane directory");
+        assertEquals(tile.getFilterFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/s_1_1101.filter");
     }
 
     @Test
@@ -211,7 +218,52 @@ public class TileTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "7d72f9d8702d4b4440cc207e3d2f80a3");  
+        assertEquals(md5, "7d72f9d8702d4b4440cc207e3d2f80a3");        
+    }
+    
+    @Test
+    public void testGARun() throws IOException, Exception {
+        System.out.println("Generating a GA tile");
+        
+        String intensityDirGA = "testdata/110519_IL33_06284/Data/Intensities";
+        String baseCallDirGA = "testdata/110519_IL33_06284/Data/Intensities/BaseCalls/";
+        String idGA = "IL33_6284";
+        int laneGA = 8;
+        int tileNumberGA = 112;
+        int[] cycleRangeRead1GA = {10, 11};
+        int[] cycleRangeRead2GA = {94, 95};
+        int[] cycleRangeIndexGA = {77, 77};
+        
+        HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(3);
+        cycleRangeByRead.put("read1", cycleRangeRead1GA);
+        cycleRangeByRead.put("read2", cycleRangeRead2GA);
+        cycleRangeByRead.put("readIndex", cycleRangeIndexGA);
+        
+        Tile tileGA = new Tile(intensityDirGA, baseCallDirGA, idGA, laneGA, tileNumberGA, cycleRangeByRead, false, true);
+        
+        assertEquals(tileGA.getFilterFileName(), "testdata/110519_IL33_06284/Data/Intensities/BaseCalls//s_8_0112.filter");
+        
+        File tempBamFileGA = File.createTempFile("test_ga", ".bam", new File("testdata/"));
+        tempBamFileGA.deleteOnExit();
+
+        SAMFileWriterFactory factory = new SAMFileWriterFactory();
+        factory.setCreateMd5File(true);
+        SAMFileHeader header = new SAMFileHeader();
+        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, tempBamFileGA);
+        
+        System.out.println("Processing tiles");
+        tileGA.openBaseCallFiles();
+        tileGA.processTile(outputSam);
+        tileGA.closeBaseCallFiles();
+        outputSam.close();
+        
+        File md5File = new File(tempBamFileGA.getAbsolutePath() + ".md5");
+        md5File.deleteOnExit();
+        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
+        String md5 = md5Stream.readLine();
+        
+        System.out.println("Checking bam md5 correct");
+        assertEquals(md5, "e8c89bc56644eaf5cd817bd7daa79f96");       
         
     }
 }

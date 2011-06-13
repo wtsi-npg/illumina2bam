@@ -23,7 +23,9 @@ import illumina.file.reader.CLocsFileReader;
 import illumina.file.reader.BCLFileReader;
 import illumina.file.reader.SCLFileReader;
 import illumina.file.reader.IlluminaFileReader;
+import illumina.file.reader.PosFileReader;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,11 +61,13 @@ public class Tile {
     //temp fields    
     private final String laneSubDir;
     private final String tileName;
+    private final String tileNameInFour;
     private final boolean pairedRead;
     private final boolean indexed;
 
     //file name
     private final String cLocsFileName;
+    protected final String posFileName;
     private final String filterFileName;
 
     //file reader list
@@ -126,20 +130,22 @@ public class Tile {
 
         this.laneSubDir = "L00" + this.laneNumber;
         this.tileName = "s_" + this.laneNumber + "_" + this.tileNumber;
+        
+        final DecimalFormat tileNumberFormatter = new DecimalFormat("0000");
+        this.tileNameInFour = "s_" + this.laneNumber + "_" + tileNumberFormatter.format(this.tileNumber);
 
         //TODO: use pos file if clocs file does not exist
         this.cLocsFileName = this.intensityDir
                 + File.separator
                 + this.laneSubDir
                 + File.separator
-                + this.tileName + ".clocs";
+                + this.tileNameInFour + ".clocs";
+        
+        this.posFileName = this.intensityDir
+                + File.separator
+                + this.tileNameInFour + "_pos.txt";
 
-        //TODO try different location for filter file if no exist here, format different as well
-        this.filterFileName = this.baseCallDir
-                + File.separator
-                + this.laneSubDir
-                + File.separator
-                + this.tileName + ".filter";
+        this.filterFileName = this.checkFilterFileName();
     }
 
     /**
@@ -152,8 +158,28 @@ public class Tile {
         log.info("Open filter file: " + this.getFilterFileName());
         FilterFileReader filterFileReader = new FilterFileReader(this.getFilterFileName());
         
-        log.info("open clocs file: " + this.getcLocsFileName());
-        CLocsFileReader clocsFileReader = new CLocsFileReader(this.getcLocsFileName());
+        File clocsFile = new File( this.getcLocsFileName() );
+        File posFile = new File( this.getPosFileName() );
+
+        CLocsFileReader clocsFileReader = null;
+        PosFileReader posFileReader = null;
+        boolean clocsExisted;
+
+        if(clocsFile.exists()){
+           log.info("open clocs file: " + this.getcLocsFileName());
+           clocsFileReader = new CLocsFileReader(this.getcLocsFileName());
+           clocsExisted = true;
+        }else if( posFile.exists() ) {
+           log.info("open pos file: " + this.getPosFileName());
+           posFileReader = new PosFileReader(this.getPosFileName());
+           clocsExisted = false;
+        }else{
+            String errorMessage = "Both clocs and pos files are not available for this tile: "
+                    + this.getcLocsFileName() + " "
+                    + this.getPosFileName();
+            log.error(errorMessage);
+            throw new RuntimeException(errorMessage);
+        }
 
         SAMFileHeader samFileHeader = outputSam.getFileHeader();
 
@@ -173,7 +199,12 @@ public class Tile {
             clusterIndex++;
 
             //position
-            String[] pos = clocsFileReader.next();
+            String[] pos;
+            if(clocsExisted){
+                pos = clocsFileReader.next();
+            }else{
+                pos = posFileReader.next();
+            }
             String readName = this.getReadName(pos);
 
             //filtered
@@ -227,20 +258,33 @@ public class Tile {
        
 
         //check number of clusters from filter file match the cluster nubmer in clocs file
-        if (clocsFileReader.getCurrentTotalClusters() != totalClusterInTile) {
+        if (clocsFileReader != null && clocsFileReader.getCurrentTotalClusters() != totalClusterInTile) {
             throw new Exception("Number of clusters in clocs file does not match filter file "
                     + filterFileReader.getTotalClusters() + " "
                     + clocsFileReader.getCurrentTotalClusters());
         }
-        log.debug("Correct number of clusters processed in clocs file: " + clocsFileReader.getCurrentTotalClusters());
-        if(clocsFileReader.hasNext()){
+      
+        int totalCurrentClusters = 0;
+        if(clocsFileReader != null){
+             totalCurrentClusters = clocsFileReader.getCurrentTotalClusters();
+        }else if(posFileReader != null){
+             totalCurrentClusters = posFileReader.getCurrentTotalClusters();
+        }
+        log.debug("Correct number of clusters processed in clocs or pos file: " + totalCurrentClusters);
+        
+        if(clocsFileReader != null && clocsFileReader.hasNext()){
             log.debug("There may be more clusters in clocs file");
         }
 
         log.info(filterFileReader.getCurrentPFClusters() + " PF clusters in this tile out of total " + totalClusterInTile);
 
-        //close clocs and filter file
-        clocsFileReader.close();
+        //close clocs or pos,  and filter file
+        if(clocsFileReader != null){
+            clocsFileReader.close();
+        }
+        if(posFileReader != null){
+            posFileReader.close();
+        }
         filterFileReader.close();
     }
     
@@ -570,6 +614,30 @@ public class Tile {
                 + this.tileName;
         return firstCall ? cycleDir + ".bcl" : cycleDir + ".scl";
     }
+    
+    private String checkFilterFileName(){
+
+        String filterFileNameLocal = this.baseCallDir
+                + File.separator
+                + this.laneSubDir
+                + File.separator
+                + this.tileNameInFour + ".filter";
+        File filterFile = new File(filterFileNameLocal);
+    
+        if(!filterFile.exists()){
+            log.info("Filter file " + filterFileNameLocal + " not in the basecall lane directory");
+            filterFileNameLocal = this.baseCallDir
+                + File.separator
+                + this.tileNameInFour + ".filter";
+            log.info("Now trying base call directory for the filter file: " + filterFileNameLocal);
+        }
+        filterFile = new File(filterFileNameLocal);
+        if( !filterFile.exists() ){
+            log.error("No filter file found for this tile");
+            filterFileNameLocal = null;
+        }
+        return filterFileNameLocal;
+    }
 
     /**
      *
@@ -597,7 +665,7 @@ public class Tile {
     }
 
     /**
-     * @return the filterFileName
+     * @return the filterFileNameLocal
      */
     public String getFilterFileName() {
         return filterFileName;
@@ -672,5 +740,12 @@ public class Tile {
         tile.closeBaseCallFiles();
         
         outputSam.close();
+    }
+
+    /**
+     * @return the posFileName
+     */
+    public String getPosFileName() {
+        return posFileName;
     }
 }
