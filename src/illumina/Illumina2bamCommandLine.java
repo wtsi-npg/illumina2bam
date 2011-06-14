@@ -31,7 +31,7 @@ import net.sf.samtools.SAMProgramRecord;
  */
 public abstract class Illumina2bamCommandLine extends CommandLineProgram {
     
-    public static final String version = "0.02";
+    public static final String version = "0.03";
     
     /**
      * Generate Program Record for this program itself

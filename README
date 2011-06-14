@@ -1,4 +1,6 @@
-Here is a collection of tools to generate or process BAM/SAM files using Picard Java API. It includs illumina2bam, BamReadTrimmer and BamMerger currently.
+Here is a collection of tools to generate or process BAM/SAM files using Picard Java API.
+
+It includes illumina2bam, BamReadTrimmer and BamMerger currently.
 
 It is a NetBeans Java project. You should be able to open it from NetBeans directly.
 
@@ -28,7 +30,7 @@ There's also an option to record the second basecall from SCL files.
 
 Config XML files under Intensities and BaseCalls directory are used to get tile list, cycle ranges per read and other meta data.
 
-CLOCS and filter files are also needed.
+CLOCS and filter files are also needed. If Clocs file missing, it will try to use pos file instead.
 
 All reads are supposed in one read group, by default, which id is 1. Sample and library name can be passed from command line, otherwise use unknown.
 
@@ -42,7 +44,7 @@ java -jar "illumina2bam.jar" -h
 
 USAGE: Illumina2bam [options]
 
-Convert Illumina BCL to BAM or SAM file. Version: 0.02
+Convert Illumina BCL to BAM or SAM file. Version: 0.03
 
 Options:
 

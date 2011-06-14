@@ -1,3 +1,9 @@
+release-0.03
+ - cope with old format of filter file - no empty four bytes and version number in the header.
+ - try to find filter file from base call directory if not in base call lane directory.
+ - use pos file if no clocs file found.
+ - cope with config xml file when using bustard directory as base call directory.
+
 release-0.02
  - a new BamReadTrimmer tool added to strip part of a read (fixed position) - typically a prefix of the forward read, and optionally place this and its quality in BAM tags.
  - a new BamMerger tool added to merge BAM/SAM alignment info in a bam with the data in an unmapped BAM file, producing a third BAM file that has alignment data and all the additional data from the unmapped BAM. The SQ records and alignment PG records in the aligned bam file will be added to the header of unmampped bam file to form the new header of output file.
