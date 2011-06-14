@@ -252,6 +252,9 @@ public class Lane {
 
         //read tile list
         this.tileList = this.readTileList();
+        if(tileList == null || tileList.length == 0){
+            this.tileList = this.readTileRange();
+        }
         if(tileList == null){
             throw new Exception("Problems to read tile list from config file:" + this.baseCallsConfig);
         }else{
@@ -338,6 +341,8 @@ public class Lane {
      */
     public int[] readTileList() {
 
+        int[] tileListConfig = null;
+        
         NodeList tilesForLane;
         try {
             XPathExpression exprLane = xpath.compile("/BaseCallAnalysis/Run/TileSelection/Lane[@Index=" + this.laneNumber + "]/Tile/text()");
@@ -347,7 +352,7 @@ public class Lane {
             return null;
         }       
 
-        int[] tileListConfig = new int[tilesForLane.getLength()];
+        tileListConfig = new int[tilesForLane.getLength()];
         for (int i = 0; i < tilesForLane.getLength(); i++) {
             Node tile = tilesForLane.item(i);
             tileListConfig[i] = Integer.parseInt(tile.getNodeValue());
@@ -361,6 +366,30 @@ public class Lane {
         return tileListConfig;
     }
 
+    public int[] readTileRange() {
+
+        int[] tileRangeConfig = null;
+        
+        Node tileRangeForLane;
+        try {
+            XPathExpression exprLane = xpath.compile("/BaseCallAnalysis/Run/TileSelection/Lane[@Index=" + this.laneNumber + "]/TileRange");
+            tileRangeForLane = (Node) exprLane.evaluate(baseCallsConfigDoc, XPathConstants.NODE);
+        } catch (XPathExpressionException ex) {
+            log.error(ex, "Problems to got a list of tiles from config files." );
+            return null;
+        }       
+        NamedNodeMap rangeAttributes = tileRangeForLane.getAttributes();
+        int minTileNumber = Integer.parseInt(rangeAttributes.getNamedItem("Min").getNodeValue()); 
+        int maxTileNumber = Integer.parseInt(rangeAttributes.getNamedItem("Max").getNodeValue());
+
+        int numberOfTiles = maxTileNumber - minTileNumber + 1;
+        tileRangeConfig = new int [numberOfTiles];
+        for(int i = 0; i< numberOfTiles; i++ ){
+            tileRangeConfig[i] = minTileNumber + i;
+        }
+
+        return tileRangeConfig;
+    }
     /**
      *
      * @return instrument name with id_run as part of read name, for example, HS13_6000
@@ -701,5 +730,19 @@ public class Lane {
      */
     public String getRunfolderConfig() {
         return runfolderConfig;
+    }
+
+    /**
+     * @return the baseCallProgram
+     */
+    public SAMProgramRecord getBaseCallProgram() {
+        return baseCallProgram;
+    }
+
+    /**
+     * @return the instrumentProgram
+     */
+    public SAMProgramRecord getInstrumentProgram() {
+        return instrumentProgram;
     }
 }

@@ -285,4 +285,36 @@ public class LaneTest {
         String md5 = md5Stream.readLine();
         assertEquals(md5, "03785d1102b07a86d5b313a26e5cbb21");
     }
+    
+    
+    public void checkGARunOK() throws Exception {
+        String intensityDir3 = "testdata/110519_IL33_06284/Data/Intensities/";
+        String baseCallDir3 = "testdata/110519_IL33_06284/Data/Intensities/BaseCalls";
+        int laneNumber3 = 8;
+        boolean includeSecondCall2 = false;
+        boolean pfFilter2 = true;
+        File output3 = new File("testdata/6284_8.bam");
+
+        Lane lane3 = new Lane(intensityDir3, baseCallDir3, laneNumber3, includeSecondCall2, pfFilter2, output3);
+
+        int [] barCodeCycleList = lane3.readBarCodeIndexCycles();
+        int [] expected = {77, 77};
+        assertArrayEquals(barCodeCycleList, expected);
+
+        HashMap<String, int[]> cycleRangeByRead = lane3.checkCycleRangeByRead();
+        int [] read1CycleRange = {10, 11};
+        assertArrayEquals(cycleRangeByRead.get("read1"), read1CycleRange);
+        int [] read2CycleRange = {94, 95};
+        assertArrayEquals(cycleRangeByRead.get("read2"), read2CycleRange);
+        int [] readIndexCycleRange = {77, 77};
+        assertArrayEquals(cycleRangeByRead.get("readIndex"), readIndexCycleRange);
+        
+        int [] tileList = lane3.getTileList();
+        assertEquals(tileList.length, 120);
+        assertEquals(tileList[0], 1);
+        
+        assertEquals(lane3.getBaseCallProgram().getProgramName(), "Bustard");
+        assertEquals(lane3.getBaseCallProgram().getProgramVersion(), "1.8.1a2");
+
+    }
 }
