@@ -71,7 +71,7 @@ public class Illumina2bamTest {
         md5File.deleteOnExit();
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
-        assertEquals(md5, "58412cfa878da629ca42e1d6a8de2c6f");
+        assertEquals(md5, "ac30e6153c2c4b776af54b69179ee907");
 
         assertEquals(illumina2bam.getCommandLine(), "illumina.Illumina2bam INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities "
                 + "LANE=1 OUTPUT=testdata/6000_1.sam SAMPLE_ALIAS=Test Sample LIBRARY_NAME=Test library "

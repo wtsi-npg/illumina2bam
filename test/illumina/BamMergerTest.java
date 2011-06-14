@@ -79,7 +79,7 @@ public class BamMergerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "de3f03320e22e4c14ee8d846e1e315ba");
+        assertEquals(md5, "0dfb80e0a8148fb0145d04d0f2348081");
     }
 
 }
