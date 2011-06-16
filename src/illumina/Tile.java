@@ -134,7 +134,6 @@ public class Tile {
         final DecimalFormat tileNumberFormatter = new DecimalFormat("0000");
         this.tileNameInFour = "s_" + this.laneNumber + "_" + tileNumberFormatter.format(this.tileNumber);
 
-        //TODO: use pos file if clocs file does not exist
         this.cLocsFileName = this.intensityDir
                 + File.separator
                 + this.laneSubDir
