@@ -118,7 +118,7 @@ Strip part of a read (fixed position) - typically a prefix of the forward read, 
 
 EXAMPLE TO RUN:
 
-java -jar "BamReadTrimmer.jar" INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_trimmed.bam FIRST_POSITION_TO_TRIM=1 TRIM_LENGTH=3 TMP_DIR=testdata CREATE_MD5_FILE=true ONLY_FORWARD_READ=true SAVE_TRIM=true TRIM_BASE_TAG=rs TRIM_QUALITY_TAG=qs VALIDATION_STRINGENCY=SILENT
+java -jar "BamReadTrimmer.jar" INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_trimmed.bam FIRST_POSITION_TO_TRIM=1 TRIM_LENGTH=3 CREATE_MD5_FILE=true ONLY_FORWARD_READ=true SAVE_TRIM=true TRIM_BASE_TAG=rs TRIM_QUALITY_TAG=qs VALIDATION_STRINGENCY=SILENT
 
 -----------------------------------------------
 
@@ -128,7 +128,7 @@ Merge BAM/SAM alignment info in a bam with the data in an unmapped BAM file, pro
 
 EXAMPLE TO RUN:
 
-java -jar "BamMerger.jar" ALIGNED=testdata/bam/6210_8_aligned.sam I=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_merged.bam  TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT
+java -jar "BamMerger.jar" ALIGNED=testdata/bam/6210_8_aligned.sam I=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_merged.bam VALIDATION_STRINGENCY=SILENT
 
 -----------------------------------------------
 
