@@ -140,6 +140,10 @@ public class IndexDecoder {
         noMatchBarcodeMetric = new BarcodeMetric(new NamedBarcode(noMatchBarcode.toString()));
     }
 
+    public BarcodeMatch extractBarcode(String barcodeRead, boolean isPf){
+        final BarcodeMatch match = findBestBarcode(barcodeRead, isPf);
+        return match;
+    } 
 
     /**
      * Assign barcodes for a single tile's qseq file
@@ -249,6 +253,7 @@ public class IndexDecoder {
 
 
         for (final BarcodeMetric barcodeMetric : barcodeMetrics) {
+            
             final int numMismatches = countMismatches(barcodeMetric.barcodeBytes, readBytes);
             if (numMismatches < numMismatchesInBestBarcode) {
                 if (bestBarcodeMetric != null) {
@@ -275,7 +280,7 @@ public class IndexDecoder {
         }
         else {
             match.mismatches = readSubsequence.length();
-            match.mismatches = readSubsequence.length();
+            match.mismatchesToSecondBest = readSubsequence.length();
             match.barcode = "";
         }
 
@@ -304,6 +309,9 @@ public class IndexDecoder {
             if (passingFilter) {
                 ++noMatchBarcodeMetric.PF_READS;
             }
+            match.matched = false;
+            match.barcode = "";
+        
         }
 
         return match;
