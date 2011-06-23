@@ -34,6 +34,7 @@ import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFileWriterFactory;
+import net.sf.samtools.SAMReadGroupRecord;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMRecordIterator;
 
@@ -187,10 +188,10 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
             String barcodeName = this.barcodeNameList.get(barcode);
 
             record.setReadName(readName + "#" + barcodeName);
-            record.setAttribute("RG", barcodeName);
+            record.setAttribute("RG", record.getAttribute("RG") + "#" + barcodeName);
             if (isPaired) {
                 pairedRecord.setReadName(readName + "#" + barcodeName);
-                pairedRecord.setAttribute("RG", barcodeName);
+                pairedRecord.setAttribute("RG", pairedRecord.getAttribute("RG") + "#" + barcodeName);
             }
             
             if( OUTPUT != null ){
@@ -227,40 +228,48 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
     }
     
     public void generateOutputFile(SAMFileHeader header) {
-
-        if (OUTPUT != null) {
-            log.info("Open output file with header: " + OUTPUT.getName());
-            final SAMFileHeader outputHeader = header.clone();
-            this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
-            out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader, true, OUTPUT);
-        } else if (OUTPUT_DIR != null) {
+        
+        List<IndexDecoder.NamedBarcode> barcodeList = indexDecoder.getNamedBarcodes(); 
+        
+        this.barcodeNameList = new HashMap<String, String>();
+        
+        List<SAMReadGroupRecord> oldReadGroupList = header.getReadGroups();        
+        List<SAMReadGroupRecord> fullReadGroupList = new ArrayList<SAMReadGroupRecord>();
+        
+        if (OUTPUT_DIR != null) {
             log.info("Open a list of output bam/sam file per barcode");
             outputList = new HashMap<String, SAMFileWriter>();
         }
-
-        barcodeNameList = new HashMap<String, String>();
-
-        List<IndexDecoder.NamedBarcode> barcodeList = indexDecoder.getNamedBarcodes();
 
         for (int count = 0; count <= barcodeList.size(); count++) {
 
             String barcodeName = null;
             String barcode = null;
+            IndexDecoder.NamedBarcode namedBarcode = null;
+            List<SAMReadGroupRecord> readGroupList = new ArrayList<SAMReadGroupRecord>();
 
             if ( count != 0 ) {
-                IndexDecoder.NamedBarcode namedBarcode = barcodeList.get(count - 1);
+                namedBarcode = barcodeList.get(count - 1);
                 barcodeName = namedBarcode.barcodeName;
                 barcode = namedBarcode.barcode;
+                barcode = barcode.toUpperCase();
+            }else{
+                barcode = "";
             }
 
             if (barcodeName == null || barcodeName.equals("")) {
                 barcodeName = Integer.toString(count);
             }
 
-            if (barcode == null) {
-                barcode = "";
+            for(SAMReadGroupRecord r : oldReadGroupList){
+                    SAMReadGroupRecord newReadGroupRecord = new SAMReadGroupRecord(r.getId() + "#" + barcodeName, r);
+                    if(namedBarcode != null ){
+                        newReadGroupRecord.setLibrary(namedBarcode.libraryName);
+                    }
+                    readGroupList.add(newReadGroupRecord);
             }
-            barcode = barcode.toUpperCase();
+            fullReadGroupList.addAll(readGroupList);
+
 
             if (OUTPUT_DIR != null) {
                 String barcodeBamOutputName = OUTPUT_DIR
@@ -271,12 +280,22 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
                         + "."
                         + OUTPUT_FORMAT;
                 final SAMFileHeader outputHeader = header.clone();
+                outputHeader.setReadGroups(readGroupList);
                 this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
                 final SAMFileWriter outPerBarcode = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader, true, new File(barcodeBamOutputName));
                 outputList.put(barcode, outPerBarcode);
             }
             barcodeNameList.put(barcode, barcodeName);
         }
+        
+        if (OUTPUT != null) {
+            log.info("Open output file with header: " + OUTPUT.getName());
+            final SAMFileHeader outputHeader = header.clone();
+            outputHeader.setReadGroups(fullReadGroupList);
+            this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
+            this.out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader, true, OUTPUT);
+        }
+
     }
     
     public void closeOutputList(){
