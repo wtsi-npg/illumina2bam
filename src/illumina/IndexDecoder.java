@@ -309,11 +309,8 @@ public class IndexDecoder {
             if (passingFilter) {
                 ++noMatchBarcodeMetric.PF_READS;
             }
-            match.matched = false;
-            match.barcode = "";
         
         }
-
         return match;
     }
     
