@@ -168,10 +168,22 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
             if(barcodeRead == null ){
                 throw new RuntimeException("No barcode read found for record: " + readName );
             }
- 
+            
+            if(barcodeRead.length() < this.barcodeLength){
+                throw new RuntimeException("The barcode read length is less than barcode lenght: " + readName );
+            }else{            
+                barcodeRead = barcodeRead.substring(0, this.barcodeLength);
+            }
+
             IndexDecoder.BarcodeMatch match = this.indexDecoder.extractBarcode(barcodeRead, isPf);
             String barcode = match.barcode;
-            barcode = barcode.toUpperCase();
+            
+            if( match.matched ) {
+               barcode = barcode.toUpperCase();
+            } else {
+               barcode = "";
+            }
+            
             String barcodeName = this.barcodeNameList.get(barcode);
 
             record.setReadName(readName + "#" + barcodeName);
