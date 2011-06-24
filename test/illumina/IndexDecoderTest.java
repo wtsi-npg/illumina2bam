@@ -77,6 +77,9 @@ public class IndexDecoderTest {
         assertEquals(messages.size(), 0);
         assertEquals(barcodeList.get(1).barcode, "TATCTGGA");
         assertEquals(barcodeList.get(0).barcodeName, "");
+        assertEquals(barcodeList.get(0).sampleName, "");
+        assertEquals(barcodeList.get(1).libraryName, "");
+        assertEquals(barcodeList.get(1).description, "");
     }    
  
     @Test
@@ -95,7 +98,10 @@ public class IndexDecoderTest {
 
         assertEquals(barcodeList.get(0).barcode, "ATCACGTT");
         assertEquals(barcodeList.get(1).barcodeName, "2");
-        assertEquals(barcodeList.get(1).libraryName, "testlib2");        
+        assertEquals(barcodeList.get(1).libraryName, "testlib2");
+        assertEquals(barcodeList.get(1).sampleName, "testsample2");
+        assertEquals(barcodeList.get(0).sampleName, "testsample1");
+        assertEquals(barcodeList.get(1).description, "study2");
     }
 
 }

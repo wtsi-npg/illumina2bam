@@ -263,8 +263,20 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
 
             for(SAMReadGroupRecord r : oldReadGroupList){
                     SAMReadGroupRecord newReadGroupRecord = new SAMReadGroupRecord(r.getId() + "#" + barcodeName, r);
-                    if(namedBarcode != null ){
-                        newReadGroupRecord.setLibrary(namedBarcode.libraryName);
+                    String pu = newReadGroupRecord.getPlatformUnit();
+                    if(pu != null){
+                        newReadGroupRecord.setPlatformUnit(pu + "#" + barcodeName);
+                    }
+                    if(namedBarcode != null){
+                        if( !namedBarcode.libraryName.equals("") ){
+                           newReadGroupRecord.setLibrary(namedBarcode.libraryName);
+                        }
+                        if( !namedBarcode.sampleName.equals("") ){
+                           newReadGroupRecord.setSample(namedBarcode.sampleName);
+                        }
+                        if(!namedBarcode.description.equals("") ){
+                            newReadGroupRecord.setDescription(namedBarcode.description);
+                        }
                     }
                     readGroupList.add(newReadGroupRecord);
             }

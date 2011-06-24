@@ -362,6 +362,8 @@ public class IndexDecoder {
     private static final String BARCODE_SEQUENCE_COLUMN = "barcode_sequence";
     private static final String BARCODE_NAME_COLUMN = "barcode_name";
     private static final String LIBRARY_NAME_COLUMN = "library_name";
+    private static final String SAMPLE_NAME_COLUMN = "sample_name";
+    private static final String DESCRIPTION_COLUMN = "description";
     
     /**
      * read and check input bar code file
@@ -381,7 +383,9 @@ public class IndexDecoder {
         
         boolean hasBarcodeName = barcodesParser.hasColumn(BARCODE_NAME_COLUMN);
         boolean hasLibraryName = barcodesParser.hasColumn(LIBRARY_NAME_COLUMN);
-
+        boolean hasSampleName = barcodesParser.hasColumn(SAMPLE_NAME_COLUMN);
+        boolean hasDescription = barcodesParser.hasColumn(DESCRIPTION_COLUMN);
+        
         int barcodeLengthLocal = 0;
         Set<String> barcodes = new HashSet<String>();
         ArrayList<NamedBarcode> namedBarcodeList = new ArrayList<NamedBarcode>();
@@ -398,7 +402,10 @@ public class IndexDecoder {
             barcodes.add(barcode);
             final String barcodeName = (hasBarcodeName? row.getField(BARCODE_NAME_COLUMN): "");
             final String libraryName = (hasLibraryName? row.getField(LIBRARY_NAME_COLUMN): "");
-            NamedBarcode namedBarcode = new NamedBarcode(barcode, barcodeName, libraryName);
+            final String sampleName = (hasSampleName? row.getField(SAMPLE_NAME_COLUMN): "");
+            final String description = (hasDescription? row.getField(DESCRIPTION_COLUMN): "");
+            
+            NamedBarcode namedBarcode = new NamedBarcode(barcode, barcodeName, libraryName, sampleName, description);
             namedBarcodeList.add(namedBarcode);
         }
 
@@ -458,17 +465,23 @@ public class IndexDecoder {
         public final String barcode;
         public final String barcodeName;
         public final String libraryName;
+        public final String sampleName;
+        public final String description;
 
-        public NamedBarcode(String barcode, String barcodeName, String libraryName) {
+        public NamedBarcode(String barcode, String barcodeName, String libraryName, String sampleName, String description) {
             this.barcode = barcode;
             this.barcodeName = barcodeName;
             this.libraryName = libraryName;
+            this.sampleName = sampleName;
+            this.description = description;
         }
 
         public NamedBarcode(String barcode) {
             this.barcode = barcode;
             this.barcodeName = "";
             this.libraryName = "";
+            this.sampleName  = "";
+            this.description = "";
         }
 
         @Override
@@ -502,6 +515,9 @@ public class IndexDecoder {
         public String BARCODE;
         public String BARCODE_NAME = "";
         public String LIBRARY_NAME = "";
+        public String SAMPLE_NAME = "";
+        public String DESCRIPTION = "";
+        
         /** The total number of reads matching the barcode. */
         public int READS = 0;
         /** The number of PF reads matching this barcode (always less than or equal to READS). */
@@ -545,6 +561,8 @@ public class IndexDecoder {
             this.BARCODE = namedBarcode.barcode;
             this.BARCODE_NAME = namedBarcode.barcodeName;
             this.LIBRARY_NAME = namedBarcode.libraryName;
+            this.SAMPLE_NAME  = namedBarcode.sampleName;
+            this.DESCRIPTION  = namedBarcode.description;
             this.barcodeBytes = net.sf.samtools.util.StringUtil.stringToBytes(this.BARCODE);
         }
 
