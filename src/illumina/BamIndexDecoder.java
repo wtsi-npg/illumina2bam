@@ -44,6 +44,12 @@ import net.sf.samtools.SAMRecordIterator;
  * Each read in BAM file will be marked in its read name and read group,
  * There is an option to output bam file by tag.
  * 
+ * The bar code list can be passed in through command line
+ * or by a file with extra information barcode name, library name, sample name and description, which are separated by tab
+ * this file must have a header: barcode_sequence	barcode_name	library_name	sample_name	description
+ * 
+ * The read group will be changed and re-added in.
+ * 
  * @author gq1@sanger.ac.uk
  * 
  */
@@ -65,16 +71,16 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
     @Option(shortName=StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc="The output file after decoding.", mutex = {"OUTPUT_DIR"} )
     public File OUTPUT;
     
-    @Option(doc="The output directory for bam files for each barcode", mutex = {"OUTPUT"})
+    @Option(doc="The output directory for bam files for each barcode if you want to split the output", mutex = {"OUTPUT"})
     public File OUTPUT_DIR;
     
     @Option(doc="The prefix for bam or sam file when you want to split output by barcodes", mutex = {"OUTPUT"})
     public String OUTPUT_PREFIX;
     
-    @Option(doc="The extension name for bam or sam file when you want to split output by barcodes", mutex = {"OUTPUT"})
+    @Option(doc="The extension name for split file when you want to split output by barcodes: bam or sam", mutex = {"OUTPUT"})
     public String OUTPUT_FORMAT;
     
-    @Option(doc="The tag name to store barcode read in bam records")
+    @Option(doc="The tag name used to store barcode read in bam records")
     public String BARCODE_TAG_NAME = "RT";
 
     @Option(doc="Barcode sequence.  These must be unique, and all the same length.", mutex = {"BARCODE_FILE"})
@@ -98,7 +104,7 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
     public int MAX_NO_CALLS = 2;
 
     private int barcodeLength;
-
+    
     private IndexDecoder indexDecoder;
     
     private SAMFileWriter out;
@@ -333,6 +339,10 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
         } else {
             this.indexDecoder = new IndexDecoder(BARCODE);
         }
+        
+        indexDecoder.setMaxMismatches(this.MAX_MISMATCHES);
+        indexDecoder.setMaxNoCalls(MAX_NO_CALLS);
+        indexDecoder.setMinMismatchDelta(this.MIN_MISMATCH_DELTA);
         
         indexDecoder.prepareDecode(messages);
         this.barcodeLength = indexDecoder.getBarcodeLength();
