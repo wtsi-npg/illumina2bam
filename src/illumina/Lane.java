@@ -370,24 +370,35 @@ public class Lane {
 
         int[] tileRangeConfig = null;
         
-        Node tileRangeForLane;
+        NodeList tileRangeList;
         try {
             XPathExpression exprLane = xpath.compile("/BaseCallAnalysis/Run/TileSelection/Lane[@Index=" + this.laneNumber + "]/TileRange");
-            tileRangeForLane = (Node) exprLane.evaluate(baseCallsConfigDoc, XPathConstants.NODE);
+            tileRangeList = (NodeList) exprLane.evaluate(baseCallsConfigDoc, XPathConstants.NODESET);
         } catch (XPathExpressionException ex) {
             log.error(ex, "Problems to got a list of tiles from config files." );
             return null;
-        }       
-        NamedNodeMap rangeAttributes = tileRangeForLane.getAttributes();
-        int minTileNumber = Integer.parseInt(rangeAttributes.getNamedItem("Min").getNodeValue()); 
-        int maxTileNumber = Integer.parseInt(rangeAttributes.getNamedItem("Max").getNodeValue());
+        }
+        
+        ArrayList<Integer> tileArrayList = new ArrayList<Integer>(); 
+        for (int j = 0; j < tileRangeList.getLength(); j++) {
+            
+            Node tileRangeForLane = tileRangeList.item(j);
+            NamedNodeMap rangeAttributes = tileRangeForLane.getAttributes();
+            int minTileNumber = Integer.parseInt(rangeAttributes.getNamedItem("Min").getNodeValue());
+            int maxTileNumber = Integer.parseInt(rangeAttributes.getNamedItem("Max").getNodeValue());
 
-        int numberOfTiles = maxTileNumber - minTileNumber + 1;
-        tileRangeConfig = new int [numberOfTiles];
-        for(int i = 0; i< numberOfTiles; i++ ){
-            tileRangeConfig[i] = minTileNumber + i;
+            int numberOfTiles = maxTileNumber - minTileNumber + 1;
+            for (int i = 0; i < numberOfTiles; i++) {
+                tileArrayList.add(minTileNumber + i);
+            }
         }
 
+        tileRangeConfig = new int [tileArrayList.size()];
+        int i = 0;
+        for(int tileNumber : tileArrayList){
+            tileRangeConfig[i] = tileNumber;
+            i++;
+        }
         return tileRangeConfig;
     }
     /**
