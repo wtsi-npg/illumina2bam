@@ -274,13 +274,13 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
                         newReadGroupRecord.setPlatformUnit(pu + "#" + barcodeName);
                     }
                     if(namedBarcode != null){
-                        if( !namedBarcode.libraryName.equals("") ){
+                        if( namedBarcode.libraryName != null && !namedBarcode.libraryName.equals("") ){
                            newReadGroupRecord.setLibrary(namedBarcode.libraryName);
                         }
-                        if( !namedBarcode.sampleName.equals("") ){
+                        if( namedBarcode.sampleName !=null && !namedBarcode.sampleName.equals("") ){
                            newReadGroupRecord.setSample(namedBarcode.sampleName);
                         }
-                        if(!namedBarcode.description.equals("") ){
+                        if(namedBarcode.description != null && !namedBarcode.description.equals("") ){
                             newReadGroupRecord.setDescription(namedBarcode.description);
                         }
                     }
