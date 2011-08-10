@@ -60,7 +60,7 @@ public class BamMergerTest {
 
         merger.instanceMain(args);
         
-        assertEquals(merger.getCommandLine(), "illumina.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_merged.bam TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
+        assertEquals(merger.getCommandLine(), "illumina.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_merged.bam TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa KEEP_EXTRA_UNMAPPED_READS=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
               );
 
     }
@@ -79,7 +79,71 @@ public class BamMergerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "0dfb80e0a8148fb0145d04d0f2348081");
+        assertEquals(md5, "0bfba540686056bc0ab5bf53f1f9465e");
     }
 
+    /**
+     * Test of instanceMain method and program record.
+     */
+    @Test
+    public void testMainExtraReadsAtEnd() throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain extra reads at end");
+        
+        String[] args = {
+            "ALIGNED=testdata/bam/6210_8_aligned.sam",
+            "I=testdata/bam/6210_8_extra_reads.sam",
+            "O=testdata/6210_8_merged_extra_reads.bam",
+            "CREATE_MD5_FILE=true",
+            "TMP_DIR=testdata/",
+            "VALIDATION_STRINGENCY=SILENT",
+            "KEEP=true"
+        };
+
+        merger.instanceMain(args);
+        
+        assertEquals(merger.getCommandLine(), "illumina.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8_extra_reads.sam OUTPUT=testdata/6210_8_merged_extra_reads.bam KEEP_EXTRA_UNMAPPED_READS=true TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        
+        File mergedBamFile = new File("testdata/6210_8_merged_extra_reads.bam");
+        mergedBamFile.deleteOnExit();
+
+        File md5File = new File("testdata/6210_8_merged_extra_reads.bam.md5");
+        md5File.deleteOnExit();
+        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
+        String md5 = md5Stream.readLine();
+
+        assertEquals(md5, "051aec00acbf16d0d8a4320a9d147ae5");
+    }
+    
+    /**
+     * Test of instanceMain method and program record.
+     */
+    @Test
+    public void testMainExtraReadsAtEndNotKeep() throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain extra reads at end, not keep extra reads");
+        
+        String[] args = {
+            "ALIGNED=testdata/bam/6210_8_aligned.sam",
+            "I=testdata/bam/6210_8_extra_reads.sam",
+            "O=testdata/6210_8_merged_extra_reads_no_keep.bam",
+            "CREATE_MD5_FILE=true",
+            "TMP_DIR=testdata/",
+            "VALIDATION_STRINGENCY=SILENT",
+        };
+
+        merger.instanceMain(args);
+        
+        assertEquals(merger.getCommandLine(), "illumina.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8_extra_reads.sam OUTPUT=testdata/6210_8_merged_extra_reads_no_keep.bam TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa KEEP_EXTRA_UNMAPPED_READS=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        
+        File mergedBamFile = new File("testdata/6210_8_merged_extra_reads_no_keep.bam");
+        mergedBamFile.deleteOnExit();
+
+        File md5File = new File("testdata/6210_8_merged_extra_reads_no_keep.bam.md5");
+        md5File.deleteOnExit();
+        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
+        String md5 = md5Stream.readLine();
+
+        assertEquals(md5, "f4d65722302abf4a9adb9ecdd45a2dea");
+    }
 }

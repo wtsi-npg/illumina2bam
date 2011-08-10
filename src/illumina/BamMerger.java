@@ -42,16 +42,23 @@ import net.sf.samtools.SAMSequenceDictionary;
  * with the data in an unmapped BAM file,
  * producing a third BAM file that has alignment data and all the additional data from the unmapped BAM
  * 
- * Two bam files must have the same set of records and in the same order.
+ * Two bam files must be in the same order but unmapped bam may have more records.
  * 
  * Only SQ records and alignment PG in the aligned bam file will be added to the output.
  * 
- * All header information in the second bam header will be kept, except SQ records.
+ * All header information in the unmapped bam header will be kept, except SQ records.
  * 
  * @author Guoying Qi
  */
 
 public class BamMerger extends Illumina2bamCommandLine {
+    
+    /**
+     * TODO: add option to keep or throw the extra records in unmapped bam
+     * 
+     * TODO: merge flag as well
+     * 
+     */  
     
     private final Log log = Log.getInstance(BamMerger.class);
     
@@ -71,11 +78,14 @@ public class BamMerger extends Illumina2bamCommandLine {
     @Option(shortName= "PG", doc="The alignment program ID in the header of the SAM or BAM file with alignment.")
     public String ALIGNMENT_PROGRAM_ID = "bwa";
     
-    @Option(shortName= StandardOptionDefinitions.INPUT_SHORT_NAME, doc="The input SAM or BAM file to merge.")
+    @Option(shortName= StandardOptionDefinitions.INPUT_SHORT_NAME, doc="The input unmapped SAM or BAM file to merge.")
     public File INPUT;
 
     @Option(shortName=StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc="The output file after merging.")
     public File OUTPUT;
+    
+    @Option(shortName= "KEEP", doc="KEEP extra unmapped reads in unmapped bam file to the final output if true.")
+    public Boolean KEEP_EXTRA_UNMAPPED_READS = false;
 
     @Override
     protected int doWork() {
@@ -88,34 +98,53 @@ public class BamMerger extends Illumina2bamCommandLine {
         log.info("Open aligned bam file " + ALIGNED_BAM.getName());
         final SAMFileReader alignments  = new SAMFileReader(ALIGNED_BAM);
         SAMFileHeader headerAlignments = alignments.getFileHeader();
+
+        //keep sequence dictionary from aligned bam
         SAMSequenceDictionary sequenceDictionary = headerAlignments.getSequenceDictionary();
         
-        //TODO: only keep aligner program records, we will lose any other head information in this file
+        //only keep aligner program records in the aligned bam, we will lose any other head information in this file
         SAMProgramRecord alignmentProgram = null;
         if(this.ALIGNMENT_PROGRAM_ID != null){
            alignmentProgram = headerAlignments.getProgramRecord(this.ALIGNMENT_PROGRAM_ID);
         }
+
+        
         log.info("Open input file to merge " + INPUT.getName());
         final SAMFileReader in  = new SAMFileReader(INPUT);        
         final SAMFileHeader header = in.getFileHeader();
+ 
         
+        log.info("Generate new bam/sam output header");
         final SAMFileHeader outputHeader = header.clone();
         outputHeader.setSequenceDictionary(sequenceDictionary);        
         if(alignmentProgram != null ){
            this.addProgramRecordToHead(outputHeader, alignmentProgram);
         }        
         this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
+
         
         log.info("Open output file with header: " + OUTPUT.getName());
         final SAMFileWriter out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader,  true, OUTPUT);
         
+        
         log.info("Starting to merge");
 
-        SAMRecordIterator iterator = alignments.iterator();
+        SAMRecordIterator iteratorAlignments = alignments.iterator();
+        SAMRecordIterator iteratorIn = in.iterator();
 
-        for(SAMRecord record: in){
-
-            SAMRecord alignment = iterator.next();
+        while( iteratorIn.hasNext() ){
+    
+            SAMRecord record = iteratorIn.next();
+                        
+            SAMRecord alignment;
+            if(iteratorAlignments.hasNext()){
+               alignment = iteratorAlignments.next();
+            }else if ( this.KEEP_EXTRA_UNMAPPED_READS ) {
+                out.addAlignment(record);
+                continue;
+            }else {
+                break;
+            }
 
             String readName1 = record.getReadName();
             String readName2 = alignment.getReadName();
@@ -126,19 +155,32 @@ public class BamMerger extends Illumina2bamCommandLine {
             boolean firstOfPair1 = record.getFirstOfPairFlag();
             boolean firstOfPair2 = alignment.getFirstOfPairFlag();
   
-            if( !readName1.equals(readName2)
+            while( ( !readName1.equals(readName2)
                 || pairedRead1 != pairedRead2
-                || firstOfPair1 != firstOfPair2
+                || firstOfPair1 != firstOfPair2 )
+                && iteratorIn.hasNext()
             ){
-                throw new RuntimeException("Two records not match: " + readName1 + " -- " + readName2);
+
+                if( this.KEEP_EXTRA_UNMAPPED_READS ){
+                    out.addAlignment(record);
+                }
+
+                record = iteratorIn.next();
+                readName1 = record.getReadName();
+                pairedRead1 = record.getReadPairedFlag();
+                firstOfPair1 = record.getFirstOfPairFlag();
                 
             }
- 
-            this.mergeRecords(alignment, record);
 
-            out.addAlignment(alignment);
+            if(  readName1.equals(readName2)
+                    && pairedRead1 == pairedRead2
+                    && firstOfPair1 == firstOfPair2 
+              ){
+                  this.mergeRecords(alignment, record);
+                  out.addAlignment(alignment);
+            }
         }
-        
+
         out.close();
 
         log.info("Merging finished, merged file: " + this.OUTPUT);
