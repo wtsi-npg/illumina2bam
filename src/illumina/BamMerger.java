@@ -100,7 +100,7 @@ public class BamMerger extends Illumina2bamCommandLine {
         IoUtil.assertFileIsReadable(INPUT);
         IoUtil.assertFileIsWritable(OUTPUT);
         
-        log.info("Open aligned bam file " + ALIGNED_BAM.getName());
+        log.info("Open aligned bam file: " + ALIGNED_BAM.getName());
         final SAMFileReader alignments  = new SAMFileReader(ALIGNED_BAM);
         SAMFileHeader headerAlignments = alignments.getFileHeader();
 
@@ -114,7 +114,7 @@ public class BamMerger extends Illumina2bamCommandLine {
         }
 
         
-        log.info("Open input file to merge " + INPUT.getName());
+        log.info("Open input file to merge: " + INPUT.getName());
         final SAMFileReader in  = new SAMFileReader(INPUT);        
         final SAMFileHeader header = in.getFileHeader();
  
