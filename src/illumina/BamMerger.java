@@ -44,7 +44,7 @@ import net.sf.samtools.SAMSequenceDictionary;
  * 
  * All the fields in each read will be added if not already in alignment.
  * 
- * The failed quality check flag in unmapped reads will be added to alignment.
+ * The failed quality check flag in unmapped reads, and paired, first and second read flags will be added to alignment.
  * 
  * Two bam files must be in the same order but unmapped bam may have more records.
  * There is an option to add these extra reads into final bam.
@@ -207,6 +207,9 @@ public class BamMerger extends Illumina2bamCommandLine {
         }
         
         alignment.setReadFailsVendorQualityCheckFlag(record.getReadFailsVendorQualityCheckFlag());
+        alignment.setReadPairedFlag(record.getReadPairedFlag());
+        alignment.setFirstOfPairFlag(record.getFirstOfPairFlag());
+        alignment.setSecondOfPairFlag(record.getSecondOfPairFlag());
 
         List<SAMTagAndValue> attributeList = record.getAttributes();
         for(SAMTagAndValue attribute : attributeList){
