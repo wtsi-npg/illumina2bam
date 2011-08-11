@@ -40,9 +40,14 @@ import net.sf.samtools.SAMSequenceDictionary;
 /**
  * A command-line tool to merge BAM/SAM alignment info in a bam
  * with the data in an unmapped BAM file,
- * producing a third BAM file that has alignment data and all the additional data from the unmapped BAM
+ * producing a third BAM file that has alignment data and all the additional data from the unmapped BAM.
+ * 
+ * All the fields in each read will be added if not already in alignment.
+ * 
+ * The failed quality check flag in unmapped reads will be added to alignment.
  * 
  * Two bam files must be in the same order but unmapped bam may have more records.
+ * There is an option to add these extra reads into final bam.
  * 
  * Only SQ records and alignment PG in the aligned bam file will be added to the output.
  * 
@@ -201,6 +206,8 @@ public class BamMerger extends Illumina2bamCommandLine {
             SAMRecordUtil.reverseComplement(record);
         }
         
+        alignment.setReadFailsVendorQualityCheckFlag(record.getReadFailsVendorQualityCheckFlag());
+
         List<SAMTagAndValue> attributeList = record.getAttributes();
         for(SAMTagAndValue attribute : attributeList){
             
