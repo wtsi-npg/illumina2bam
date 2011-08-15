@@ -58,13 +58,6 @@ import net.sf.samtools.SAMSequenceDictionary;
 
 public class BamMerger extends Illumina2bamCommandLine {
     
-    /**
-     * TODO: add option to keep or throw the extra records in unmapped bam
-     * 
-     * TODO: merge flag as well
-     * 
-     */  
-    
     private final Log log = Log.getInstance(BamMerger.class);
     
     private final String programName = "bamMerger";
@@ -88,7 +81,7 @@ public class BamMerger extends Illumina2bamCommandLine {
 
     @Option(shortName=StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc="The output file after merging.")
     public File OUTPUT;
-    
+
     @Option(shortName= "KEEP", doc="KEEP extra unmapped reads in unmapped bam file to the final output if true.")
     public Boolean KEEP_EXTRA_UNMAPPED_READS = false;
 
@@ -130,8 +123,7 @@ public class BamMerger extends Illumina2bamCommandLine {
         
         log.info("Open output file with header: " + OUTPUT.getName());
         final SAMFileWriter out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader,  true, OUTPUT);
-        
-        
+    
         log.info("Starting to merge");
 
         SAMRecordIterator iteratorAlignments = alignments.iterator();
