@@ -42,7 +42,7 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
     
     private final Log log = Log.getInstance(BamReadTrimmer.class);
     
-    private final String programName = "bamReadTrimmer";
+    private final String programName = "BamReadTrimmer";
     
     private final String programDS = "Strip part of a read in fixed positionos, optionally place this and its quality in BAM tags";
    

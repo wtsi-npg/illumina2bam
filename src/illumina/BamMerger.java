@@ -60,7 +60,7 @@ public class BamMerger extends Illumina2bamCommandLine {
     
     private final Log log = Log.getInstance(BamMerger.class);
     
-    private final String programName = "bamMerger";
+    private final String programName = "BamMerger";
     
     private final String programDS = "A command-line tool to merge BAM/SAM alignment info in the first input file"
             + " with the data in an unmapped BAM file,"
