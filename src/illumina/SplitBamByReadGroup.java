@@ -118,6 +118,15 @@ public class SplitBamByReadGroup extends Illumina2bamCommandLine {
         log.info("Spliting the input file now");
         for(SAMRecord rec: in){
             String rgId = (String) rec.getAttribute("RG");
+            
+            if( rgId == null ){
+                throw new RuntimeException("Record without read group id: " + rec.getReadName());
+            }
+            
+            SAMFileWriter out = outputFileList.get(rgId);
+            if( out == null ){
+                throw new RuntimeException("Read group id does not exist in the header: " + rgId +  " in record " + rec.getReadName());
+            }
             outputFileList.get(rgId).addAlignment(rec);
         }
         
