@@ -102,7 +102,7 @@ public class SplitBamByReadGroup extends Illumina2bamCommandLine {
             IoUtil.assertFileIsWritable( outputFile );
             
             SAMFileHeader newHeader = header.clone();
-            List<SAMReadGroupRecord> newRGList = new ArrayList();
+            List<SAMReadGroupRecord> newRGList = new ArrayList<SAMReadGroupRecord>();
             newRGList.add(rg);
             
             newHeader.setReadGroups(newRGList);
