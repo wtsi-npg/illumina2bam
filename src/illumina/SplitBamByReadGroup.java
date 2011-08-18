@@ -40,7 +40,7 @@ import net.sf.samtools.SAMRecord;
  */
 public class SplitBamByReadGroup extends Illumina2bamCommandLine {
     
-    private final Log log = Log.getInstance(BamMerger.class);
+    private final Log log = Log.getInstance(SplitBamByReadGroup.class);
     
     private final String programName = "SplitBamByReadGroup";
     

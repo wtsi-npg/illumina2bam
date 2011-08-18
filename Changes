@@ -1,3 +1,8 @@
+release-0.04
+ - a new tool to decode bam file - BamIndexDecoder.
+ - BamMerger allows extra reads in unmapped bam file and an option to add them to merged bam file, and merge flag information as well.
+ - a new tool to split bam files by read group.
+
 release-0.03
  - cope with old format of filter file - no empty four bytes and version number in the header.
  - try to find filter file from base call directory if not in base call lane directory.
