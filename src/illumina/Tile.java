@@ -543,6 +543,7 @@ public class Tile {
         samRecord.setBaseQualities(baseQuals[1]);
         samRecord.setReadUnmappedFlag(true);
         
+        
         String rgId = "1";
         
         List<SAMReadGroupRecord> readGroupList = null;
@@ -563,6 +564,7 @@ public class Tile {
 
         if(paired){
            samRecord.setReadPairedFlag(paired);
+           samRecord.setMateUnmappedFlag(true);
            if(firstRead){
                samRecord.setFirstOfPairFlag(firstRead);
            }else{

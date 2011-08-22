@@ -95,7 +95,7 @@ public class TileTest {
         byte [][] baseQualsIndex = {{84, 67}, {37 ,34} };
         SAMRecord record = tile.getSAMRecord(
                 null, readName, 5, baseQuals, secondBases, baseQualsIndex, 0, true, true);
-        String result = "HS13_6000:1:1101:21238:9999	581"
+        String result = "HS13_6000:1:1101:21238:9999	589"
                 + "	*	*	0	*	*	*	*	"
                 + "NG	BA	E2:Z:AAA	RG:Z:1	QT:Z:FC	RT:Z:TC	ci:i:5";
         assertEquals(record.format(), result);
@@ -158,7 +158,7 @@ public class TileTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "03785d1102b07a86d5b313a26e5cbb21");        
+        assertEquals(md5, "3e256b176c26283991ce0704457f0d3d");        
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -263,7 +263,7 @@ public class TileTest {
         String md5 = md5Stream.readLine();
         
         System.out.println("Checking bam md5 correct");
-        assertEquals(md5, "e8c89bc56644eaf5cd817bd7daa79f96");       
+        assertEquals(md5, "d5dc58337bb8bb1494344338b5aead91");       
         
     }
 }
