@@ -22,7 +22,9 @@ It does no deplexing at the moment.
 
 It puts what preceding Illumina code has run e.g. RTA, in PG headers.
 
-By default it only puts in PF filtered reads. Default bcl2qseq will also exclude sequence identified as TruSeq controls from passing the qseq filter field. There's an option to put all reads in the BAM.
+By default it only puts in PF filtered reads. There's an option to put all reads in the BAM.
+
+Default bcl2qseq will also exclude sequence identified as TruSeq controls from passing the qseq filter field. Currently we don't do that yet. These reads should be included in the output.
 
 We expect read qualities to differ from those produced via default bcl2qseq as we'll give Ns a quality of 0 (rather than 2 which we're not convinced about), and we'll not do the EAMSS(?) flattening of the 3' tail of read to  qvals of 2 a.k.a. "The Killer Bs".
 
