@@ -149,8 +149,14 @@ public class BamMerger extends Illumina2bamCommandLine {
             boolean pairedRead1 = record.getReadPairedFlag();
             boolean pairedRead2 = alignment.getReadPairedFlag();
             
-            boolean firstOfPair1 = record.getFirstOfPairFlag();
-            boolean firstOfPair2 = alignment.getFirstOfPairFlag();
+            boolean firstOfPair1 = false;
+            if(pairedRead1){
+               firstOfPair1 = record.getFirstOfPairFlag();
+            }
+            boolean firstOfPair2 = false;
+            if(pairedRead2){
+               firstOfPair2= alignment.getFirstOfPairFlag();
+            }
   
             while( ( !readName1.equals(readName2)
                 || pairedRead1 != pairedRead2
@@ -165,7 +171,10 @@ public class BamMerger extends Illumina2bamCommandLine {
                 record = iteratorIn.next();
                 readName1 = record.getReadName();
                 pairedRead1 = record.getReadPairedFlag();
-                firstOfPair1 = record.getFirstOfPairFlag();
+                firstOfPair1 = false;
+                if(pairedRead1){
+                  firstOfPair1 = record.getFirstOfPairFlag();
+                }
                 
             }
 
@@ -199,9 +208,12 @@ public class BamMerger extends Illumina2bamCommandLine {
         }
         
         alignment.setReadFailsVendorQualityCheckFlag(record.getReadFailsVendorQualityCheckFlag());
-        alignment.setReadPairedFlag(record.getReadPairedFlag());
-        alignment.setFirstOfPairFlag(record.getFirstOfPairFlag());
-        alignment.setSecondOfPairFlag(record.getSecondOfPairFlag());
+        boolean isPaired = record.getReadPairedFlag();
+        alignment.setReadPairedFlag(isPaired);
+        if(isPaired){
+            alignment.setFirstOfPairFlag(record.getFirstOfPairFlag());
+            alignment.setSecondOfPairFlag(record.getSecondOfPairFlag());
+        }
 
         List<SAMTagAndValue> attributeList = record.getAttributes();
         for(SAMTagAndValue attribute : attributeList){
