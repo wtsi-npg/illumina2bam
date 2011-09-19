@@ -43,7 +43,7 @@ public class SplitBamByReadGroupTest {
 
         splitter.instanceMain(args);
         
-        assertEquals(splitter.getCommandLine(), "illumina.SplitBamByReadGroup INPUT=testdata/decode/6551_8.sam OUTPUT_PREFIX=testdata/6551_8_split OUTPUT_COMMON_RG_HEAD_TO_TRIM=1 TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"); 
+        assertEquals(splitter.getCommandLine(), "illumina.SplitBamByReadGroup INPUT=testdata/decode/6551_8.sam OUTPUT_PREFIX=testdata/6551_8_split OUTPUT_COMMON_RG_HEAD_TO_TRIM=1 TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"); 
     
         File splitFile1 = new File("testdata/6551_8_split#1.sam");
         splitFile1.deleteOnExit();
@@ -53,7 +53,7 @@ public class SplitBamByReadGroupTest {
         md5File1.deleteOnExit();
         BufferedReader md5Stream1 = new BufferedReader(new FileReader(md5File1));
         String md5 = md5Stream1.readLine();
-        assertEquals(md5, "6918f014a55682f836c77fcf44a3ba75");
+        assertEquals(md5, "e2d095b4acd5e7de77962b6732a64977");
         
         File splitFile9 = new File("testdata/6551_8_split#9.sam");
         splitFile9.deleteOnExit();
@@ -63,7 +63,7 @@ public class SplitBamByReadGroupTest {
         md5File9.deleteOnExit();
         BufferedReader md5Stream9 = new BufferedReader(new FileReader(md5File9));
         md5 = md5Stream9.readLine();
-        assertEquals(md5, "4144376830c02b82b7771381887e58e8");
+        assertEquals(md5, "b5cb704dee3e6bacd028d5f551af7ccb");
     
     }
 }

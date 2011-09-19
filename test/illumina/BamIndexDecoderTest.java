@@ -68,7 +68,7 @@ public class BamIndexDecoderTest {
                 + "OUTPUT=" + outputName + ".sam "
                 + "BARCODE_FILE=testdata/decode/6383_8.tag "
                 + "METRICS_FILE="+ outputName + ".metrics "
-                + "TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT "
+                + "TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT "
                 + "CREATE_MD5_FILE=true    "
                 + "BARCODE_TAG_NAME=RT MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 "
                 + "VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
@@ -79,7 +79,7 @@ public class BamIndexDecoderTest {
         
         BufferedReader md5Stream = new BufferedReader(new FileReader(outputMd5 ));
         String md5 = md5Stream.readLine();
-        assertEquals(md5, "86e0b5db1e899de0d7fe7c12312beea6");
+        assertEquals(md5, "db2afb30cda5689924beab16572090eb");
         
         outputFile.delete();
         outputMetrics.delete();
@@ -123,7 +123,7 @@ public class BamIndexDecoderTest {
                 + "OUTPUT_FORMAT=bam "
                 + "BARCODE_FILE=testdata/decode/6383_8.tag "
                 + "METRICS_FILE=" + outputName + "/6383_8.metrics "
-                + "TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT "
+                + "TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT "
                 + "CREATE_MD5_FILE=true    BARCODE_TAG_NAME=RT "
                 + "MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 "
                 + "VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
@@ -132,7 +132,7 @@ public class BamIndexDecoderTest {
         
         File outputMetrics = new File(outputName + "/6383_8.metrics");
         outputMetrics.delete();
-        String [] md5s = {"49e5c8b0ee433f8ea0f91b42a3c53bb7", "f73d3881e7b677426e85c667eb2e468e", "862b87e768cc1dee927812b9114f60e9"};
+        String [] md5s = {"87f1fcbc2f29546f7297558de1b3bb89", "d78c7fc05f4b7099c92b11f78026b4dc", "d634fdc0a0080586c95b0c26c0117e35"};
         for (int i=0;i<3;i++){
             File outputFile = new File(outputName + "/6383_8#" + i + ".bam");
             outputFile.delete();

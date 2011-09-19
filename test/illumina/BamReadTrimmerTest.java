@@ -62,12 +62,13 @@ public class BamReadTrimmerTest {
         };
 
         trimmer.instanceMain(args);
-        
+ System.out.println(trimmer.getCommandLine());
+ 
         assertEquals(trimmer.getCommandLine(), "illumina.BamReadTrimmer "
                 + "INPUT=testdata/bam/6210_8.sam "
                 + "OUTPUT=testdata/6210_8_trimmed.bam "
                 + "FIRST_POSITION_TO_TRIM=1 TRIM_LENGTH=3 "
-                + "TMP_DIR=testdata VALIDATION_STRINGENCY=SILENT "
+                + "TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT "
                 + "CREATE_MD5_FILE=true    ONLY_FORWARD_READ=true "
                 + "SAVE_TRIM=true TRIM_BASE_TAG=rs TRIM_QUALITY_TAG=qs "
                 + "VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 "
@@ -114,7 +115,7 @@ public class BamReadTrimmerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "9854225791da35d2466bc92dd4c19162");
+        assertEquals(md5, "14744e03e9d48bc0ce1bb1e35cdcfbb6");
     }
 
 }
