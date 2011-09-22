@@ -19,6 +19,7 @@
  */
 package illumina;
 
+import java.util.HashMap;
 import java.util.List;
 import net.sf.picard.cmdline.CommandLineProgram;
 import net.sf.samtools.SAMFileHeader;
@@ -64,7 +65,26 @@ public abstract class Illumina2bamCommandLine extends CommandLineProgram {
             String previousProgramId =  programList.get(programList.size() - 1 ).getProgramGroupId();
             programRecord.setPreviousProgramGroupId(previousProgramId);
         }        
-        header.addProgramRecord(programRecord);
+        header.addProgramRecord(this.makeUniqueProgramId(programList, programRecord));
+    }
+    
+    public SAMProgramRecord makeUniqueProgramId(List<SAMProgramRecord> programList,  SAMProgramRecord programRecord){
+        
+        HashMap<String, Integer> programIdList = new HashMap<String, Integer>();
+        for(SAMProgramRecord program : programList){
+            programIdList.put(program.getProgramGroupId(), 1);
+        }
+        
+        String programId = programRecord.getProgramGroupId();
+        String newProgramId = programId;
+        int count = 1;
+        while(programIdList.get(newProgramId) != null ){
+            newProgramId = programId + "_" + count;
+        }
+        if(newProgramId.equalsIgnoreCase(programId)){
+            return programRecord;
+        }
+        return new SAMProgramRecord(newProgramId, programRecord);
     }
     
 }
