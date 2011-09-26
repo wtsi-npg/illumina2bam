@@ -19,6 +19,7 @@
 package illumina;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.StandardOptionDefinitions;
@@ -50,6 +51,8 @@ import net.sf.samtools.SAMSequenceDictionary;
  * There is an option to add these extra reads into final bam.
  * 
  * Only SQ records and alignment PG in the aligned bam file will be added to the output.
+ * Default alignment PG ID is bwa, you need specify this PG ID from command line if not.
+ * There is an option you can merge all other PGs in aligned bam file into the output.
  * 
  * All header information in the unmapped bam header will be kept, except SQ records.
  * 
@@ -76,6 +79,9 @@ public class BamMerger extends Illumina2bamCommandLine {
     @Option(shortName= "PG", doc="The alignment program ID in the header of the SAM or BAM file with alignment.")
     public String ALIGNMENT_PROGRAM_ID = "bwa";
     
+    @Option(shortName= "KEEP_PG", doc="keep all other PGs in aligned bam into output")
+    public Boolean KEEP_ALL_PG = false;
+    
     @Option(shortName= StandardOptionDefinitions.INPUT_SHORT_NAME, doc="The input unmapped SAM or BAM file to merge.")
     public File INPUT;
 
@@ -84,6 +90,7 @@ public class BamMerger extends Illumina2bamCommandLine {
 
     @Option(shortName= "KEEP", doc="KEEP extra unmapped reads in unmapped bam file to the final output if true.")
     public Boolean KEEP_EXTRA_UNMAPPED_READS = false;
+
 
     @Override
     protected int doWork() {
@@ -100,13 +107,16 @@ public class BamMerger extends Illumina2bamCommandLine {
         //keep sequence dictionary from aligned bam
         SAMSequenceDictionary sequenceDictionary = headerAlignments.getSequenceDictionary();
         
-        //only keep aligner program records in the aligned bam, we will lose any other head information in this file
-        SAMProgramRecord alignmentProgram = null;
-        if(this.ALIGNMENT_PROGRAM_ID != null){
-           alignmentProgram = headerAlignments.getProgramRecord(this.ALIGNMENT_PROGRAM_ID);
-        }
+        List<SAMProgramRecord> pgList = new ArrayList<SAMProgramRecord>();
+        if(this.KEEP_ALL_PG){
+       
+            pgList = headerAlignments.getProgramRecords();
+        }else{
 
-        
+            SAMProgramRecord alignmentProgram = headerAlignments.getProgramRecord(this.ALIGNMENT_PROGRAM_ID);
+            pgList.add(alignmentProgram);
+        }
+          
         log.info("Open input file to merge: " + INPUT.getName());
         final SAMFileReader in  = new SAMFileReader(INPUT);        
         final SAMFileHeader header = in.getFileHeader();
@@ -114,10 +124,13 @@ public class BamMerger extends Illumina2bamCommandLine {
         
         log.info("Generate new bam/sam output header");
         final SAMFileHeader outputHeader = header.clone();
-        outputHeader.setSequenceDictionary(sequenceDictionary);        
-        if(alignmentProgram != null ){
-           this.addProgramRecordToHead(outputHeader, alignmentProgram);
-        }        
+        outputHeader.setSequenceDictionary(sequenceDictionary);
+        
+        for(SAMProgramRecord pg : pgList){
+          if(pg != null ){
+             this.addProgramRecordToHead(outputHeader, pg);
+          }
+        }
         this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
 
         
