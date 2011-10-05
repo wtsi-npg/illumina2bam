@@ -47,11 +47,12 @@ import net.sf.samtools.SAMSequenceDictionary;
  * 
  * The failed quality check flag in unmapped reads, and paired, first and second read flags will be added to alignment.
  * 
- * Two bam files must be in the same order but unmapped bam may have more records.
+ * Two bam files must be in the same order but unmapped bam may have more records than the aligned bam.
  * There is an option to add these extra reads into final bam.
  * 
- * Only SQ records and alignment PG in the aligned bam file will be added to the output.
+ * Only SQ records and alignment PG in the aligned bam file will be added to the output by default.
  * Default alignment PG ID is bwa, you need specify this PG ID from command line if not.
+ * 
  * There is an option you can merge all other PGs in aligned bam file into the output.
  * 
  * All header information in the unmapped bam header will be kept, except SQ records.
@@ -109,7 +110,7 @@ public class BamMerger extends Illumina2bamCommandLine {
         
         List<SAMProgramRecord> pgList = new ArrayList<SAMProgramRecord>();
         if(this.KEEP_ALL_PG){
-       
+
             pgList = headerAlignments.getProgramRecords();
         }else{
 
@@ -120,12 +121,13 @@ public class BamMerger extends Illumina2bamCommandLine {
         log.info("Open input file to merge: " + INPUT.getName());
         final SAMFileReader in  = new SAMFileReader(INPUT);        
         final SAMFileHeader header = in.getFileHeader();
- 
+
         
         log.info("Generate new bam/sam output header");
         final SAMFileHeader outputHeader = header.clone();
         outputHeader.setSequenceDictionary(sequenceDictionary);
-        
+        outputHeader.setSortOrder(SAMFileHeader.SortOrder.unsorted);
+
         for(SAMProgramRecord pg : pgList){
           if(pg != null ){
              this.addProgramRecordToHead(outputHeader, pg);
@@ -170,23 +172,26 @@ public class BamMerger extends Illumina2bamCommandLine {
             if(pairedRead2){
                firstOfPair2= alignment.getFirstOfPairFlag();
             }
-  
+
             while( ( !readName1.equals(readName2)
                 || pairedRead1 != pairedRead2
                 || firstOfPair1 != firstOfPair2 )
-                && iteratorIn.hasNext()
             ){
 
                 if( this.KEEP_EXTRA_UNMAPPED_READS ){
                     out.addAlignment(record);
                 }
 
-                record = iteratorIn.next();
-                readName1 = record.getReadName();
-                pairedRead1 = record.getReadPairedFlag();
-                firstOfPair1 = false;
-                if(pairedRead1){
-                  firstOfPair1 = record.getFirstOfPairFlag();
+                if (iteratorIn.hasNext()) {
+                    record = iteratorIn.next();
+                    readName1 = record.getReadName();
+                    pairedRead1 = record.getReadPairedFlag();
+                    firstOfPair1 = false;
+                    if (pairedRead1) {
+                        firstOfPair1 = record.getFirstOfPairFlag();
+                    }
+                }else{
+                    break;
                 }
                 
             }
@@ -197,10 +202,23 @@ public class BamMerger extends Illumina2bamCommandLine {
               ){
                   this.mergeRecords(alignment, record);
                   out.addAlignment(alignment);
+            }else if ( this.KEEP_EXTRA_UNMAPPED_READS ) {
+                out.addAlignment(record);
             }
+ 
+        }
+
+        if( iteratorAlignments.hasNext() ){
+            SAMRecord firstRecordLeft = iteratorAlignments.next();
+            log.error( firstRecordLeft.getReadName() + " " + firstRecordLeft.getFlags() );
+            throw new RuntimeException("The mapped bam file has more reads than the unmapped"
+                    + " after reading their common reads in their begining.");
         }
 
         out.close();
+        in.close();
+        alignments.close();
+
 
         log.info("Merging finished, merged file: " + this.OUTPUT);
         
