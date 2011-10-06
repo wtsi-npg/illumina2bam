@@ -31,6 +31,7 @@ import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFileWriterFactory;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMRecordIterator;
+import net.sf.samtools.SAMSequenceDictionary;
 
 /**
  *
@@ -42,34 +43,32 @@ public class AlignmentFilter extends Illumina2bamCommandLine {
     
     private final String programName = "AlignmentFiler";
     
-    private final String programDS = "Give a list of SAM/BAM files with the same set of records "
+    private final String programDS = "Give a list of SAM/BAM files with the same set of records and in the same order "
                                    + "but aligned with different references, "
                                    + "split reads into different files according to alignments. "
-                                   + "You have option to put unaligned reads into one of output files";
+                                   + "You have option to put unaligned reads into one of output files or a separate file";
    
     @Usage(programVersion= version)
     public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". "; 
  
     
-    @Option(shortName="IN",
-            doc="The input SAM or BAM file with alignment. "
-              + "The main input file with most of head informaiton should be at the first.")
+    @Option(shortName="IN", doc="The input SAM or BAM file with alignment.",minElements=1, optional= false)
     public final List<File> INPUT_ALIGNMENT = new ArrayList<File>();
     
     @Option(shortName="OUT",
             doc="The ouput SAM or BAM file. "
-              + "It should have the same number of file as the input.")
+              + "It should have the same number of files as the input.", minElements=1, optional= false)
     public final List<File> OUTPUT_ALIGNMENT = new ArrayList<File>();
 
     @Option(shortName="UNALIGNED",
-            doc="The ouput SAM or BAM file for reads not alignment. "
+            doc="The ouput SAM or BAM file for unaligned. "
                + "If not given, the unaligned reads will put into the last output file.", optional= true)
     public File OUTPUT_UNALIGNED;
 
     @Override
     protected int doWork() {
 
-        log.info("Checking input and out files");
+        log.info("Checking input files");
         if(this.INPUT_ALIGNMENT.isEmpty()){
             throw new RuntimeException("NO ANY INPUT ALIGNMENT File given!");
         }
@@ -77,6 +76,8 @@ public class AlignmentFilter extends Illumina2bamCommandLine {
             IoUtil.assertFileIsReadable(file);
         }
 
+        
+        log.info("Checking output files");
         if( this.OUTPUT_ALIGNMENT.size() != this.INPUT_ALIGNMENT.size() ){
             throw new RuntimeException("The number of input and output file should be the same!");
         }
@@ -97,7 +98,7 @@ public class AlignmentFilter extends Illumina2bamCommandLine {
         }
         
         
-        log.info("Open output files");
+        log.info("Open output files with headers");
         final List<SAMFileWriter> outputWriterList  = new ArrayList<SAMFileWriter>();
         int outputCount = 0;
         for(File outFile : OUTPUT_ALIGNMENT){
@@ -110,38 +111,154 @@ public class AlignmentFilter extends Illumina2bamCommandLine {
 
         SAMFileWriter outputWriterUnaligned = null;
         if(this.OUTPUT_UNALIGNED != null ){
-            final SAMFileHeader outputHeader = inputReaderList.get(0).getFileHeader().clone();
-            outputHeader.setSequenceDictionary(null);
+            final SAMFileHeader outputHeader = inputReaderList.get( outputCount - 1 ).getFileHeader().clone();
+            outputHeader.setSequenceDictionary(new SAMSequenceDictionary());
+            outputHeader.setSortOrder(SAMFileHeader.SortOrder.unsorted);
             outputHeader.addProgramRecord(this.getThisProgramRecord(programName, programDS));
             outputWriterUnaligned = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader,  true, this.OUTPUT_UNALIGNED);
         }
 
-        log.info("Starting read and wring files");
-        List<SAMRecordIterator> iteratorList = new ArrayList<SAMRecordIterator>();
+        log.info("Starting read and writing records");
+        List<SAMRecordIterator> inputReaderIteratorList = new ArrayList<SAMRecordIterator>();
         for(SAMFileReader reader : inputReaderList){
             SAMRecordIterator iterator = reader.iterator();
-            iteratorList.add(iterator);
+            inputReaderIteratorList.add(iterator);
         }
 
-        while(iteratorList.get(0).hasNext()){
+        while(inputReaderIteratorList.get(0).hasNext()){
 
             List<SAMRecord> recordList = new ArrayList<SAMRecord>();
             List<SAMRecord> pairedRecordList = new ArrayList<SAMRecord>();
+            boolean isPairedRead = false;
             
-            for(SAMRecordIterator iterator : iteratorList){
+            for(SAMRecordIterator inputReaderIterator : inputReaderIteratorList){
                 
-                SAMRecord tempRecord = iterator.next();
-                recordList.add(tempRecord);
-                if(tempRecord.getReadPairedFlag()){
-                    SAMRecord tempPairedRecord = iterator.next();
-                    pairedRecordList.add(tempPairedRecord);
+                if (inputReaderIterator.hasNext()) {
+                   
+                    SAMRecord tempRecord = inputReaderIterator.next();
+                    recordList.add(tempRecord);
+                    
+                    boolean tempPaired = tempRecord.getReadPairedFlag();
+                    if( tempPaired ){
+                        isPairedRead = true;
+                    }
+                    
+                    if ( tempPaired && inputReaderIterator.hasNext() ) {
+                        SAMRecord tempPairedRecord = inputReaderIterator.next();
+                        pairedRecordList.add(tempPairedRecord);
+                    }
+                    
+                }else{
+
+                    throw new RuntimeException("The input files don't have the same set of records");
                 }
+               
             }
+            
+            int firstAlignedIndex = this.checkOneRecord(recordList, pairedRecordList, isPairedRead);
+            
+            SAMFileWriter tempOut;
+            
+            if(firstAlignedIndex != -1 ){
+                tempOut = outputWriterList.get(firstAlignedIndex);
+            }else if(outputWriterUnaligned != null){
+                tempOut = outputWriterUnaligned;
+                firstAlignedIndex = outputCount -1;
+            }else{
+                firstAlignedIndex = outputCount -1;
+                tempOut = outputWriterList.get(firstAlignedIndex);
+            }
+
+            tempOut.addAlignment(recordList.get(firstAlignedIndex));
+            if(isPairedRead){
+                tempOut.addAlignment(pairedRecordList.get(firstAlignedIndex));
+            }
+        }
+ 
+        log.info("Closing all the files");
+        for(SAMFileReader reader : inputReaderList){
+            reader.close();
+        }        
+        for(SAMFileWriter writer : outputWriterList){
+            writer.close();
+        }
+        if(this.OUTPUT_UNALIGNED != null ){
+           outputWriterUnaligned.close();
         }
 
         return 0;
     }
 
+    public int checkOneRecord ( List<SAMRecord> recordList,  List<SAMRecord> pairedRecordList, boolean isPairedRead){
+       
+        if( isPairedRead && ( recordList.size() != pairedRecordList.size() ) ){
+
+            throw new RuntimeException("Paired information is not correct in all input files for read: " 
+                     + recordList.get(0).getReadName()
+                    + " " + recordList.get(0).getFlags());
+        }
+ 
+        int firstAlignedIndex = -1;
+
+        int count = 0;
+        String firstReadName = null;
+        boolean firstPairedFlag = false;
+        boolean firstFirstReadFlag = false;
+        
+        for(SAMRecord record : recordList ){   
+
+            String readName = record.getReadName();
+            boolean pairedFlag = record.getReadPairedFlag();
+            boolean firstReadFlag = record.getFirstOfPairFlag();
+            
+            if(count == 0){
+                firstReadName = readName;
+                firstPairedFlag = pairedFlag;
+                firstFirstReadFlag = firstReadFlag;
+            }
+
+            if(!readName.equals(firstReadName) || firstPairedFlag != pairedFlag || firstFirstReadFlag != firstReadFlag ){
+               
+                throw new RuntimeException("Reads in input files are not the same: " + firstReadName +  " " + readName);
+                
+            }
+
+
+            boolean unmappedFlag = record.getReadUnmappedFlag();
+            boolean mateUnmappedFlag = record.getMateUnmappedFlag();
+            
+            boolean aligned = !unmappedFlag;
+
+            SAMRecord record2 = null;
+            if(isPairedRead){
+                
+               record2 = pairedRecordList.get(count);
+               String readName2 = record2.getReadName();
+               boolean pairedFlag2 = record2.getReadPairedFlag();
+               boolean firstReadFlag2 = record2.getFirstOfPairFlag();
+               if( !readName2.equals(readName) || pairedFlag != pairedFlag2 || firstReadFlag == firstReadFlag2 ){
+                    throw new RuntimeException("Paired reads are not together: " + readName + " " + readName2);
+               }
+               
+               boolean unmappedFlag2 = record2.getReadUnmappedFlag();
+               boolean mateUnmappedFlag2 = record2.getMateUnmappedFlag();
+               
+               if( mateUnmappedFlag != unmappedFlag2 || unmappedFlag != mateUnmappedFlag2 ){
+                   throw new RuntimeException("Paired read alignment information not correct: " + readName);
+               }
+               
+               aligned = aligned || !unmappedFlag2;
+            }
+            if(firstAlignedIndex == -1 && aligned ){
+                firstAlignedIndex = count;
+            }
+            
+            count++;
+        }
+        
+        return firstAlignedIndex;
+        
+    }
 
     public static void main(final String[] args) {
         
