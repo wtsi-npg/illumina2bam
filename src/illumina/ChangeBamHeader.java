@@ -49,7 +49,6 @@ public class ChangeBamHeader extends Illumina2bamCommandLine {
    
     @Usage(programVersion= version)
     public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". "; 
- 
     
     @Option(shortName=StandardOptionDefinitions.INPUT_SHORT_NAME, doc="The input SAM or BAM file.")
     public File INPUT;
@@ -57,7 +56,7 @@ public class ChangeBamHeader extends Illumina2bamCommandLine {
     @Option(shortName=StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc="The ouput SAM or BAM file. ")
     public File OUTPUT;
     
-    @Option(doc="The extra PG with fields separated by tab for bam header including ID, PN and CL etc, PP id will be reset.")
+    @Option(doc="The extra PG with fields separated by tab for bam header including ID, PN, VN and CL etc, PP id will be reset.")
     public final List<String> PG = new ArrayList<String>();
 
     @Override
@@ -66,7 +65,7 @@ public class ChangeBamHeader extends Illumina2bamCommandLine {
         this.log.info("Checking input and output file");
         IoUtil.assertFileIsReadable(INPUT);
         IoUtil.assertFileIsWritable(OUTPUT);
-        
+
         log.info("Open input file: " + INPUT.getName());
         final SAMFileReader in  = new SAMFileReader(INPUT);
         

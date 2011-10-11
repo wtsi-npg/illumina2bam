@@ -28,7 +28,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * This is the test class for BamReadTrimmer
+ * This is the test class for ChangeBamHeader
  * 
  * @author Guoying Qi
  */

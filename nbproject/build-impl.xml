@@ -726,7 +726,7 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="init,compile,-pre-jar,-do-jar-with-manifest,-do-jar-without-manifest,-do-jar-with-mainclass,-do-jar-with-libraries,bamMerger-jar,bamReadTrimmer-jar,bamIndexDecoder-jar,extractIlluminaBarcodes-jar,splitBamByReadGoup-jar,alignmentFilter-jar,-post-jar" description="Build JAR." name="jar"/>
+    <target depends="init,compile,-pre-jar,-do-jar-with-manifest,-do-jar-without-manifest,-do-jar-with-mainclass,-do-jar-with-libraries,bamMerger-jar,bamReadTrimmer-jar,bamIndexDecoder-jar,extractIlluminaBarcodes-jar,splitBamByReadGoup-jar,alignmentFilter-jar,changeBamHeader-jar,-post-jar" description="Build JAR." name="jar"/>
     <!--
                 =================
                 EXECUTION SECTION
@@ -1129,4 +1129,16 @@ is divided into following sections:
            </manifest>
        </jar>
     </target>
+
+     <target name="changeBamHeader-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds ChangeBamHeader jar for command line"> 
+       <jar destfile="${dist.dir}/ChangeBamHeader.jar" compress="no">
+          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
+    	   <manifest>
+    	      <attribute name="Implementation-Title" value="ChangeBamHeader"/>
+              <attribute name="Main-Class" value="illumina.ChangeBamHeader"/>
+              <attribute name="Class-Path" value="${jar.classpath}"/>
+           </manifest>
+       </jar>
+    </target>
+ 
 </project>
