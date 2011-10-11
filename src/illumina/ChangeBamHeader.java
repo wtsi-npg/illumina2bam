@@ -71,9 +71,11 @@ public class ChangeBamHeader extends Illumina2bamCommandLine {
         
         final SAMFileHeader header = in.getFileHeader();
         final SAMFileHeader outputHeader = header.clone();
+        List<SAMProgramRecord> pgList = header.getProgramRecords();
 
         for(String pg_fields: this.PG){
             SAMProgramRecord pg = this.getProgramRecordFromString(pg_fields);
+            pg = this.makeUniqueProgramId(pgList, pg);
             this.addProgramRecordToHead(outputHeader, pg);
         }
 
