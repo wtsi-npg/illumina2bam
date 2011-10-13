@@ -112,7 +112,7 @@ public class ChangeBamHeader extends Illumina2bamCommandLine {
         HashMap<String, String> fieldsHash = new HashMap<String, String>();
         
         for ( String field : fields ) {
-           String [] keyValue =  field.split(":");
+           String [] keyValue =  field.split(":", 2);
            if(keyValue.length != 2){
                throw new RuntimeException("PG field must be given in tag name and value in pair separated by :,  " + field );
            }
