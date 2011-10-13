@@ -56,7 +56,9 @@ public class ChangeBamHeader extends Illumina2bamCommandLine {
     @Option(shortName=StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc="The ouput SAM or BAM file. ")
     public File OUTPUT;
     
-    @Option(doc="The extra PG with fields separated by tab for bam header including ID, PN, VN and CL etc, PP id will be reset.")
+    @Option(doc="The extra PG line with fields separated by semicolon for bam header"
+            + " including ID, PN, VN and CL etc, PP id will be reset."
+            + " Each field including tag name and value separated by colon.")
     public final List<String> PG = new ArrayList<String>();
 
     @Override
@@ -103,7 +105,7 @@ public class ChangeBamHeader extends Illumina2bamCommandLine {
      */
     public SAMProgramRecord getProgramRecordFromString(String pg_fields){
         
-        String []  fields = pg_fields.split("\t");
+        String []  fields = pg_fields.split(";");
         
         if(fields.length == 0){
             throw new RuntimeException("There are no PG fields given: " + pg_fields);
