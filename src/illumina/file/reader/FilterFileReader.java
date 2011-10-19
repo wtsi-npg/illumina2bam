@@ -88,7 +88,7 @@ public class FilterFileReader extends IlluminaFileReader {
             int nextByte = this.inputStream.read();
 
             if (nextByte == -1) {
-                log.warn("There is no mroe cluster in Filter file after cluster " + this.getCurrentCluster() + " in file " + this.getFileName());
+                log.warn("There is no more cluster in Filter file after cluster " + this.getCurrentCluster() + " in file " + this.getFileName());
                 return null;
             }
 
