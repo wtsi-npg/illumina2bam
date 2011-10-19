@@ -53,6 +53,10 @@ public class Tile {
     private final int laneNumber;
     private final int tileNumber;
 
+    //fields for tag name
+    private final String barcodeSeqTagName;
+    private final String barcodeQualTagName;
+
     private final HashMap<String, int[]> cycleRangeByRead;
 
     private final boolean includeSecondCall;
@@ -91,14 +95,19 @@ public class Tile {
             int tileNumber,
             HashMap<String, int[]> cycleRangeByRead,
             boolean secondCall,
-            boolean pfFilter) {
+            boolean pfFilter,
+            String barcodeSeqTagName,
+            String barcodeQualTagName) {
 
         this.id = id;
         this.laneNumber = laneNumber;
         this.tileNumber = tileNumber;
         this.intensityDir = intensityDir;
         this.baseCallDir  = baseCallDir;
-
+        
+        this.barcodeSeqTagName  = barcodeSeqTagName;
+        this.barcodeQualTagName = barcodeQualTagName;
+        
         this.includeSecondCall = secondCall;
         this.pfFilter = pfFilter;
 
@@ -578,8 +587,8 @@ public class Tile {
 
         if(baseQualsIndex != null){
 
-            samRecord.setAttribute("RT",this.covertByteArrayToString(baseQualsIndex[0]));
-            samRecord.setAttribute("QT",this.covertPhredQulByteArrayToFastqString(baseQualsIndex[1]));
+            samRecord.setAttribute(this.barcodeSeqTagName, this.covertByteArrayToString(baseQualsIndex[0]));
+            samRecord.setAttribute(this.barcodeQualTagName, this.covertPhredQulByteArrayToFastqString(baseQualsIndex[1]));
         }
         
         return samRecord;
@@ -708,6 +717,9 @@ public class Tile {
      */
     public static void main (String [] args) throws Exception{
 
+        String barcodeSeqTagName = "BC";
+        String barcodeQualTagName = "QT";
+     
         String intensityDir = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities";
         String baseCallDir  = intensityDir + "/BaseCalls";
         if(args.length > 0  && args[0] != null){
@@ -727,7 +739,7 @@ public class Tile {
         cycleRangeByRead.put("read2", cycleRangeRead2);
         cycleRangeByRead.put("readIndex", cycleRangeIndex);
 
-        Tile tile = new Tile(intensityDir, baseCallDir, id, lane, tileNumber, cycleRangeByRead, true, true);
+        Tile tile = new Tile(intensityDir, baseCallDir, id, lane, tileNumber, cycleRangeByRead, true, true, barcodeSeqTagName, barcodeQualTagName);
 
         File outBam = new File("test.bam");
         SAMFileWriterFactory factory = new SAMFileWriterFactory();

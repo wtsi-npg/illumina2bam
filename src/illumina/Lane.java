@@ -72,6 +72,10 @@ public class Lane {
 
     //fields must be given for output bam
     private final File output;
+    
+    //fields for tag name
+    private final String barcodeSeqTagName;
+    private final String barcodeQualTagName;
 
 
 
@@ -114,7 +118,9 @@ public class Lane {
                 int laneNumber,
                 boolean secondCall,
                 boolean pfFilter,
-                File output){
+                File output,
+                String barcodeSeqTagName,
+                String barcodeQualTagName){
 
         this.intensityDir      = intensityDir;
         this.baseCallDir       = baseCallDir;
@@ -122,6 +128,8 @@ public class Lane {
         this.includeSecondCall = secondCall;
         this.pfFilter          = pfFilter;
         this.output            = output;
+        this.barcodeSeqTagName  = barcodeSeqTagName;
+        this.barcodeQualTagName = barcodeQualTagName;
 
         this.baseCallsConfig = this.baseCallDir
                              + File.separator
@@ -181,7 +189,8 @@ public class Lane {
             
             Tile tile = new Tile(intensityDir, baseCallDir, id, laneNumber, tileNumber,
                                  cycleRangeByRead,
-                                 this.includeSecondCall, this.pfFilter);
+                                 this.includeSecondCall, this.pfFilter,
+                                 this.barcodeSeqTagName, this.barcodeQualTagName);
             
             log.info("Opening all basecall files");
             tile.openBaseCallFiles();

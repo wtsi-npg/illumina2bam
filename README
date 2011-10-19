@@ -16,7 +16,8 @@ This tool converts Illumina BCL files directly to bam files using Picard JAVA AP
 
 It will create a bam file for an entire lane.
 
-It puts an indexing read quality and sequence in tags (we're suggesting the use of) "QT" and "RT" e.g. QT:Z:HHHHHHHH   RT:Z:ATCACGTT, on the first read record.
+It puts an indexing read quality and sequence in tags (we're suggesting the use of) "QT" and "BC" e.g. QT:Z:HHHHHHHH   BC:Z:ATCACGTT, on the first read record.
+User can overwrite them from command line.
 
 It does no deplexing at the moment.
 

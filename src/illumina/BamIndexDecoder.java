@@ -81,7 +81,7 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
     public String OUTPUT_FORMAT;
     
     @Option(doc="The tag name used to store barcode read in bam records")
-    public String BARCODE_TAG_NAME = "RT";
+    public String BARCODE_TAG_NAME = "BC";
 
     @Option(doc="Barcode sequence.  These must be unique, and all the same length.", mutex = {"BARCODE_FILE"})
     public List<String> BARCODE = new ArrayList<String>();

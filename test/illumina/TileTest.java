@@ -52,6 +52,9 @@ public class TileTest {
     private static int[] cycleRangeIndex = {50, 50};
     private static Tile tile;
 
+    private static String barcodeSeqTagName = "RT";
+    private static String barcodeQualTagName = "QT";
+    
     public TileTest() {
     }
 
@@ -61,7 +64,7 @@ public class TileTest {
         cycleRangeByRead.put("read1", cycleRangeRead1);
         cycleRangeByRead.put("read2", cycleRangeRead2);
         cycleRangeByRead.put("readIndex", cycleRangeIndex);
-        tile = new Tile(intensityDir, baseCallDir, id, lane, tileNumber, cycleRangeByRead, true, true);
+        tile = new Tile(intensityDir, baseCallDir, id, lane, tileNumber, cycleRangeByRead, true, true, barcodeSeqTagName, barcodeQualTagName);
     }
 
     @AfterClass
@@ -180,7 +183,7 @@ public class TileTest {
         HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(1);
         cycleRangeByRead.put("read1", cycleRangeRead_1);
 
-        Tile tile2 = new Tile(intensityDir_2, baseCallDir_2, id_2, lane_2, tileNumber_2, cycleRangeByRead, false, true);
+        Tile tile2 = new Tile(intensityDir_2, baseCallDir_2, id_2, lane_2, tileNumber_2, cycleRangeByRead, false, true, barcodeSeqTagName, barcodeQualTagName);
         tile2.openBaseCallFiles();
         tile2.processTile(outputSam);
         tile2.closeBaseCallFiles();
@@ -207,7 +210,7 @@ public class TileTest {
         HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(1);
         cycleRangeByRead.put("read1", cycleRangeRead_1);
 
-        Tile tile2 = new Tile(intensityDir_2, baseCallDir_2, id_2, lane_2, tileNumber_2, cycleRangeByRead, false, false);
+        Tile tile2 = new Tile(intensityDir_2, baseCallDir_2, id_2, lane_2, tileNumber_2, cycleRangeByRead, false, false, barcodeSeqTagName, barcodeQualTagName);
         tile2.openBaseCallFiles();
         tile2.processTile(outputSam);
         tile2.closeBaseCallFiles();
@@ -239,7 +242,7 @@ public class TileTest {
         cycleRangeByRead.put("read2", cycleRangeRead2GA);
         cycleRangeByRead.put("readIndex", cycleRangeIndexGA);
         
-        Tile tileGA = new Tile(intensityDirGA, baseCallDirGA, idGA, laneGA, tileNumberGA, cycleRangeByRead, false, true);
+        Tile tileGA = new Tile(intensityDirGA, baseCallDirGA, idGA, laneGA, tileNumberGA, cycleRangeByRead, false, true, barcodeSeqTagName, barcodeQualTagName);
         
         assertEquals(tileGA.getFilterFileName(), "testdata/110519_IL33_06284/Data/Intensities/BaseCalls//s_8_0112.filter");
         
