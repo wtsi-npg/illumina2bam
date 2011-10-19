@@ -59,7 +59,7 @@ public class LaneTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {        
-        lane = new Lane(intensityDir, baseCallDir, laneNumber, includeSecondCall, pfFilter, output);
+        lane = new Lane(intensityDir, baseCallDir, laneNumber, includeSecondCall, pfFilter, "RT", output);
     }
 
     @AfterClass
@@ -180,7 +180,7 @@ public class LaneTest {
         boolean includeSecondCall2 = true;
         boolean pfFilter2 = true;
 
-        Lane lane2 = new Lane(intensityDir2, baseCallDir2, laneNumber2, includeSecondCall2, pfFilter2, output);
+        Lane lane2 = new Lane(intensityDir2, baseCallDir2, laneNumber2, includeSecondCall2, pfFilter2, "RT", output);
 
         int [] barCodeCycleList = lane2.readBarCodeIndexCycles();
         int [] expected = {76,77,78,79,80,81,82,83};
@@ -295,7 +295,7 @@ public class LaneTest {
         boolean pfFilter2 = true;
         File output3 = new File("testdata/6284_8.bam");
 
-        Lane lane3 = new Lane(intensityDir3, baseCallDir3, laneNumber3, includeSecondCall2, pfFilter2, output3);
+        Lane lane3 = new Lane(intensityDir3, baseCallDir3, laneNumber3, includeSecondCall2, pfFilter2, "RT", output3);
 
         int [] barCodeCycleList = lane3.readBarCodeIndexCycles();
         int [] expected = {77, 77};

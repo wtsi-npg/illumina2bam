@@ -70,6 +70,9 @@ public class Lane {
     private final boolean includeSecondCall;
     private final boolean pfFilter;
 
+    //barcode sequence tag in resulting bam
+    private final String barCodeTagName;
+    
     //fields must be given for output bam
     private final File output;
 
@@ -114,6 +117,7 @@ public class Lane {
                 int laneNumber,
                 boolean secondCall,
                 boolean pfFilter,
+                String barCodeTagName,
                 File output){
 
         this.intensityDir      = intensityDir;
@@ -122,6 +126,7 @@ public class Lane {
         this.includeSecondCall = secondCall;
         this.pfFilter          = pfFilter;
         this.output            = output;
+        this.barCodeTagName    = barCodeTagName;
 
         this.baseCallsConfig = this.baseCallDir
                              + File.separator
@@ -181,7 +186,7 @@ public class Lane {
             
             Tile tile = new Tile(intensityDir, baseCallDir, id, laneNumber, tileNumber,
                                  cycleRangeByRead,
-                                 this.includeSecondCall, this.pfFilter);
+                                 this.includeSecondCall, this.pfFilter, this.barCodeTagName);
             
             log.info("Opening all basecall files");
             tile.openBaseCallFiles();

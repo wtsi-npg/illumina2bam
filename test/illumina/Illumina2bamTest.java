@@ -71,14 +71,14 @@ public class Illumina2bamTest {
         md5File.deleteOnExit();
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
-        assertEquals(md5, "3d313a8a1a84546347204d0952568c6a");
+        assertEquals(md5, "66939c8182557c2da077381954fc0f50");
 
         assertEquals(illumina2bam.getCommandLine(), "illumina.Illumina2bam INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities "
                 + "LANE=1 OUTPUT=testdata/6000_1.sam SAMPLE_ALIAS=Test Sample LIBRARY_NAME=Test library "
                 + "STUDY_NAME=testStudy RUN_START_DATE=2011-03-23T00:00:00+0000 FIRST_TILE=1101 TILE_LIMIT=1 TMP_DIR=[testdata] "
                 + "VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1 CREATE_MD5_FILE=true    "
                 + "GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1 SEQUENCING_CENTER=SC "
-                + "PLATFORM=ILLUMINA VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
+                + "PLATFORM=ILLUMINA BARCODE_TAG_NAME=RT VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
                );
         
         SAMProgramRecord result = illumina2bam.getThisProgramRecord("illumina2bam", "Convert Illumina BCL to BAM or SAM file");

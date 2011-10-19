@@ -88,6 +88,9 @@ public class Illumina2bam extends Illumina2bamCommandLine {
     @Option(doc="The name of the sequencing technology that produced the read, default ILLUMINA.", optional=true)
     public String PLATFORM = "ILLUMINA";
 
+    @Option(doc="Name of tag to describe the barcode/index-sequence. Defaults to RT.", optional=true)
+    public String BARCODE_TAG_NAME = "RT";
+
     @Option(doc="If set, this is the first tile to be processed (for debugging).  Note that tiles are not processed in numerical order.",
     optional = true)
     public Integer FIRST_TILE;
@@ -111,7 +114,7 @@ public class Illumina2bam extends Illumina2bamCommandLine {
           log.info("BaseCalls directory not given, using " + this.BASECALLS_DIR);
         }
 
-        Lane lane = new Lane(this.INTENSITY_DIR.getAbsolutePath(), this.BASECALLS_DIR.getAbsolutePath(), this.LANE, this.GENERATE_SECONDARY_BASE_CALLS, this.PF_FILTER, OUTPUT);
+        Lane lane = new Lane(this.INTENSITY_DIR.getAbsolutePath(), this.BASECALLS_DIR.getAbsolutePath(), this.LANE, this.GENERATE_SECONDARY_BASE_CALLS, this.PF_FILTER, this.BARCODE_TAG_NAME, OUTPUT);
 
         try {
             log.info("Reading config xml files");
