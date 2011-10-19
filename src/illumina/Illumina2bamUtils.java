@@ -32,7 +32,7 @@ public final class Illumina2bamUtils {
      * @param array
      * @return fastq quality string from phred qual byte array
      */
-    public static String covertPhredQulByteArrayToFastqString(byte [] array){
+    public static String convertPhredQualByteArrayToFastqString(byte [] array){
         StringBuilder builder = new StringBuilder(array.length);
         for (byte b : array){
             builder.append( (char) (b + 33) );
@@ -45,7 +45,7 @@ public final class Illumina2bamUtils {
      * @param array
      * @return string from a byte array
      */
-    public static String covertByteArrayToString(byte [] array){
+    public static String convertByteArrayToString(byte [] array){
         StringBuilder builder = new StringBuilder(array.length);
         for (byte b : array){
             builder.append((char) b);

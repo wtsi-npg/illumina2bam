@@ -32,7 +32,7 @@ import net.sf.samtools.util.Iso8601Date;
 
 /**
  *
- * This is the main class to covert Illumina BCL files to BAM
+ * This is the main class to convert Illumina BCL files to BAM
  * 
  * @author Guoying Qi
  */
