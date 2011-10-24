@@ -50,7 +50,6 @@ public class Tile {
     private final String intensityDir;
     private final String baseCallDir;
     private final String id;
-    private final String barCodeTagName;
     private final int laneNumber;
     private final int tileNumber;
 
@@ -92,8 +91,7 @@ public class Tile {
             int tileNumber,
             HashMap<String, int[]> cycleRangeByRead,
             boolean secondCall,
-            boolean pfFilter,
-            String barCodeTagName) {
+            boolean pfFilter) {
 
         this.id = id;
         this.laneNumber = laneNumber;
@@ -103,7 +101,6 @@ public class Tile {
 
         this.includeSecondCall = secondCall;
         this.pfFilter = pfFilter;
-        this.barCodeTagName = barCodeTagName;
 
         this.cycleRangeByRead = cycleRangeByRead;
 
@@ -581,8 +578,8 @@ public class Tile {
 
         if(baseQualsIndex != null){
 
-            samRecord.setAttribute(this.barCodeTagName, this.convertByteArrayToString(baseQualsIndex[0]));
-            samRecord.setAttribute("QT", this.convertPhredQualByteArrayToFastqString(baseQualsIndex[1]));
+            samRecord.setAttribute("RT",this.convertByteArrayToString(baseQualsIndex[0]));
+            samRecord.setAttribute("QT",this.convertPhredQualByteArrayToFastqString(baseQualsIndex[1]));
         }
         
         return samRecord;
@@ -730,7 +727,7 @@ public class Tile {
         cycleRangeByRead.put("read2", cycleRangeRead2);
         cycleRangeByRead.put("readIndex", cycleRangeIndex);
 
-        Tile tile = new Tile(intensityDir, baseCallDir, id, lane, tileNumber, cycleRangeByRead, true, true, "RT");
+        Tile tile = new Tile(intensityDir, baseCallDir, id, lane, tileNumber, cycleRangeByRead, true, true);
 
         File outBam = new File("test.bam");
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
