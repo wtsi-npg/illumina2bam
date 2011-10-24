@@ -32,7 +32,7 @@ import net.sf.samtools.util.Iso8601Date;
 
 /**
  *
- * This is the main class to covert Illumina BCL files to BAM
+ * This is the main class to convert Illumina BCL files to BAM
  * 
  * @author Guoying Qi
  */
@@ -154,7 +154,7 @@ public class Illumina2bam extends Illumina2bamCommandLine {
             lane.reduceTileList(this.FIRST_TILE, this.TILE_LIMIT);
         }
 
-        log.info("Generationg bam or sam file output stream with header");
+        log.info("Generating bam or sam file output stream with header");
         SAMFileWriter outBam = lane.generateOutputSamStream();
         
         log.info("Writing Basecall files to bam");

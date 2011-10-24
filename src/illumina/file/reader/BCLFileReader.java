@@ -91,7 +91,7 @@ public class BCLFileReader extends IlluminaFileReader {
                 nextBase = this.inputStream.readByte();
             } catch( EOFException ex) {
                 //end of the file
-                log.error(ex, "There is no mroe cluster in BCL file after cluster " + this.getCurrentCluster()
+                log.error(ex, "There is no more cluster in BCL file after cluster " + this.getCurrentCluster()
                         + " in file " + this.getFileName() );
                 return null;
             }

@@ -117,7 +117,7 @@ public class CLocsFileReader extends IlluminaFileReader {
             }
 
             if (this.currentBlockUnreadClusters < 0) {
-                log.warn("There is no mroe block in " + this.getFileName() + ". Current block: " + this.getCurrentBlock());
+                log.warn("There is no more block in " + this.getFileName() + ". Current block: " + this.getCurrentBlock());
                 return null;
             }
 

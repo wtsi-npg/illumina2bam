@@ -146,8 +146,8 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
         record.setReadBases(newBases);
         record.setBaseQualities(newQualities);
         if(saveTrim){
-            record.setAttribute(this.TRIM_BASE_TAG,   Illumina2bamUtils.covertByteArrayToString( basesTrimmed));
-            record.setAttribute(this.TRIM_QUALITY_TAG, Illumina2bamUtils.covertPhredQulByteArrayToFastqString(qualitiesTrimmed));
+            record.setAttribute(this.TRIM_BASE_TAG,   Illumina2bamUtils.convertByteArrayToString( basesTrimmed));
+            record.setAttribute(this.TRIM_QUALITY_TAG, Illumina2bamUtils.convertPhredQualByteArrayToFastqString(qualitiesTrimmed));
         }
 
         return record;

@@ -587,8 +587,8 @@ public class Tile {
 
         if(baseQualsIndex != null){
 
-            samRecord.setAttribute(this.barcodeSeqTagName, this.covertByteArrayToString(baseQualsIndex[0]));
-            samRecord.setAttribute(this.barcodeQualTagName, this.covertPhredQulByteArrayToFastqString(baseQualsIndex[1]));
+            samRecord.setAttribute(this.barcodeSeqTagName, this.convertByteArrayToString(baseQualsIndex[0]));
+            samRecord.setAttribute(this.barcodeQualTagName, this.convertPhredQualByteArrayToFastqString(baseQualsIndex[1]));
         }
         
         return samRecord;
@@ -654,8 +654,8 @@ public class Tile {
      * @param array
      * @return fastq quality string from phred qual byte array
      */
-    public String covertPhredQulByteArrayToFastqString(byte [] array){
-        return Illumina2bamUtils.covertPhredQulByteArrayToFastqString(array);
+    public String convertPhredQualByteArrayToFastqString(byte [] array){
+        return Illumina2bamUtils.convertPhredQualByteArrayToFastqString(array);
     }
 
     /**
@@ -663,8 +663,8 @@ public class Tile {
      * @param array
      * @return string from a byte array
      */
-    public String covertByteArrayToString(byte [] array){
-        return Illumina2bamUtils.covertByteArrayToString(array);
+    public String convertByteArrayToString(byte [] array){
+        return Illumina2bamUtils.convertByteArrayToString(array);
     }
 
     /**
