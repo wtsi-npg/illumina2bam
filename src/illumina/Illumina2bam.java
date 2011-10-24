@@ -95,6 +95,12 @@ public class Illumina2bam extends Illumina2bamCommandLine {
     @Option(doc="If set, process no more than this many tiles (for debugging).", optional=true)
     public Integer TILE_LIMIT;
     
+    @Option(shortName="BC_SEQ", doc="Tag name for barcode sequence.")
+    public String BARCODE_SEQUENCE_TAG_NAME = "BC";
+
+    @Option(shortName="BC_QUAL", doc="Tag name for barcode quality.")
+    public String BARCODE_QUALITY_TAG_NAME = "QT";
+
     //TODO: add command option to add ci tag
     
     //TODO: add command option to overwrite cycle range per read   
@@ -111,7 +117,13 @@ public class Illumina2bam extends Illumina2bamCommandLine {
           log.info("BaseCalls directory not given, using " + this.BASECALLS_DIR);
         }
 
-        Lane lane = new Lane(this.INTENSITY_DIR.getAbsolutePath(), this.BASECALLS_DIR.getAbsolutePath(), this.LANE, this.GENERATE_SECONDARY_BASE_CALLS, this.PF_FILTER, OUTPUT);
+        Lane lane = new Lane(this.INTENSITY_DIR.getAbsolutePath(),
+                this.BASECALLS_DIR.getAbsolutePath(),
+                this.LANE, this.GENERATE_SECONDARY_BASE_CALLS,
+                this.PF_FILTER,
+                OUTPUT,
+                this.BARCODE_SEQUENCE_TAG_NAME,
+                this.BARCODE_QUALITY_TAG_NAME);
 
         try {
             log.info("Reading config xml files");

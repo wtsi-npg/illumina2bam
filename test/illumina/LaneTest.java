@@ -48,6 +48,8 @@ public class LaneTest {
     private static int laneNumber = 1;
     private static boolean includeSecondCall = true;
     private static boolean pfFilter = true;
+    private static String barcodeSeqTagName = "RT";
+    private static String barcodeQualTagName = "QT";
 
     private static File output = new File("testdata/6000_1.bam");
 
@@ -59,7 +61,7 @@ public class LaneTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {        
-        lane = new Lane(intensityDir, baseCallDir, laneNumber, includeSecondCall, pfFilter, output);
+        lane = new Lane(intensityDir, baseCallDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
     }
 
     @AfterClass
@@ -180,7 +182,7 @@ public class LaneTest {
         boolean includeSecondCall2 = true;
         boolean pfFilter2 = true;
 
-        Lane lane2 = new Lane(intensityDir2, baseCallDir2, laneNumber2, includeSecondCall2, pfFilter2, output);
+        Lane lane2 = new Lane(intensityDir2, baseCallDir2, laneNumber2, includeSecondCall2, pfFilter2, output, barcodeSeqTagName, barcodeQualTagName);
 
         int [] barCodeCycleList = lane2.readBarCodeIndexCycles();
         int [] expected = {76,77,78,79,80,81,82,83};
@@ -295,7 +297,7 @@ public class LaneTest {
         boolean pfFilter2 = true;
         File output3 = new File("testdata/6284_8.bam");
 
-        Lane lane3 = new Lane(intensityDir3, baseCallDir3, laneNumber3, includeSecondCall2, pfFilter2, output3);
+        Lane lane3 = new Lane(intensityDir3, baseCallDir3, laneNumber3, includeSecondCall2, pfFilter2, output3, barcodeSeqTagName, barcodeQualTagName);
 
         int [] barCodeCycleList = lane3.readBarCodeIndexCycles();
         int [] expected = {77, 77};
