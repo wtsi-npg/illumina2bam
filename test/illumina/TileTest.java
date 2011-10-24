@@ -128,16 +128,16 @@ public class TileTest {
     public void checkNextClusterMethods() throws Exception {
 
         byte [][] read1 = tile.getNextClusterBaseQuals("read1");
-        assertEquals(tile.covertByteArrayToString(read1[0]), "NG");
-        assertEquals(tile.covertPhredQulByteArrayToFastqString(read1[1]), "!*");
+        assertEquals(tile.convertByteArrayToString(read1[0]), "NG");
+        assertEquals(tile.convertPhredQualByteArrayToFastqString(read1[1]), "!*");
 
         byte [][] read2 = tile.getNextClusterBaseQuals("read2");
-        assertEquals(tile.covertByteArrayToString(read2[0]), "NN");
-        assertEquals(tile.covertPhredQulByteArrayToFastqString(read2[1]), "!!");
+        assertEquals(tile.convertByteArrayToString(read2[0]), "NN");
+        assertEquals(tile.convertPhredQualByteArrayToFastqString(read2[1]), "!!");
 
         byte [][] readIndex = tile.getNextClusterBaseQuals("readIndex");
-        assertEquals(tile.covertByteArrayToString(readIndex[0]), "N");
-        assertEquals(tile.covertPhredQulByteArrayToFastqString(readIndex[1]), "!");
+        assertEquals(tile.convertByteArrayToString(readIndex[0]), "N");
+        assertEquals(tile.convertPhredQualByteArrayToFastqString(readIndex[1]), "!");
     }
 
 
