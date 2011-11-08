@@ -137,7 +137,7 @@ public class CLocsFileReader extends IlluminaFileReader {
             return pos;
 
         } catch (IOException ex) {
-            log.error(ex, "Problem to read clock file");
+            log.error(ex, "Problem to read clocs file");
         }
 
         return null;

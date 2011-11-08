@@ -48,7 +48,7 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
      * @param fileName bcl, clocs and filter etc illumina file name
      * @throws Exception
      */
-    public IlluminaFileReader(String fileName) throws Exception {
+    public IlluminaFileReader(String fileName) throws FileNotFoundException {
 
         this.fileName = fileName;
         this.openInputFile(fileName);
@@ -59,7 +59,7 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
      * @param fileName
      * @throws Exception
      */
-    private void openInputFile(String fileName) throws Exception {
+    private void openInputFile(String fileName) throws FileNotFoundException {
 
         if (fileName == null) {
             throw new IllegalArgumentException("File name must be given.");
