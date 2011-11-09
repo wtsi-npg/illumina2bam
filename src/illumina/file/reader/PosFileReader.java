@@ -19,22 +19,21 @@
 package illumina.file.reader;
 
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import net.sf.picard.util.Log;
 
 /**
  *
  * @author Guoying Qi
  */
-public class PosFileReader implements Closeable {
+public class PosFileReader extends PositionFileReader  {
 
     private final Log log = Log.getInstance(IlluminaFileReader.class);
-    private final String fileName;
     private BufferedReader fileReader;
-    protected int currentTotalClusters;
+    private int totalCluster;
     
     /**
      * 
@@ -42,15 +41,36 @@ public class PosFileReader implements Closeable {
      * @throws FileNotFoundException 
      */
     public PosFileReader(String fileName) throws FileNotFoundException{
-        this.fileName = fileName;
+        
+        super(fileName);
+        
         this.fileReader = new BufferedReader(new FileReader(this.fileName));
+        
+        this.countTotalClusters();
+    }
+
+
+    private void countTotalClusters(){
+        try {
+            LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(this.fileName));
+
+            lineNumberReader.skip(Long.MAX_VALUE);
+            this.totalCluster = lineNumberReader.getLineNumber();
+            lineNumberReader.close();
+            
+        } catch (FileNotFoundException ex) {
+            log.error(ex, "Pos file not exist");
+        } catch (IOException ex) {
+            log.error(ex, "problems to read pos file");
+        }
     }
 
     /**
      * 
      * @return cluster position coordinates as an array
      */
-    public String [] next() {
+    @Override
+    public PositionFileReader.Position next() {
         String [] pos = new String [2];
         try {
             String nextLine = this.fileReader.readLine();
@@ -70,20 +90,22 @@ public class PosFileReader implements Closeable {
         } catch (IOException ex) {
             log.error(ex, "Problem to read pos file: " + ex);
         }
-        return pos;
+        return new PositionFileReader.Position(pos[0], pos[1]);
     }
-
 
     @Override
-    public void close() throws IOException {
-        this.fileReader.close();
+    public boolean hasNext() {
+          return (this.currentTotalClusters < this.totalCluster) ? true : false;
     }
 
-    /**
-     * @return the currentTotalClusters
-     */
-    public int getCurrentTotalClusters() {
-        return currentTotalClusters;
+    @Override
+    public void close() {
+        super.close();
+        try {
+            this.fileReader.close();
+        } catch (IOException ex) {
+            log.error(ex, "problems to close pos file");
+        }
     }
     
     public static void main (String [] args){
@@ -94,9 +116,16 @@ public class PosFileReader implements Closeable {
            System.err.println(ex);
         }
         for(int i =0; i< 353693; i++){
-            String [] pos = posFileReader.next();
-            //System.out.println(pos[0] + " " + pos[1]);
+             PositionFileReader.Position pos = posFileReader.next();
+             System.out.println(pos.x + " " + pos.y);
         }
+    }
+
+    /**
+     * @return the totalCluster
+     */
+    public int getTotalCluster() {
+        return totalCluster;
     }
     
 }

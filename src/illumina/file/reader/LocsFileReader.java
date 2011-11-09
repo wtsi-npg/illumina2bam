@@ -29,12 +29,11 @@ import net.sf.picard.util.Log;
  * @author Guoying Qi
  */
 
-public class LocsFileReader extends IlluminaFileReader {
+public class LocsFileReader extends PositionFileReader {
     
     private final Log log = Log.getInstance(LocsFileReader.class);
 
     private int totalCluster;
-    private int currentTotalClusters = 0;
 
     /**
      * Constructor
@@ -75,7 +74,7 @@ public class LocsFileReader extends IlluminaFileReader {
      */
 
     @Override
-    public String[] next() {
+    public PositionFileReader.Position next() {
 
         if (!this.hasNext()) {
            throw new RuntimeException("No more cluster available."
@@ -97,7 +96,7 @@ public class LocsFileReader extends IlluminaFileReader {
 
             this.currentTotalClusters++;
 
-            return pos;
+            return new PositionFileReader.Position(pos[0], pos[1]);
 
         } catch (IOException ex) {
             log.error(ex, "Problem to read locs file");
@@ -121,7 +120,7 @@ public class LocsFileReader extends IlluminaFileReader {
         LocsFileReader fr = new LocsFileReader(locsFileName);
         int count = 0;
         while (fr.hasNext()) {
-            String[] pos = fr.next();
+            String[] pos = fr.next().toArray();
             count++;
             if (count % 10000 == 1 && pos != null ) {
                 System.out.println(pos[0] + " " + pos[1]);
@@ -131,7 +130,7 @@ public class LocsFileReader extends IlluminaFileReader {
         System.err.println(fr.currentTotalClusters);
         
         try{
-           String[] next = fr.next();
+           fr.next();
         } catch (Exception ex){
            System.err.println(ex.getMessage());
         }
@@ -145,10 +144,4 @@ public class LocsFileReader extends IlluminaFileReader {
         return totalCluster;
     }
 
-    /**
-     * @return the currentTotalClusters
-     */
-    public int getCurrentTotalClusters() {
-        return currentTotalClusters;
-    }
 }

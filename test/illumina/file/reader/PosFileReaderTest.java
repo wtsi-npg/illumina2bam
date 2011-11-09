@@ -51,13 +51,18 @@ public class PosFileReaderTest {
     public void testConstructorNotOK() throws FileNotFoundException{        
         PosFileReader posFileReader1 = new PosFileReader("testdata/110519_IL33_06284/Data/Intensities/s_8_0112_pos_not_exist.txt");
     }
+    @Test
+    public void testCountTotalClusters(){
+        System.out.println("check total cluster number correct");
+        assertEquals(posFileReader.getTotalCluster(), 353693);
+    }
     
     @Test
     public void testNext() throws FileNotFoundException{
         System.out.println("test next method");
-        String [] firstPos = posFileReader.next();
-        assertEquals(firstPos[0], "1547");
-        assertEquals(firstPos[1], "997");
+        PositionFileReader.Position firstPos = posFileReader.next();
+        assertEquals(firstPos.x, "1547");
+        assertEquals(firstPos.y, "997");
         assertEquals(posFileReader.getCurrentTotalClusters(), 1);
         for(int i = 0; i< 353692; i++){
             posFileReader.next();
@@ -68,7 +73,7 @@ public class PosFileReaderTest {
     @Test
     public void testNoMoreNext(){
         System.out.println("test no more next method");
-        String [] firstPos = posFileReader.next();
+        PositionFileReader.Position firstPos = posFileReader.next();
         assertNull(firstPos);
     }
 }

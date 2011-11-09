@@ -55,7 +55,7 @@ public class CLocsFileReaderTest {
     @Test
     public void checkNextFirstClusterOK() {
 
-        String[] cluster = cLocsFileReader.next();
+        String[] cluster = cLocsFileReader.next().toArray();
         assertEquals(cluster[0], "1235");
         assertEquals(cluster[1], "1989");
         assertEquals(cLocsFileReader.getCurrentBlock(), 247);
@@ -69,7 +69,7 @@ public class CLocsFileReaderTest {
         for (int i = 0; i < 305; i++) {
             cLocsFileReader.next();
         }
-        String[] cluster = cLocsFileReader.next();
+        String[] cluster = cLocsFileReader.next().toArray();
         assertEquals(cluster[0], "1279");
         assertEquals(cluster[1], "2120");
         assertEquals(cLocsFileReader.getCurrentBlock(), 330);
@@ -83,7 +83,7 @@ public class CLocsFileReaderTest {
         String[] cluster = null;
 
         while (cLocsFileReader.getCurrentTotalClusters() < 2609912) {
-            cluster = cLocsFileReader.next();
+            cluster = cLocsFileReader.next().toArray();
         }
         assertEquals(cluster[0], "21324");
         assertEquals(cluster[1], "200731");
@@ -95,7 +95,7 @@ public class CLocsFileReaderTest {
     @Test
     public void checkNextLastBlockOK() {
 
-        String[] cluster = null;
+        PositionFileReader.Position cluster = null;
 
         while (cLocsFileReader.hasNext()) {
             cluster = cLocsFileReader.next();

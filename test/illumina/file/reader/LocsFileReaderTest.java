@@ -64,14 +64,14 @@ public class LocsFileReaderTest {
     public void testNext() throws FileNotFoundException{
         
         System.out.println("test next method");
-        String [] firstPos = locsFileReader.next();
+        String [] firstPos = locsFileReader.next().toArray();
         assertEquals(firstPos[0], "16440");
         assertEquals(firstPos[1], "1321");
         assertEquals(locsFileReader.getCurrentTotalClusters(), 1);
         
         String [] lastPos = null;
         for(int i = 1; i< 235085; i++){
-            lastPos = locsFileReader.next();
+            lastPos = locsFileReader.next().toArray();
         }
         assertEquals(lastPos[0], "15605");
         assertEquals(lastPos[1], "29408");

@@ -85,6 +85,24 @@ public class TileTest {
     }
 
     @Test
+    public void checkPosFileName(){
+        System.out.println("Checking pos file name");
+        assertEquals(tile.getPosFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/s_1_1101_pos.txt");
+    }   
+ 
+    @Test
+    public void checkclocsFileName(){
+        System.out.println("Checking clocs file name");
+        assertEquals(tile.getcLocsFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.clocs");
+    }
+        
+    @Test
+    public void checkLocsFileName(){
+        System.out.println("Checking locs file name");
+        assertEquals(tile.getLocsFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.locs");
+    }
+ 
+    @Test
     public void checkReadName() {
         String[] pos = {"21238", "9999"};
         assertEquals(tile.getReadName(pos), "HS13_6000:1:1101:21238:9999");

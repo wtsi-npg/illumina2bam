@@ -26,7 +26,7 @@ import net.sf.picard.util.Log;
  * This class is a reader of a clocs file
  * @author Guoying Qi
  */
-public class CLocsFileReader extends IlluminaFileReader {
+public class CLocsFileReader extends PositionFileReader {
     
     private final Log log = Log.getInstance(CLocsFileReader.class);
 
@@ -37,7 +37,6 @@ public class CLocsFileReader extends IlluminaFileReader {
     private int totalBlocks;
     private int currentBlock = 0;
     private int currentBlockUnreadClusters;
-    private int currentTotalClusters = 0;
 
     /**
      * Constructor
@@ -97,7 +96,7 @@ public class CLocsFileReader extends IlluminaFileReader {
      * @return [x, y]
      */
     @Override
-    public String[] next() {
+    public PositionFileReader.Position next() {
 
         if (!this.hasNext()) {
            throw new RuntimeException("Try to read a block "
@@ -134,7 +133,7 @@ public class CLocsFileReader extends IlluminaFileReader {
 
             this.currentTotalClusters++;
 
-            return pos;
+            return new PositionFileReader.Position(pos[0],pos[1]);
 
         } catch (IOException ex) {
             log.error(ex, "Problem to read clocs file");
@@ -157,12 +156,6 @@ public class CLocsFileReader extends IlluminaFileReader {
         return currentBlock;
     }
 
-    /**
-     * @return the currentTotalClusters
-     */
-    public int getCurrentTotalClusters() {
-        return currentTotalClusters;
-    }
 
     public static void main(String[] args) throws Exception {
 
@@ -174,7 +167,7 @@ public class CLocsFileReader extends IlluminaFileReader {
         CLocsFileReader fr = new CLocsFileReader(clocsFileName);
         int count = 0;
         while (fr.hasNext()) {
-            String[] pos = fr.next();
+            String[] pos = fr.next().toArray();
             count++;
             if (count % 100000 == 1 && pos != null ) {
                 System.out.println(pos[0] + " " + pos[1]);
@@ -183,7 +176,7 @@ public class CLocsFileReader extends IlluminaFileReader {
         System.err.println(fr.getCurrentTotalClusters());
         
         try{
-           String[] next = fr.next();
+           String[] next = fr.next().toArray();
         } catch (Exception ex){
            System.err.println(ex.getMessage());
         }

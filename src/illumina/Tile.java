@@ -23,7 +23,9 @@ import illumina.file.reader.CLocsFileReader;
 import illumina.file.reader.BCLFileReader;
 import illumina.file.reader.SCLFileReader;
 import illumina.file.reader.IlluminaFileReader;
+import illumina.file.reader.LocsFileReader;
 import illumina.file.reader.PosFileReader;
+import illumina.file.reader.PositionFileReader;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -71,7 +73,8 @@ public class Tile {
 
     //file name
     private final String cLocsFileName;
-    protected final String posFileName;
+    private final String posFileName;
+    private final String locsFileName;
     private final String filterFileName;
 
     //file reader list
@@ -148,7 +151,12 @@ public class Tile {
                 + this.laneSubDir
                 + File.separator
                 + this.tileNameInFour + ".clocs";
-        
+        this.locsFileName = this.intensityDir
+                + File.separator
+                + this.laneSubDir
+                + File.separator
+                + this.tileName + ".locs";
+
         this.posFileName = this.intensityDir
                 + File.separator
                 + this.tileNameInFour + "_pos.txt";
@@ -167,22 +175,26 @@ public class Tile {
         FilterFileReader filterFileReader = new FilterFileReader(this.getFilterFileName());
         
         File clocsFile = new File( this.getcLocsFileName() );
+        File locsFile = new File( this.getLocsFileName() );
         File posFile = new File( this.getPosFileName() );
-
-        CLocsFileReader clocsFileReader = null;
-        PosFileReader posFileReader = null;
-        boolean clocsExisted;
+        
+        PositionFileReader positionReader = null;
 
         if(clocsFile.exists()){
+            
            log.info("open clocs file: " + this.getcLocsFileName());
-           clocsFileReader = new CLocsFileReader(this.getcLocsFileName());
-           clocsExisted = true;
+           positionReader = new CLocsFileReader(this.getcLocsFileName());
+        }else if(locsFile.exists()){
+            
+           log.info("open locs file: " + this.getLocsFileName()) ;
+           positionReader = new LocsFileReader(this.getLocsFileName());
         }else if( posFile.exists() ) {
+            
            log.info("open pos file: " + this.getPosFileName());
-           posFileReader = new PosFileReader(this.getPosFileName());
-           clocsExisted = false;
+           positionReader = new PosFileReader(this.getPosFileName());
         }else{
-            String errorMessage = "Both clocs and pos files are not available for this tile: "
+            
+            String errorMessage = "clocs, locs and pos files are not available for this tile: "
                     + this.getcLocsFileName() + " "
                     + this.getPosFileName();
             log.error(errorMessage);
@@ -207,13 +219,9 @@ public class Tile {
             clusterIndex++;
 
             //position
-            String[] pos;
-            if(clocsExisted){
-                pos = clocsFileReader.next();
-            }else{
-                pos = posFileReader.next();
-            }
-            String readName = this.getReadName(pos);
+            PositionFileReader.Position pos = positionReader.next();
+
+            String readName = this.getReadName(pos.toArray());
 
             //filtered
             int filtered = (Integer) filterFileReader.next();
@@ -266,33 +274,23 @@ public class Tile {
        
 
         //check number of clusters from filter file match the cluster nubmer in clocs file
-        if (clocsFileReader != null && clocsFileReader.getCurrentTotalClusters() != totalClusterInTile) {
+        int totalCurrentClusters = positionReader.getCurrentTotalClusters();
+        if (positionReader.getCurrentTotalClusters() != totalClusterInTile) {
             throw new Exception("Number of clusters in clocs file does not match filter file "
                     + filterFileReader.getTotalClusters() + " "
-                    + clocsFileReader.getCurrentTotalClusters());
+                    + positionReader.getCurrentTotalClusters());
         }
-      
-        int totalCurrentClusters = 0;
-        if(clocsFileReader != null){
-             totalCurrentClusters = clocsFileReader.getCurrentTotalClusters();
-        }else if(posFileReader != null){
-             totalCurrentClusters = posFileReader.getCurrentTotalClusters();
-        }
+
         log.debug("Correct number of clusters processed in clocs or pos file: " + totalCurrentClusters);
         
-        if(clocsFileReader != null && clocsFileReader.hasNext()){
+        if(positionReader.hasNext()){
             log.debug("There may be more clusters in clocs file");
         }
 
         log.info(filterFileReader.getCurrentPFClusters() + " PF clusters in this tile out of total " + totalClusterInTile);
 
         //close clocs or pos,  and filter file
-        if(clocsFileReader != null){
-            clocsFileReader.close();
-        }
-        if(posFileReader != null){
-            posFileReader.close();
-        }
+        positionReader.close();
         filterFileReader.close();
     }
     
@@ -760,5 +758,12 @@ public class Tile {
      */
     public String getPosFileName() {
         return posFileName;
+    }
+
+    /**
+     * @return the locsFileName
+     */
+    public String getLocsFileName() {
+        return locsFileName;
     }
 }

@@ -45,7 +45,7 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
 
     /**
      *
-     * @param fileName bcl, clocs and filter etc illumina file name
+     * @param fileName bcl, clocs, locs, pos and filter etc illumina file name
      * @throws Exception
      */
     public IlluminaFileReader(String fileName) throws FileNotFoundException {
