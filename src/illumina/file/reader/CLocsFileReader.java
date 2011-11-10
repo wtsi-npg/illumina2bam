@@ -47,10 +47,7 @@ public class CLocsFileReader extends PositionFileReader {
 
         super(cLocsFileName);
 
-
         this.readFileHeader();
-
-
     }
 
     /**

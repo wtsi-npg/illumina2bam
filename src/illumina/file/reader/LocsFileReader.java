@@ -104,7 +104,14 @@ public class LocsFileReader extends PositionFileReader {
 
         return null;
     }
-
+ 
+    /**
+     * @return the totalCluster
+     */
+    public int getTotalCluster() {
+        return totalCluster;
+    }
+    
     /**
      * 
      * @param args
@@ -135,13 +142,6 @@ public class LocsFileReader extends PositionFileReader {
            System.err.println(ex.getMessage());
         }
 
-    }
-
-    /**
-     * @return the totalCluster
-     */
-    public int getTotalCluster() {
-        return totalCluster;
     }
 
 }

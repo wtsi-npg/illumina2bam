@@ -20,11 +20,9 @@ package illumina.file.reader;
 
 
 import java.io.FileNotFoundException;
-import net.sf.picard.util.Log;
-
 
 /**
- * This class try to open a Illumina file into a data input stream, base class for all file reader classes
+ * This class try to open a Illumina position file including clocs, locs or pos file into a data input stream
  * 
  * @author Guoying Qi
  */
