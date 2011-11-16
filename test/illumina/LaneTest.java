@@ -68,7 +68,11 @@ public class LaneTest {
     public static void tearDownClass() throws Exception {
         lane = null;
     }
-
+    @Test (expected = RuntimeException.class)
+    public void bothConfigfileNotAvailable(){
+       Lane failedLane = new Lane(intensityDir + "_not", baseCallDir + "_not", laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+    }
+    
     @Test
     public void readBaseCallProgramOK(){
         SAMProgramRecord baseCallProgram = lane.readBaseCallProgramRecord();
