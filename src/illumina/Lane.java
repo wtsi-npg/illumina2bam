@@ -312,6 +312,8 @@ public class Lane {
     }
     
     private void readRunConfig() throws Exception{
+        
+        log.info("Reading run config from BaseCalls or Intensities");
         //read tile list
         this.tileList = this.readTileList();
         if(tileList == null || tileList.length == 0){
