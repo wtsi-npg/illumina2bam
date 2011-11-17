@@ -33,6 +33,7 @@ import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFileWriterFactory;
 import net.sf.samtools.SAMProgramRecord;
+import net.sf.samtools.SAMReadGroupRecord;
 import net.sf.samtools.SAMRecord;
 
 /**
@@ -45,12 +46,13 @@ public class ChangeBamHeader extends Illumina2bamCommandLine {
     
     private final String programName = "ChangeBamHeader";
     
-    private final String programDS = "Add extra PGs into bam header";
+    private final String programDS = "Add extra PGs into bam header,"
+            + " or change SM, LB or DS tag in RG line in header and this only works with one read group in the input bam. ";
    
     @Usage(programVersion= version)
     public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". "; 
     
-    @Option(shortName=StandardOptionDefinitions.INPUT_SHORT_NAME, doc="The input SAM or BAM file.")
+    @Option(shortName=StandardOptionDefinitions.INPUT_SHORT_NAME, doc="The input SAM or BAM file. ")
     public File INPUT;
     
     @Option(shortName=StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc="The ouput SAM or BAM file. ")
@@ -60,7 +62,16 @@ public class ChangeBamHeader extends Illumina2bamCommandLine {
             + " including ID, PN, VN and CL etc, PP id will be reset."
             + " Each field including tag name and value separated by colon.")
     public final List<String> PG = new ArrayList<String>();
-
+    
+    @Option(shortName="SM", doc="The sample name in the only RG group. ", optional=true)
+    public String SAMPLE;
+    
+    @Option(shortName="LB", doc="The library name in the only RG group. ", optional=true)
+    public String LIBRARY;
+    
+    @Option(shortName="DS", doc="The description in the only RG group. ", optional=true)
+    public String DESCRIPTION;
+    
     @Override
     protected int doWork() {
         
@@ -75,12 +86,35 @@ public class ChangeBamHeader extends Illumina2bamCommandLine {
         final SAMFileHeader outputHeader = header.clone();
         List<SAMProgramRecord> pgList = header.getProgramRecords();
 
-        for(String pg_fields: this.PG){
-            SAMProgramRecord pg = this.getProgramRecordFromString(pg_fields);
-            pg = this.makeUniqueProgramId(pgList, pg);
-            this.addProgramRecordToHead(outputHeader, pg);
+        if (this.PG.size() > 0) {
+            log.info("Add extra PG into output header");
+            for (String pg_fields : this.PG) {
+                SAMProgramRecord pg = this.getProgramRecordFromString(pg_fields);
+                pg = this.makeUniqueProgramId(pgList, pg);
+                this.addProgramRecordToHead(outputHeader, pg);
+            }
         }
 
+        if(this.SAMPLE != null || this.LIBRARY != null || this.DESCRIPTION != null){
+            
+            log.info("Change Read group");
+            
+            List<SAMReadGroupRecord> readGroupList = outputHeader.getReadGroups();
+            if(readGroupList.size() != 1){
+                throw new RuntimeException("This program only can change bam with one read group");
+            }
+            SAMReadGroupRecord rg = readGroupList.get(0);
+            if(this.SAMPLE != null){
+               rg.setSample(this.SAMPLE);
+            }
+            if(this.LIBRARY != null){
+                rg.setLibrary(this.LIBRARY);
+            }
+            if(this.DESCRIPTION != null){
+                rg.setDescription(this.DESCRIPTION);
+            }
+        }
+        
         this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
         
         log.info("Open output file with header: " + OUTPUT.getName());

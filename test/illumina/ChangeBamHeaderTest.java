@@ -71,14 +71,17 @@ public class ChangeBamHeaderTest {
             "PG=ID:samtools_sorting;PN:samtools;VN:0.1.12a (r862);CL:samtools sort",
             "CREATE_MD5_FILE=true",
             "TMP_DIR=testdata/",
-            "VALIDATION_STRINGENCY=SILENT"
+            "VALIDATION_STRINGENCY=SILENT",
+            "LB=newLB",
+            "SM=newSM",
+            "DS=newDS",               
         };
 
         changer.instanceMain(args);
         
         System.out.println(changer.getCommandLine());
         assertEquals(changer.getCommandLine(),
-                "illumina.ChangeBamHeader INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_header_changed.bam PG=[ID:samtools_sorting;PN:samtools;VN:0.1.12a (r862);CL:samtools sort] TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
+                "illumina.ChangeBamHeader INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_header_changed.bam PG=[ID:samtools_sorting;PN:samtools;VN:0.1.12a (r862);CL:samtools sort] SAMPLE=newSM LIBRARY=newLB DESCRIPTION=newDS TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
                     );
     }
     
@@ -96,6 +99,6 @@ public class ChangeBamHeaderTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "f76aa0fcf4094d3fa571ff3c863945b2");
+        assertEquals(md5, "8acdf8b4f327994a0c1dc1f387f359dd");
     }
 }
