@@ -129,7 +129,7 @@ public class Illumina2bam extends Illumina2bamCommandLine {
             log.info("Reading config xml files");
             lane.readConfigs();
         } catch (Exception ex) {
-            log.error("Problems to read config xml file: " + ex.getMessage());
+            log.error(ex, "Problems to read config files");
             return 1;
         }
         
@@ -161,7 +161,7 @@ public class Illumina2bam extends Illumina2bamCommandLine {
         try {
             lane.processTiles(outBam);
         } catch (Exception ex) {
-            log.error( "Problems to process tiles " + ex.getMessage() );
+            log.error(ex, "Problems to process tiles ");
             return 1;
         }
 

@@ -629,6 +629,9 @@ public class Lane {
         try {
             XPathExpression exprRunfolder = xpath.compile("RunParameters/RunFolder/text()");
             Node runfolderNode = (Node) exprRunfolder.evaluate(this.runConfigXmlNode, XPathConstants.NODE);
+            if(runfolderNode == null){
+                return null;
+            }
             runfolder = runfolderNode.getNodeValue();
         } catch (XPathExpressionException ex) {
             log.warn(ex, "Problems to read runfolder");
@@ -647,14 +650,17 @@ public class Lane {
         try {
             XPathExpression exprRunDate = xpath.compile("RunParameters/RunFolderDate/text()");
             Node runDateNode = (Node) exprRunDate.evaluate(this.runConfigXmlNode, XPathConstants.NODE);
+            if(runDateNode == null){
+                return null;
+            }
             String runDateString = runDateNode.getNodeValue();
             SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
             runDate = formatter.parse(runDateString);
         } catch (ParseException ex) {
-            log.warn(ex, "Problems to parse run date");
+            log.warn(ex, "Problems parsing run date");
         } catch (XPathExpressionException ex) {
-            log.warn(ex, "Problems to read run date");
-        }
+            log.warn(ex, "Problems reading run date");
+        }  
 
         return runDate;
     }
