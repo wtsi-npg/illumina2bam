@@ -59,7 +59,7 @@ public class BamMergerTest {
         };
 
         merger.instanceMain(args);   
-        assertEquals(merger.getCommandLine(), "illumina.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_merged.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa KEEP_ALL_PG=false KEEP_EXTRA_UNMAPPED_READS=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
+        assertEquals(merger.getCommandLine(), "illumina.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_merged.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa KEEP_ALL_PG=false KEEP_EXTRA_UNMAPPED_READS=false REPLACE_ALIGNED_BASE_QUALITY=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
               );
 
     }
@@ -78,7 +78,7 @@ public class BamMergerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "f807b9572ad8f1a2aa44db4158fad887");
+        assertEquals(md5, "12b165f2aa05ea4062913d85810bc54b");
     }
 
     /**
@@ -101,8 +101,7 @@ public class BamMergerTest {
 
         merger.instanceMain(args);
         
-        assertEquals(merger.getCommandLine(), "illumina.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8_extra_reads.sam OUTPUT=testdata/6210_8_merged_extra_reads.bam KEEP_EXTRA_UNMAPPED_READS=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa KEEP_ALL_PG=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
-        
+        assertEquals(merger.getCommandLine(), "illumina.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8_extra_reads.sam OUTPUT=testdata/6210_8_merged_extra_reads.bam KEEP_EXTRA_UNMAPPED_READS=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa KEEP_ALL_PG=false REPLACE_ALIGNED_BASE_QUALITY=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
         File mergedBamFile = new File("testdata/6210_8_merged_extra_reads.bam");
         mergedBamFile.deleteOnExit();
 
@@ -111,7 +110,7 @@ public class BamMergerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "74020dfec4ae9029a18685d36fd1e6b5");
+        assertEquals(md5, "5af45d5495ecb84095309f34ce759110");
     }
     
     /**
@@ -133,8 +132,7 @@ public class BamMergerTest {
 
         merger.instanceMain(args);
         
-        assertEquals(merger.getCommandLine(), "illumina.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8_extra_reads.sam OUTPUT=testdata/6210_8_merged_extra_reads_no_keep.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa KEEP_ALL_PG=false KEEP_EXTRA_UNMAPPED_READS=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
-        
+        assertEquals(merger.getCommandLine(), "illumina.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8_extra_reads.sam OUTPUT=testdata/6210_8_merged_extra_reads_no_keep.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa KEEP_ALL_PG=false KEEP_EXTRA_UNMAPPED_READS=false REPLACE_ALIGNED_BASE_QUALITY=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
         File mergedBamFile = new File("testdata/6210_8_merged_extra_reads_no_keep.bam");
         mergedBamFile.deleteOnExit();
 
@@ -143,6 +141,6 @@ public class BamMergerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "a68d818d8e88da000f91265f3bf8bdb6");
+        assertEquals(md5, "f8c1cb14d122b460c37afc95daaa04e5");
     }
 }

@@ -20,6 +20,7 @@ package illumina;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.StandardOptionDefinitions;
@@ -92,7 +93,9 @@ public class BamMerger extends Illumina2bamCommandLine {
     @Option(shortName= "KEEP", doc="KEEP extra unmapped reads in unmapped bam file to the final output if true.")
     public Boolean KEEP_EXTRA_UNMAPPED_READS = false;
 
-
+    @Option(shortName= "REPLACE_QUAL", doc="Replace base qualities in aligned bam wtih the ones in unaligned bam if true.")
+    public Boolean REPLACE_ALIGNED_BASE_QUALITY = false;
+    
     @Override
     protected int doWork() {
       
@@ -236,6 +239,17 @@ public class BamMerger extends Illumina2bamCommandLine {
         boolean isNegativeStrand2 = record.getReadNegativeStrandFlag();
         if( isNegativeStrand1 != isNegativeStrand2 ){
             SAMRecordUtil.reverseComplement(record);
+        }
+
+
+        if( ! Arrays.equals( alignment.getReadBases(), record.getReadBases() ) ){
+            throw new RuntimeException( "Bases are different for read " + record.getReadName() );
+        }
+        
+        if(this.REPLACE_ALIGNED_BASE_QUALITY){
+            alignment.setBaseQualities(record.getBaseQualities());
+        }else if( ! Arrays.equals( alignment.getBaseQualities(), record.getBaseQualities() ) ){
+            throw new RuntimeException( "Qualities are different for read " + record.getReadName() );
         }
         
         alignment.setReadFailsVendorQualityCheckFlag(record.getReadFailsVendorQualityCheckFlag());
