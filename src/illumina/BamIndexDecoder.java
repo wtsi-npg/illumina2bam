@@ -80,9 +80,12 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
     @Option(doc="The extension name for split file when you want to split output by barcodes: bam or sam", mutex = {"OUTPUT"})
     public String OUTPUT_FORMAT;
     
-    @Option(doc="The tag name used to store barcode read in bam records")
+    @Option(shortName="BC_SEQ", doc="The tag name used to store barcode read in bam records")
     public String BARCODE_TAG_NAME = "BC";
 
+    @Option(shortName="BC_QUAL", doc="Tag name for barcode quality.")
+    public String BARCODE_QUALITY_TAG_NAME = "QT";
+  
     @Option(doc="Barcode sequence.  These must be unique, and all the same length.", mutex = {"BARCODE_FILE"})
     public List<String> BARCODE = new ArrayList<String>();
 
@@ -102,6 +105,12 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
 
     @Option(doc="Maximum allowable number of no-calls in a barcode read before it is considered unmatchable.")
     public int MAX_NO_CALLS = 2;
+    
+    @Option(doc="Convert low quality bases in barcode read to Ns .")
+    public boolean CONVERT_LOW_QUALITY_TO_NO_CALL = false;
+    
+    @Option(doc="Max low quality phred value to convert bases in barcode read to Ns .")
+    private int MAX_LOW_QUALITY_TO_CONVERT = 15;
 
     private int barcodeLength;
     
@@ -138,14 +147,23 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
         while(inIterator.hasNext()){
             
             String barcodeRead = null;
+            String barcodeQual = null;
 
             SAMRecord record = inIterator.next();            
             String readName = record.getReadName();
             boolean isPaired = record.getReadPairedFlag();
             boolean isPf = ! record.getReadFailsVendorQualityCheckFlag();
+
             Object barcodeReadObject = record.getAttribute(this.BARCODE_TAG_NAME);
             if(barcodeReadObject != null){
                     barcodeRead = barcodeReadObject.toString();
+            }
+
+            if( this.CONVERT_LOW_QUALITY_TO_NO_CALL ){
+               Object barcodeQualObject = record.getAttribute( this.BARCODE_QUALITY_TAG_NAME );
+               if(barcodeQualObject != null){
+                    barcodeQual = barcodeQualObject.toString();
+               }
             }
             
             SAMRecord pairedRecord = null;
@@ -168,14 +186,27 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
                     throw new RuntimeException("barcode read bases are different in paired two reads: "
                             + barcodeReadObject + " " + barcodeReadObject2);
                 } else if( barcodeRead == null && barcodeReadObject2 != null ){
+                    
                     barcodeRead = barcodeReadObject2.toString();
+                    
+                    if (this.CONVERT_LOW_QUALITY_TO_NO_CALL) {
+                        Object barcodeQualObject2 = pairedRecord.getAttribute(this.BARCODE_QUALITY_TAG_NAME);
+                        if (barcodeQualObject2 != null) {
+                            barcodeQual = barcodeQualObject2.toString();
+                        }
+                    }
                 }                
             }
             
             if(barcodeRead == null ){
                 throw new RuntimeException("No barcode read found for record: " + readName );
             }
-            
+
+            if (this.CONVERT_LOW_QUALITY_TO_NO_CALL) {
+               
+               barcodeRead = this.checkBarcodeQuality(barcodeRead, barcodeQual);
+            }
+
             if(barcodeRead.length() < this.barcodeLength){
                 throw new RuntimeException("The barcode read length is less than barcode lenght: " + readName );
             }else{            
@@ -351,6 +382,30 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
             return null;
         }
         return messages.toArray(new String[messages.size()]);
+    }
+    
+    public String checkBarcodeQuality(String barcodeRead, String barcodeQual){
+
+        if(barcodeQual == null){
+            return barcodeRead;
+        }
+        if(barcodeRead == null || barcodeRead.length() != barcodeQual.length()){
+            throw new RuntimeException("Barcode read sequence not available or its lenght not match quality length ");
+        }
+
+        StringBuilder newBarcodeRead = new StringBuilder(barcodeRead.length());
+        for (int i = 0; i<barcodeRead.length(); i++){
+            int qual = (int) barcodeQual.charAt(i);
+            char base = barcodeRead.charAt(i);
+
+            if(qual <= this.MAX_LOW_QUALITY_TO_CONVERT + 33 ){
+                newBarcodeRead.append('N');
+            }else{
+                newBarcodeRead.append(base);
+            }
+        }
+        
+        return newBarcodeRead.toString();
     }
 
     public static void main(final String[] argv) {

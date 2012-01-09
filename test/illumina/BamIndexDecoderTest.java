@@ -36,7 +36,19 @@ public class BamIndexDecoderTest {
     public BamIndexDecoderTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
-    
+
+    /**
+     * Test of instanceMain method and program record.
+     */
+    @Test
+    public void testCheckBarcodeQualityMethod() throws IOException {
+        
+        System.out.println("test check barcode quality method");
+        
+        BamIndexDecoder decoder = new BamIndexDecoder();
+        assertEquals("NNGATCTG", decoder.checkBarcodeQuality("CAGATCTG", "%#144=D@"));
+    }
+
     /**
      * Test of instanceMain method and program record.
      */
@@ -64,19 +76,14 @@ public class BamIndexDecoderTest {
 
         decoder.instanceMain(args);
         System.out.println(decoder.getCommandLine());
-        assertEquals(decoder.getCommandLine(), "illumina.BamIndexDecoder INPUT=testdata/bam/6383_8.sam"
-                + " OUTPUT=testdata/6383_8/6383_8.sam BARCODE_TAG_NAME=RT BARCODE_FILE=testdata/decode/6383_8.tag"
-                + " METRICS_FILE=testdata/6383_8/6383_8.metrics TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT"
-                + " CREATE_MD5_FILE=true    MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 VERBOSITY=INFO"
-                + " QUIET=false"
-                + " COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        assertEquals(decoder.getCommandLine(), "illumina.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT=testdata/6383_8/6383_8.sam BARCODE_TAG_NAME=RT BARCODE_FILE=testdata/decode/6383_8.tag METRICS_FILE=testdata/6383_8/6383_8.metrics TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    BARCODE_QUALITY_TAG_NAME=QT MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 CONVERT_LOW_QUALITY_TO_NO_CALL=false MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
         File outputFile = new File(outputName + ".sam");
         File outputMetrics = new File(outputName + ".metrics");
         File outputMd5 = new File(outputName + ".sam.md5");
         
         BufferedReader md5Stream = new BufferedReader(new FileReader(outputMd5 ));
         String md5 = md5Stream.readLine();
-        assertEquals(md5, "78390346d7ee0f6b3d9467ff08fb31df");
+        assertEquals(md5, "8306bd0953ab3f23e83c25f1b9ccd72a");
         
         outputFile.delete();
         outputMetrics.delete();
@@ -109,22 +116,19 @@ public class BamIndexDecoderTest {
             "CREATE_MD5_FILE=true",
             "TMP_DIR=testdata/",
             "VALIDATION_STRINGENCY=SILENT",
-            "BARCODE_TAG_NAME=RT"
+            "BARCODE_TAG_NAME=RT",
+            "BARCODE_QUALITY_TAG_NAME=QT",
+            "CONVERT_LOW_QUALITY_TO_NO_CALL=true"
         };
 
         decoder.instanceMain(args);
         System.out.println(decoder.getCommandLine());
-        assertEquals(decoder.getCommandLine(), "illumina.BamIndexDecoder INPUT=testdata/bam/6383_8.sam"
-                + " OUTPUT_DIR=testdata/6383_8_split OUTPUT_PREFIX=6383_8 OUTPUT_FORMAT=bam BARCODE_TAG_NAME=RT"
-                + " BARCODE_FILE=testdata/decode/6383_8.tag METRICS_FILE=testdata/6383_8_split/6383_8.metrics"
-                + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    MAX_MISMATCHES=1"
-                + " MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 VERBOSITY=INFO QUIET=false"
-                + " COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        assertEquals(decoder.getCommandLine(), "illumina.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT_DIR=testdata/6383_8_split OUTPUT_PREFIX=6383_8 OUTPUT_FORMAT=bam BARCODE_TAG_NAME=RT BARCODE_QUALITY_TAG_NAME=QT BARCODE_FILE=testdata/decode/6383_8.tag METRICS_FILE=testdata/6383_8_split/6383_8.metrics CONVERT_LOW_QUALITY_TO_NO_CALL=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
         
         
         File outputMetrics = new File(outputName + "/6383_8.metrics");
         outputMetrics.delete();
-        String [] md5s = {"3c26286d343069dc74e36219f04fbd9c", "ec174a399a5115d7ce9ab8b3678dc9ad", "20c021071494b3f72a8131c350e1b81e"};
+        String [] md5s = {"b733df40361a51368f64a55e7f5d2dc2", "7780bb31d5dcbef67472c182c0773cfc", "eb03854e37d3b98c0ae140b70f26e0ef"};
         for (int i=0;i<3;i++){
             File outputFile = new File(outputName + "/6383_8#" + i + ".bam");
             outputFile.delete();
