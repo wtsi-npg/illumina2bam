@@ -327,7 +327,7 @@ public class Lane {
 
         this.id = this.readInstrumentAndRunID();
         if(id == null){
-            log.warn("Problems to read run id and instruament name from config file:" + this.baseCallsConfig);
+            log.warn("Problems to read run id and instrument name from config file:" + this.baseCallsConfig);
             this.id = "";
         }else{
             log.info("Instrument name and run id to be used as part of read name: " + this.id );
