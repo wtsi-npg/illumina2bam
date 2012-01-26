@@ -41,7 +41,7 @@ public class AlignmentFilter extends Illumina2bamCommandLine {
     
     private final Log log = Log.getInstance(AlignmentFilter.class);
     
-    private final String programName = "AlignmentFiler";
+    private final String programName = "AlignmentFilter";
     
     private final String programDS = "Give a list of SAM/BAM files with the same set of records and in the same order "
                                    + "but aligned with different references, "
@@ -103,7 +103,8 @@ public class AlignmentFilter extends Illumina2bamCommandLine {
         int outputCount = 0;
         for(File outFile : OUTPUT_ALIGNMENT){
            final SAMFileHeader outputHeader = inputReaderList.get(outputCount).getFileHeader().clone();
-           outputHeader.addProgramRecord(this.getThisProgramRecord(programName, programDS));
+           outputHeader.setSortOrder(SAMFileHeader.SortOrder.unsorted);
+           this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
            final SAMFileWriter out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader,  true, outFile);
            outputWriterList.add(out);
            outputCount++;
