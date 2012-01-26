@@ -80,6 +80,7 @@ public abstract class Illumina2bamCommandLine extends CommandLineProgram {
         int count = 1;
         while(programIdList.get(newProgramId) != null ){
             newProgramId = programId + "_" + count;
+            count++;
         }
         if(newProgramId.equalsIgnoreCase(programId)){
             return programRecord;
