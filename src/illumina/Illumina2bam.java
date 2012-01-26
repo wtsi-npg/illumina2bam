@@ -46,6 +46,9 @@ public class Illumina2bam extends Illumina2bamCommandLine {
     @Usage(programVersion=version)
     public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". ";
     
+    @Option(shortName="R", doc="Illumina runfolder directory including runParameters xml file under it.", optional=true)
+    public File RUN_FOLDER;
+    
     @Option(shortName="I", doc="Illumina intensities directory including config xml file, and clocs files under lane directory.")
     public File INTENSITY_DIR;
 

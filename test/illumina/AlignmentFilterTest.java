@@ -73,7 +73,7 @@ public class AlignmentFilterTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "0c0bcc57d18f94deada3d583b45003c6");
+        assertEquals(md5, "be1ccf2127fb718e7e49b1b9ae84cd19");
         
         File filteredHumanBamFile = new File("testdata/986_1_human.bam");
         filteredHumanBamFile.deleteOnExit();
@@ -83,7 +83,7 @@ public class AlignmentFilterTest {
         BufferedReader humanMd5Stream = new BufferedReader(new FileReader(humanMd5File));
         String humanMd5 = humanMd5Stream.readLine();
 
-        assertEquals(humanMd5, "61fa52750c683db52596622c31114ddf");
+        assertEquals(humanMd5, "6fb543f1c6bcc945ccb8eb579b53c70b");
 
     }
 
