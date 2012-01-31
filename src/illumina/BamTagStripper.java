@@ -93,7 +93,7 @@ public class BamTagStripper extends Illumina2bamCommandLine {
             tagToRemoveHash.put(tag, true);
         }
 
-        final Pattern upperCasePattern = Pattern.compile("^[A-Z][A-Z]$");
+        final Pattern upperCasePattern = Pattern.compile("^[A-Z][A-z0-9]$");
         
         final HashSet<String> strippedTagList = new HashSet<String>();
         
