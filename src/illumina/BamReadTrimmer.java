@@ -110,6 +110,10 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
     }
     
     public SAMRecord trimSAMRecord(SAMRecord record, int firstPos, int trimLength, boolean saveTrim){
+        
+        if (record.getReadNegativeStrandFlag()) {
+             throw new RuntimeException("Read"+ record.getReadName() + "is reversed. Reversed read are not expected.");
+        }
 
         byte[] bases = record.getReadBases();
         byte[] qualities = record.getBaseQualities();
