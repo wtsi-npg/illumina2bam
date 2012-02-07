@@ -25,6 +25,7 @@ import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.Usage;
 import net.sf.picard.io.IoUtil;
 import net.sf.picard.util.Log;
+import net.sf.samtools.Cigar;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileWriter;
@@ -169,10 +170,15 @@ public class AlignmentFilter extends Illumina2bamCommandLine {
                 firstAlignedIndex = outputCount -1;
                 tempOut = outputWriterList.get(firstAlignedIndex);
             }
-
-            tempOut.addAlignment(recordList.get(firstAlignedIndex));
+            
+            SAMRecord samRecord = recordList.get(firstAlignedIndex);
+            this.removeAlignmentsFromUnalignedRecord(samRecord);
+            tempOut.addAlignment(samRecord);
+            
             if(isPairedRead){
-                tempOut.addAlignment(pairedRecordList.get(firstAlignedIndex));
+                samRecord = pairedRecordList.get(firstAlignedIndex);
+                this.removeAlignmentsFromUnalignedRecord(samRecord);
+                tempOut.addAlignment(samRecord);
             }
         }
  
@@ -189,7 +195,24 @@ public class AlignmentFilter extends Illumina2bamCommandLine {
 
         return 0;
     }
+    
+    private void removeAlignmentsFromUnalignedRecord (SAMRecord samRecord){
 
+        if(!samRecord.getReadUnmappedFlag()){
+            return;
+        }
+
+        samRecord.setReferenceIndex(-1);
+        samRecord.setAlignmentStart(0);
+        samRecord.setMateReferenceIndex(-1);
+        samRecord.setMateAlignmentStart(0);
+        samRecord.setCigar(new Cigar());
+        samRecord.setAttribute("MD", null);
+        samRecord.setInferredInsertSize(0);
+        samRecord.setMappingQuality(0);
+    }
+
+    
     public int checkOneRecord ( List<SAMRecord> recordList,  List<SAMRecord> pairedRecordList, boolean isPairedRead){
        
         if( isPairedRead && ( recordList.size() != pairedRecordList.size() ) ){
