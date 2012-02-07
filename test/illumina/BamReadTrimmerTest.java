@@ -62,7 +62,7 @@ public class BamReadTrimmerTest {
         };
 
         trimmer.instanceMain(args);
- System.out.println(trimmer.getCommandLine());
+        System.out.println(trimmer.getCommandLine());
  
         assertEquals(trimmer.getCommandLine(), "illumina.BamReadTrimmer "
                 + "INPUT=testdata/bam/6210_8.sam "
@@ -77,10 +77,34 @@ public class BamReadTrimmerTest {
 
     }
     
-     /**
+    /**
      * Test trimming sam record methods
      */
     @Test
+    public void testErrorIfReadReversed(){
+        System.out.println("Error should be thrown if the read to be trimmed is reverse complemented.");
+        
+        String bases     = "CCCTCCTACTACCACCAAAATTT";
+        String qualities = "!998997<99DDDDD<>>><<><";
+        
+        SAMFileHeader header = new SAMFileHeader();        
+        SAMRecord record = new SAMRecord(header);
+        record.setReadString(bases);
+        record.setBaseQualityString(qualities);
+              
+        trimmer.trimSAMRecord(record, 1, 5, true);
+        
+        assertEquals(record.getReadString(), "CTACTACCACCAAAATTT");
+        assertEquals(record.getBaseQualityString(), "97<99DDDDD<>>><<><");
+        
+        assertEquals(record.getAttribute("rs"),"CCCTC");
+        assertEquals(record.getAttribute("qs"),"!9989");
+    }
+    
+    /**
+     * Test trimming sam record methods
+     */
+    @Test(expected= RuntimeException.class)
     public void testTrimmingSamRecord(){
         System.out.println("Testing trimming reads");
         
@@ -91,14 +115,9 @@ public class BamReadTrimmerTest {
         SAMRecord record = new SAMRecord(header);
         record.setReadString(bases);
         record.setBaseQualityString(qualities);
+        record.setReadNegativeStrandFlag(true);
         
         trimmer.trimSAMRecord(record, 1, 5, true);
-        
-        assertEquals(record.getReadString(), "CTACTACCACCAAAATTT");
-        assertEquals(record.getBaseQualityString(), "97<99DDDDD<>>><<><");
-        
-        assertEquals(record.getAttribute("rs"),"CCCTC");
-        assertEquals(record.getAttribute("qs"),"!9989");
     }
     
     /**
