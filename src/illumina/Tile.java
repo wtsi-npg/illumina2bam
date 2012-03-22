@@ -58,6 +58,9 @@ public class Tile {
     //fields for tag name
     private final String barcodeSeqTagName;
     private final String barcodeQualTagName;
+    
+    private String secondBarcodeSeqTagName;
+    private String secondBarcodeQualTagName;
 
     private final HashMap<String, int[]> cycleRangeByRead;
 
@@ -70,6 +73,7 @@ public class Tile {
     private final String tileNameInFour;
     private final boolean pairedRead;
     private final boolean indexed;
+    private final boolean dualIndexed;
 
     //file name
     private final String cLocsFileName;
@@ -139,6 +143,12 @@ public class Tile {
         } else {
             this.indexed = false;
         }
+        
+        if (cycleRangeByRead.get("readIndex2") != null) {
+            this.dualIndexed = true;
+        } else {
+            this.dualIndexed = false;
+        }
 
         this.laneSubDir = "L00" + this.laneNumber;
         this.tileName = "s_" + this.laneNumber + "_" + this.tileNumber;
@@ -170,6 +180,10 @@ public class Tile {
      * @throws Exception
      */
     public void processTile(SAMFileWriter outputSam) throws Exception {
+        
+        if(this.dualIndexed && (this.secondBarcodeQualTagName == null || this.secondBarcodeSeqTagName == null)){
+            throw new RuntimeException("Dual index run but tag names for second barcode not given.");
+        }
         
         log.info("Open filter file: " + this.getFilterFileName());
         FilterFileReader filterFileReader = new FilterFileReader(this.getFilterFileName());
@@ -240,6 +254,12 @@ public class Tile {
             if(this.isIndexed()){
                  basesQualsIndex = this.getNextClusterBaseQuals("readIndex");
             }
+            
+            //second index read
+            byte [][] basesQualsIndex2 = null;
+            if( this.dualIndexed ){
+                 basesQualsIndex2 = this.getNextClusterBaseQuals("readIndex2");
+            }
 
             //second call
             String secondBases1 = null;
@@ -254,10 +274,10 @@ public class Tile {
 
             //write to bam
             if(!(this.pfFilter && filtered == 0)){
-                SAMRecord recordRead1 = this.getSAMRecord(samFileHeader, readName, clusterIndex, basesQuals1, secondBases1, basesQualsIndex, filtered, pairedRead, true);
+                SAMRecord recordRead1 = this.getSAMRecord(samFileHeader, readName, clusterIndex, basesQuals1, secondBases1, basesQualsIndex, basesQualsIndex2, filtered, pairedRead, true);
                 this.writeToBam(outputSam, recordRead1);
                 if(this.pairedRead){
-                    SAMRecord recordRead2 = this.getSAMRecord(samFileHeader, readName, clusterIndex, basesQuals2, secondBases2, null, filtered, pairedRead, false);
+                    SAMRecord recordRead2 = this.getSAMRecord(samFileHeader, readName, clusterIndex, basesQuals2, secondBases2, null, null, filtered, pairedRead, false);
                     this.writeToBam(outputSam, recordRead2);
                 }
             }
@@ -538,6 +558,7 @@ public class Tile {
             byte [][] baseQuals,
             String secondBases,
             byte [][] baseQualsIndex,
+            byte [][] baseQualsIndex2,
             int filter,
             boolean paired,
             boolean firstRead) {
@@ -587,6 +608,12 @@ public class Tile {
 
             samRecord.setAttribute(this.barcodeSeqTagName, this.convertByteArrayToString(baseQualsIndex[0]));
             samRecord.setAttribute(this.barcodeQualTagName, this.convertPhredQualByteArrayToFastqString(baseQualsIndex[1]));
+        }
+        
+        if(baseQualsIndex2 != null){
+
+            samRecord.setAttribute(this.secondBarcodeSeqTagName, this.convertByteArrayToString(baseQualsIndex2[0]));
+            samRecord.setAttribute(this.secondBarcodeQualTagName, this.convertPhredQualByteArrayToFastqString(baseQualsIndex2[1]));
         }
         
         return samRecord;
@@ -765,5 +792,19 @@ public class Tile {
      */
     public String getLocsFileName() {
         return locsFileName;
+    }
+
+    /**
+     * @param secondBarcodeSeqTagName the secondBarcodeSeqTagName to set
+     */
+    public void setSecondBarcodeSeqTagName(String secondBarcodeSeqTagName) {
+        this.secondBarcodeSeqTagName = secondBarcodeSeqTagName;
+    }
+
+    /**
+     * @param secondBarcodeQualTagName the secondBarcodeQualTagName to set
+     */
+    public void setSecondBarcodeQualTagName(String secondBarcodeQualTagName) {
+        this.secondBarcodeQualTagName = secondBarcodeQualTagName;
     }
 }

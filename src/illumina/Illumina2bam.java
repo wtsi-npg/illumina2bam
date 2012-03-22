@@ -46,10 +46,10 @@ public class Illumina2bam extends Illumina2bamCommandLine {
     @Usage(programVersion=version)
     public final String USAGE = this.getStandardUsagePreamble() + this.programDS + ". ";
     
-    @Option(shortName="R", doc="Illumina runfolder directory including runParameters xml file under it.", optional=true)
+    @Option(shortName="R", doc="Illumina runfolder directory including runParameters xml file under it, upwards two levels from Intensities directory if not given.", optional=true)
     public File RUN_FOLDER;
     
-    @Option(shortName="I", doc="Illumina intensities directory including config xml file, and clocs files under lane directory.")
+    @Option(shortName="I", doc="Illumina intensities directory including config xml file, and clocs, locs or pos files under lane directory.")
     public File INTENSITY_DIR;
 
     @Option(shortName="B", doc="Illumina basecalls directory including config xml file, and filter files, bcl, maybe scl files under lane cycle directory, using BaseCalls directory under intensities if not given. ", optional=true)
@@ -103,6 +103,12 @@ public class Illumina2bam extends Illumina2bamCommandLine {
 
     @Option(shortName="BC_QUAL", doc="Tag name for barcode quality.")
     public String BARCODE_QUALITY_TAG_NAME = "QT";
+    
+    @Option(shortName="SEC_BC_SEQ", doc="Tag name for second  barcode sequence.", optional=true)
+    public String SECOND_BARCODE_SEQUENCE_TAG_NAME;
+
+    @Option(shortName="SEC_BC_QUAL", doc="Tag name for second barcode quality.", optional=true)
+    public String SECOND_BARCODE_QUALITY_TAG_NAME;  
 
     //TODO: add command option to add ci tag
     
@@ -114,19 +120,50 @@ public class Illumina2bam extends Illumina2bamCommandLine {
 
         IoUtil.assertFileIsWritable(OUTPUT);
         
+        IoUtil.assertDirectoryIsReadable(this.INTENSITY_DIR);
+        
         if(this.BASECALLS_DIR == null){
             
           this.BASECALLS_DIR = new File(INTENSITY_DIR.getAbsoluteFile() + File.separator + "BaseCalls");
           log.info("BaseCalls directory not given, using " + this.BASECALLS_DIR);
         }
+        IoUtil.assertDirectoryIsReadable(this.BASECALLS_DIR);
+        
+        if( this.RUN_FOLDER == null ){
+            try{
+                this.RUN_FOLDER = this.INTENSITY_DIR.getParentFile().getParentFile();
+                log.info("Runfolder not given, using " + this.RUN_FOLDER );
+            } catch (NullPointerException ex){
+                log.warn("Runfolder not given and can not be set from intensity directory: " + ex.toString());
+            }
+        }        
+        String runfolderPath = null;
+        if( this.RUN_FOLDER != null ){
+           IoUtil.assertDirectoryIsReadable(this.RUN_FOLDER);
+           runfolderPath = this.RUN_FOLDER.getAbsolutePath();
+        }   
 
         Lane lane = new Lane(this.INTENSITY_DIR.getAbsolutePath(),
                 this.BASECALLS_DIR.getAbsolutePath(),
-                this.LANE, this.GENERATE_SECONDARY_BASE_CALLS,
+                runfolderPath,
+                this.LANE,
+                this.GENERATE_SECONDARY_BASE_CALLS,
                 this.PF_FILTER,
-                OUTPUT,
+                this.OUTPUT,
                 this.BARCODE_SEQUENCE_TAG_NAME,
                 this.BARCODE_QUALITY_TAG_NAME);
+        
+               
+        if ( (this.SECOND_BARCODE_QUALITY_TAG_NAME != null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME == null)
+            || (this.SECOND_BARCODE_QUALITY_TAG_NAME == null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME != null) )
+        {
+            
+            log.warn("Both SECOND_BARCODE_SEQUENCE_TAG_NAME and SECOND_BARCODE_QUALITY_TAG_NAME need to be given togeter or both missing");
+        }else if(this.SECOND_BARCODE_QUALITY_TAG_NAME != null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME != null){
+            
+            lane.setSecondBarcodeSeqTagName(this.SECOND_BARCODE_SEQUENCE_TAG_NAME);
+            lane.setSecondBarcodeQualTagName(this.SECOND_BARCODE_QUALITY_TAG_NAME);
+        }
 
         try {
             log.info("Reading config xml files");

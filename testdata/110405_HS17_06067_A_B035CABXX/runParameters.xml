@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RunParameters xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Setup>
+    <ExperimentName>06000</ExperimentName>
+    <ScanID>-999</ScanID>
+    <FCPosition>B</FCPosition>
+    <WorkFlowType>CUSTOM</WorkFlowType>
+    <PairEndFC>false</PairEndFC>
+    <Read1>100</Read1>
+    <IndexRead1>8</IndexRead1>
+    <IndexRead2>0</IndexRead2>
+    <Read2>100</Read2>
+    <OutputFolder>Y:\ILorHSany_sf32\incoming</OutputFolder>
+    <PeriodicSave>Save All Thumbnails</PeriodicSave>
+    <Flowcell>HiSeq Flow Cell v3</Flowcell>
+    <FirstBaseConfirmation>true</FirstBaseConfirmation>
+    <ControlLane>0</ControlLane>
+    <KeepIntensityFiles>true</KeepIntensityFiles>
+    <Sbs>TruSeq SBS Kit v3</Sbs>
+    <Pe>TruSeq PE Cluster Kit v3 - cBot - HS</Pe>
+    <Index>TruSeq Dual Index Sequencing Primer Box</Index>
+    <AlignToPhiX>
+      <Lane>1</Lane>
+      <Lane>2</Lane>
+      <Lane>3</Lane>
+      <Lane>4</Lane>
+      <Lane>5</Lane>
+      <Lane>6</Lane>
+      <Lane>7</Lane>
+      <Lane>8</Lane>
+    </AlignToPhiX>
+    <CycleWaitDefinitions/>
+    <ApplicationName>HiSeq Control Software</ApplicationName>
+    <ApplicationVersion>1.5.15</ApplicationVersion>
+    <RunID>120204_HS27_06000_B_C0BY2ACXX</RunID>
+    <RunStartDate>120204</RunStartDate>
+    <ScannerID>SN1121</ScannerID>
+    <ScanNumber>78</ScanNumber>
+    <ComputerName>HS27</ComputerName>
+    <FPGAVersion>3.2.06</FPGAVersion>
+    <CPLDVersion>3.0.14</CPLDVersion>
+    <RTAVersion>1.13.57</RTAVersion>
+    <ChemistryVersion>Illumina,Bruno Fluidics Controller,0,v2.0340</ChemistryVersion>
+    <CameraFirmware>3.00-F22</CameraFirmware>
+    <CameraDriver>5.57.4.3277</CameraDriver>
+    <FocusCameraFirmware/>
+    <Barcode>C0BY2ACXX</Barcode>
+    <Username>pav</Username>
+    <SelectedSections>
+      <Section Name="A_1"/>
+      <Section Name="B_1"/>
+      <Section Name="C_1"/>
+      <Section Name="D_1"/>
+      <Section Name="E_1"/>
+      <Section Name="F_1"/>
+      <Section Name="G_1"/>
+      <Section Name="H_1"/>
+    </SelectedSections>
+    <FocusMethod>DynamicITF</FocusMethod>
+    <SelectedSurface>BothLaneSurfaces</SelectedSurface>
+    <SwathScanMode>AutoSwath</SwathScanMode>
+    <EnableLft>true</EnableLft>
+    <AutoTiltOnce>true</AutoTiltOnce>
+    <EnableAutoCenter>true</EnableAutoCenter>
+    <EnableAnalysis>true</EnableAnalysis>
+    <EnableBasecalling>true</EnableBasecalling>
+    <EnableCameraLogging>false</EnableCameraLogging>
+    <AdapterPlate>HiSeq Adapter Plate</AdapterPlate>
+    <SlideHolder>HiSeq Flow Cell Holder</SlideHolder>
+    <TemplateCycleCount>4</TemplateCycleCount>
+    <NumAnalysisThreads>8</NumAnalysisThreads>
+    <FPGADynamicFocusSettings>
+      <MaxInitialZJumpHalfUm>3</MaxInitialZJumpHalfUm>
+      <MaxSubsequentZJumpHalfUm>7</MaxSubsequentZJumpHalfUm>
+      <NumberOfInitialZJumps>0</NumberOfInitialZJumps>
+      <CVGainStart>500</CVGainStart>
+      <CVGainPosLocked>500</CVGainPosLocked>
+      <Offset>250</Offset>
+      <HotPixel>350</HotPixel>
+      <MotorDelayFrames>25</MotorDelayFrames>
+      <DitherSize>100</DitherSize>
+      <IntensityCeiling>65535</IntensityCeiling>
+      <IGain>100</IGain>
+      <IHistory>4</IHistory>
+    </FPGADynamicFocusSettings>
+    <TileWidth>2048</TileWidth>
+    <TileHeight>20000</TileHeight>
+    <ImageWidth>2048</ImageWidth>
+    <ImageHeight>160000</ImageHeight>
+    <LaneLength>60</LaneLength>
+    <NumTilesPerSwath>8</NumTilesPerSwath>
+    <NumSwaths>3</NumSwaths>
+    <UseExistingRecipe>false</UseExistingRecipe>
+    <Reads>
+      <Read Number="1" NumCycles="100" IsIndexedRead="N"/>
+      <Read Number="2" NumCycles="8" IsIndexedRead="Y"/>
+      <Read Number="3" NumCycles="100" IsIndexedRead="N"/>
+    </Reads>
+    <EnableNotifications>false</EnableNotifications>
+    <ReagentKits>
+      <Sbs>
+        <SbsReagentKit>
+          <ID>6997286</ID>
+          <Prime>false</Prime>
+          <NumberCyclesRemaining>101</NumberCyclesRemaining>
+          <IsNew50Cycle>false</IsNew50Cycle>
+          <IsNew200Cycle>true</IsNew200Cycle>
+        </SbsReagentKit>
+        <SbsReagentKit>
+          <ID>12345</ID>
+          <Prime>false</Prime>
+          <NumberCyclesRemaining>209</NumberCyclesRemaining>
+          <IsNew50Cycle>false</IsNew50Cycle>
+          <IsNew200Cycle>true</IsNew200Cycle>
+        </SbsReagentKit>
+      </Sbs>
+      <Index>
+        <ReagentKit>
+          <ID>ipcr</ID>
+        </ReagentKit>
+        <ReagentKit>
+          <ID>12345</ID>
+        </ReagentKit>
+      </Index>
+      <Pe>
+        <ReagentKit>
+          <ID>6957225</ID>
+        </ReagentKit>
+      </Pe>
+    </ReagentKits>
+    <Resume>true</Resume>
+    <ResumeCycle>208</ResumeCycle>
+    <SupportMultipleSurfacesInUI>true</SupportMultipleSurfacesInUI>
+    <TempFolder>E:\Runs\120204_HS27_06000_B_C0BY2ACXX</TempFolder>
+    <RecipeFragmentVersion>1.3.26</RecipeFragmentVersion>
+    <PromptForPeReagents>true</PromptForPeReagents>
+    <MockRun>false</MockRun>
+  </Setup>
+  <Version>1</Version>
+</RunParameters>

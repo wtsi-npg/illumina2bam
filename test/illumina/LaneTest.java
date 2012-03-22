@@ -45,6 +45,7 @@ public class LaneTest {
 
     private static String intensityDir = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities";
     private static String baseCallDir = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls";
+    private static String runfolderDir = "testdata/110323_HS13_06000_B_B039WABXX";
     private static int laneNumber = 1;
     private static boolean includeSecondCall = true;
     private static boolean pfFilter = true;
@@ -61,7 +62,7 @@ public class LaneTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {        
-        lane = new Lane(intensityDir, baseCallDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+        lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
     }
 
     @AfterClass
@@ -70,7 +71,7 @@ public class LaneTest {
     }
     @Test (expected = RuntimeException.class)
     public void bothConfigfileNotAvailable(){
-       Lane failedLane = new Lane(intensityDir + "_not", baseCallDir + "_not", laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+       Lane failedLane = new Lane(intensityDir + "_not", baseCallDir + "_not", null, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
     }
     
     @Test
@@ -179,14 +180,53 @@ public class LaneTest {
     }
     
     @Test
+    public void readCycleRangeFromRunParameters(){
+
+        System.out.println("Checking cycle range from run parameters file");
+        
+        String intensityDir2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities";
+        String baseCallDir2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/BaseCalls";
+        String runfolderDir2 = "testdata/110405_HS17_06067_A_B035CABXX";
+        int laneNumber2 = 1;
+        boolean includeSecondCall2 = true;
+        boolean pfFilter2 = true;
+
+        Lane lane2 = new Lane(intensityDir2, baseCallDir2, runfolderDir2, laneNumber2, includeSecondCall2, pfFilter2, output, barcodeSeqTagName, barcodeQualTagName);
+
+        
+        HashMap<String, int[]> cycleRangeByRead = lane2.getCycleRangeByReadFromRunParametersFile();
+        
+        assertEquals(cycleRangeByRead.keySet().size(), 3);
+        
+        int [] read1CycleRange = {1,100};
+        assertArrayEquals(cycleRangeByRead.get("read1"), read1CycleRange);
+        
+        int [] read2CycleRange = {109,208};
+        assertArrayEquals(cycleRangeByRead.get("read2"), read2CycleRange);
+        
+        int [] readIndex1CycleRange = {101,108};
+        assertArrayEquals(cycleRangeByRead.get("readIndex"), readIndex1CycleRange);
+        
+        SAMProgramRecord instrumentProgram = lane2.readInstrumentProgramRecordFromRunParameterFile();
+        assertEquals( instrumentProgram.getId(), "SCS");
+        assertEquals( instrumentProgram.getProgramName(), "HiSeq Control Software");
+        assertEquals( instrumentProgram.getProgramVersion(), "1.5.15");
+        assertEquals( instrumentProgram.getAttribute("DS"), "Controlling software on instrument");
+
+    }
+    
+    @Test
     public void checkReadCycleRangeOK() throws Exception {
+        
+        System.out.println("Check read cycle range");
+        
         String intensityDir2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities";
         String baseCallDir2 = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/BaseCalls";
         int laneNumber2 = 1;
         boolean includeSecondCall2 = true;
         boolean pfFilter2 = true;
 
-        Lane lane2 = new Lane(intensityDir2, baseCallDir2, laneNumber2, includeSecondCall2, pfFilter2, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane2 = new Lane(intensityDir2, baseCallDir2, null, laneNumber2, includeSecondCall2, pfFilter2, output, barcodeSeqTagName, barcodeQualTagName);
 
         int [] barCodeCycleList = lane2.readBarCodeIndexCycles();
         int [] expected = {76,77,78,79,80,81,82,83};
@@ -199,11 +239,12 @@ public class LaneTest {
         assertArrayEquals(cycleRangeByRead.get("read2"), read2CycleRange);
         int [] readIndexCycleRange = {76, 83};
         assertArrayEquals(cycleRangeByRead.get("readIndex"), readIndexCycleRange);
-
+        
     }
 
     @Test
     public void readInstrumentProgramOK(){
+
         SAMProgramRecord instrumentProgram = lane.readInstrumentProgramRecord();
         assertEquals( instrumentProgram.getId(), "SCS");
         assertEquals( instrumentProgram.getProgramName(), "RTA");
@@ -213,12 +254,14 @@ public class LaneTest {
 
     @Test
     public void readConfigsOK() throws Exception{
+        
         assertTrue(lane.readConfigs());
     }
 
     @Test
     public void generateHeaderOK() throws Exception{
 
+        System.out.println("Generate output bam header");
         SAMReadGroupRecord readGroup = new SAMReadGroupRecord("1");
         lane.setReadGroup(readGroup);
 
@@ -242,6 +285,8 @@ public class LaneTest {
     @Test
     public void generateOutputSamStreamOK() throws Exception{
 
+        System.out.println("Generate output stream");
+        
         SAMFileWriterFactory.setDefaultCreateMd5File(true);
         SAMFileWriter outputSam = lane.generateOutputSamStream();
         assertNotNull(outputSam);
@@ -257,7 +302,9 @@ public class LaneTest {
 
     @Test
     public void processTilesOK() throws IOException, Exception{
-
+        
+        System.out.println("Process Tiles");
+        
         String id = "HS13_6000";
         int[] cycleRangeRead1 = {1, 2};
         int[] cycleRangeRead2 = {51, 52};
@@ -292,19 +339,22 @@ public class LaneTest {
         assertEquals(md5, "3e256b176c26283991ce0704457f0d3d");
     }
     
-    
+    @Test
     public void checkGARunOK() throws Exception {
+        
+        System.out.println("Test a GA run");
+        
         String intensityDir3 = "testdata/110519_IL33_06284/Data/Intensities/";
         String baseCallDir3 = "testdata/110519_IL33_06284/Data/Intensities/BaseCalls";
         int laneNumber3 = 8;
-        boolean includeSecondCall2 = false;
-        boolean pfFilter2 = true;
+        boolean includeSecondCall3 = false;
+        boolean pfFilter3 = true;
         File output3 = new File("testdata/6284_8.bam");
 
-        Lane lane3 = new Lane(intensityDir3, baseCallDir3, laneNumber3, includeSecondCall2, pfFilter2, output3, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane3 = new Lane(intensityDir3, baseCallDir3, null, laneNumber3, includeSecondCall3, pfFilter3, output3, barcodeSeqTagName, barcodeQualTagName);
 
         int [] barCodeCycleList = lane3.readBarCodeIndexCycles();
-        int [] expected = {77, 77};
+        int [] expected = {77};
         assertArrayEquals(barCodeCycleList, expected);
 
         HashMap<String, int[]> cycleRangeByRead = lane3.checkCycleRangeByRead();
@@ -315,12 +365,57 @@ public class LaneTest {
         int [] readIndexCycleRange = {77, 77};
         assertArrayEquals(cycleRangeByRead.get("readIndex"), readIndexCycleRange);
         
+        lane3.readConfigs();
         int [] tileList = lane3.getTileList();
         assertEquals(tileList.length, 120);
         assertEquals(tileList[0], 1);
         
         assertEquals(lane3.getBaseCallProgram().getProgramName(), "Bustard");
         assertEquals(lane3.getBaseCallProgram().getProgramVersion(), "1.8.1a2");
+
+    }
+    
+    @Test
+    public void checkMiSeqRunOK() throws Exception {
+        
+        System.out.println("Test a MiSeq run");
+        
+        String intensityDir4 = "testdata/120110_M00119_0068_AMS0002022-00300/Data/Intensities";
+        String baseCallDir4 = "testdata/120110_M00119_0068_AMS0002022-00300/Data/Intensities/BaseCalls";
+        String runFolder = "testdata/120110_M00119_0068_AMS0002022-00300";
+        int laneNumber4 = 1;
+        boolean includeSecondCall4 = false;
+        boolean pfFilter4 = true;
+        File output4 = new File("testdata/miseq_1.bam");
+
+        Lane lane4 = new Lane(intensityDir4, baseCallDir4, runFolder, laneNumber4, includeSecondCall4, pfFilter4, output4, barcodeSeqTagName, barcodeQualTagName);
+
+        HashMap<String, int[]> cycleRangeByRead = lane4.getCycleRangeByReadFromRunParametersFile();
+        assertEquals(cycleRangeByRead.size(), 4);
+        
+        int [] cycleRangeRead1 = {1,151};
+        int [] cycleRangeRead2 = {168,318};
+        int [] cycleRangeIndex = {152,159};
+        int [] cycleRangeIndex2 = {160,167};
+        assertArrayEquals(cycleRangeByRead.get("read1"), cycleRangeRead1);
+        assertArrayEquals(cycleRangeByRead.get("read2"), cycleRangeRead2);
+        assertArrayEquals(cycleRangeByRead.get("readIndex"), cycleRangeIndex);
+        assertArrayEquals(cycleRangeByRead.get("readIndex2"), cycleRangeIndex2);
+        
+        lane4.readConfigs();
+        
+        cycleRangeByRead = lane4.getCycleRangeByRead();
+        assertEquals(cycleRangeByRead.size(), 3);
+        int [] cycleRangeMergedIndex = {152, 167};
+        assertArrayEquals(cycleRangeByRead.get("readIndex"), cycleRangeMergedIndex);
+        assertArrayEquals(cycleRangeByRead.get("read1"), cycleRangeRead1);
+        assertArrayEquals(cycleRangeByRead.get("read2"), cycleRangeRead2);
+        
+        SAMProgramRecord instrumentProgram = lane4.readInstrumentProgramRecordFromRunParameterFile();
+        assertEquals( instrumentProgram.getId(), "SCS");
+        assertEquals( instrumentProgram.getProgramName(), "MiSeq Control Software");
+        assertEquals( instrumentProgram.getProgramVersion(), "1.1.1");
+        assertEquals( instrumentProgram.getAttribute("DS"), "Controlling software on instrument");
 
     }
 }

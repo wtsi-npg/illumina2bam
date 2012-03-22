@@ -115,10 +115,25 @@ public class TileTest {
         String secondBases = "AAA";
         byte [][] baseQualsIndex = {{84, 67}, {37 ,34} };
         SAMRecord record = tile.getSAMRecord(
-                null, readName, 5, baseQuals, secondBases, baseQualsIndex, 0, true, true);
+                null, readName, 5, baseQuals, secondBases, baseQualsIndex, null, 0, true, true);
         String result = "HS13_6000:1:1101:21238:9999	589"
                 + "	*	*	0	*	*	*	*	"
                 + "NG	BA	E2:Z:AAA	RG:Z:1	QT:Z:FC	RT:Z:TC	ci:i:5";
+        assertEquals(record.format(), result);
+    }
+    
+    @Test
+    public void checkOneSAMRecordDualIndex() {
+        byte [][] baseQuals = { {78, 71}, {33, 32}};
+        String readName = "HS13_6000:1:1101:21238:9999";
+        String secondBases = "AAA";
+        byte [][] baseQualsIndex = {{84, 67}, {37 ,34} };
+        byte [][] baseQualsIndex2 = {{84, 67}, {37 ,34} };
+        tile.setSecondBarcodeSeqTagName("sb");
+        tile.setSecondBarcodeQualTagName("qd");
+        SAMRecord record = tile.getSAMRecord(
+                null, readName, 5, baseQuals, secondBases, baseQualsIndex, baseQualsIndex2, 0, true, true);
+        String result = "HS13_6000:1:1101:21238:9999	589	*	*	0	*	*	*	*	NG	BA	E2:Z:AAA	RG:Z:1	QT:Z:FC	RT:Z:TC	sb:Z:TC	qd:Z:FC	ci:i:5";
         assertEquals(record.format(), result);
     }
 
