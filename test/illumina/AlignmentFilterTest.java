@@ -19,14 +19,10 @@
  */
 package illumina;
 
+import java.io.*;
 import java.util.TimeZone;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * This is the test class for BamMerger
@@ -137,6 +133,9 @@ public class AlignmentFilterTest {
         unalignedMd5File.deleteOnExit();
         BufferedReader unalignedMd5Stream = new BufferedReader(new FileReader(unalignedMd5File));
         String unalignedMd5 = unalignedMd5Stream.readLine();
+        
+        File metricsFile = new File("testdata/986_1_human.bam_alignment_filter_metrics.json");
+        metricsFile.deleteOnExit();
 
         assertEquals(unalignedMd5, "2004eb37d54723f6d7e84eeb02965d71");
 
