@@ -84,10 +84,16 @@ public class AlignmentFilter extends Illumina2bamCommandLine {
         }
 
         if(this.OUTPUT_UNALIGNED != null ){
+            
             IoUtil.assertFileIsWritable(this.OUTPUT_UNALIGNED);
+            
+            if(this.METRICS_FILE == null){
+                this.METRICS_FILE = new File(this.OUTPUT_UNALIGNED.getAbsoluteFile() + "_alignment_filter_metrics.json");
+            }
         }
-        
+
         if(this.METRICS_FILE == null){
+            
             this.METRICS_FILE = new File(this.OUTPUT_ALIGNMENT.get(this.OUTPUT_ALIGNMENT.size() -1 ).getAbsoluteFile() + "_alignment_filter_metrics.json");
         }
         IoUtil.assertFileIsWritable(METRICS_FILE);
