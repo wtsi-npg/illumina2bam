@@ -133,6 +133,11 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
         final SAMFileHeader header = in.getFileHeader();
         
         this.generateOutputFile(header);
+        List<SAMReadGroupRecord> readGroupList = header.getReadGroups();
+        String readGroupOnlyIdInHeader = null;
+        if(readGroupList.size() == 1){
+            readGroupOnlyIdInHeader = readGroupList.get(0).getId();
+        }
                 
         log.info("Decoding records");        
         SAMRecordIterator inIterator = in.iterator();
@@ -216,11 +221,10 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
             
             String barcodeName = this.barcodeNameList.get(barcode);
 
-            record.setReadName(readName + "#" + barcodeName);
-            record.setAttribute("RG", record.getAttribute("RG") + "#" + barcodeName);
+            this.markBarcode(record, barcodeName, readGroupOnlyIdInHeader);
+            
             if (isPaired) {
-                pairedRecord.setReadName(readName + "#" + barcodeName);
-                pairedRecord.setAttribute("RG", pairedRecord.getAttribute("RG") + "#" + barcodeName);
+                this.markBarcode(pairedRecord, barcodeName, readGroupOnlyIdInHeader);
             }
             
             if( OUTPUT != null ){
@@ -254,6 +258,21 @@ public class BamIndexDecoder extends Illumina2bamCommandLine {
         log.info("All finished");
 
         return 0;
+    }
+    
+    private SAMRecord markBarcode(SAMRecord record, String barcodeName, String readGroupOnlyIdInHeader) {
+
+        String readName = record.getReadName();
+        record.setReadName(readName + "#" + barcodeName);
+
+        Object oldReadGroupId = record.getAttribute("RG");
+        if (oldReadGroupId == null && readGroupOnlyIdInHeader != null) {
+            oldReadGroupId = readGroupOnlyIdInHeader;
+        } else if( oldReadGroupId == null ) {
+            throw new RuntimeException("No read group id given for read " + readName + " and more than one read group defined in header");
+        }
+        record.setAttribute("RG", oldReadGroupId + "#" + barcodeName);
+        return record;
     }
     
     public void generateOutputFile(SAMFileHeader header) {
