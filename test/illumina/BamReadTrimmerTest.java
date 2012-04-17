@@ -18,16 +18,12 @@
  */
 package illumina;
 
+import java.io.*;
 import java.util.TimeZone;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMRecord;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * This is the test class for BamReadTrimmer
@@ -81,17 +77,18 @@ public class BamReadTrimmerTest {
      * Test trimming sam record methods
      */
     @Test
-    public void testErrorIfReadReversed(){
-        System.out.println("Error should be thrown if the read to be trimmed is reverse complemented.");
+    public void testTrimmingSamRecord(){
+        System.out.println("Testing trimming sam record");
         
         String bases     = "CCCTCCTACTACCACCAAAATTT";
         String qualities = "!998997<99DDDDD<>>><<><";
         
         SAMFileHeader header = new SAMFileHeader();        
         SAMRecord record = new SAMRecord(header);
+        record.setReadNegativeStrandFlag(false);
         record.setReadString(bases);
         record.setBaseQualityString(qualities);
-              
+            
         trimmer.trimSAMRecord(record, 1, 5, true);
         
         assertEquals(record.getReadString(), "CTACTACCACCAAAATTT");
@@ -104,9 +101,9 @@ public class BamReadTrimmerTest {
     /**
      * Test trimming sam record methods
      */
-    @Test(expected= RuntimeException.class)
-    public void testTrimmingSamRecord(){
-        System.out.println("Testing trimming reads");
+    @Test
+    public void testTrimmingReversedSamRecord(){
+        System.out.println("Testing trimming reversed reads");
         
         String bases     = "CCCTCCTACTACCACCAAAATTT";
         String qualities = "!998997<99DDDDD<>>><<><";
@@ -118,6 +115,12 @@ public class BamReadTrimmerTest {
         record.setReadNegativeStrandFlag(true);
         
         trimmer.trimSAMRecord(record, 1, 5, true);
+        
+        assertEquals(record.getReadString(), "CCCTCCTACTACCACCAA");
+        assertEquals(record.getBaseQualityString(), "!998997<99DDDDD<>>");
+        assertEquals(record.getAttribute("rs"),"AAATT");
+        assertEquals(record.getAttribute("qs"),"<><<>");
+        
     }
     
     /**
@@ -134,7 +137,8 @@ public class BamReadTrimmerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "14744e03e9d48bc0ce1bb1e35cdcfbb6");
+        assertEquals(md5, "0996da7e4a6a6ebcb89e943eea63c85d");
+
     }
 
 }
