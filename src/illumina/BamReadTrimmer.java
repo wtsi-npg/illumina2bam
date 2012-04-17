@@ -19,16 +19,14 @@
 package illumina;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.StandardOptionDefinitions;
 import net.sf.picard.cmdline.Usage;
 import net.sf.picard.io.IoUtil;
 import net.sf.picard.util.Log;
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFileWriterFactory;
-import net.sf.samtools.SAMRecord;
+import net.sf.samtools.*;
 
 
 /**
@@ -71,7 +69,10 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
     public String TRIM_BASE_TAG = "rs";
     
     @Option(shortName="QS", doc="Tag name to be used for timmed qualities.", optional=true)
-    public String TRIM_QUALITY_TAG = "qs";   
+    public String TRIM_QUALITY_TAG = "qs";
+    
+    @Option(shortName="TAG", doc= "A list of tags to keep.")
+    public final List<String> TAG_TO_KEEP = new ArrayList<String>();
 
 
     @Override
@@ -86,20 +87,24 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
         
         final SAMFileHeader header = in.getFileHeader();
         final SAMFileHeader outputHeader = header.clone();
+        outputHeader.setSequenceDictionary(new SAMSequenceDictionary());
+        outputHeader.setSortOrder(SAMFileHeader.SortOrder.unsorted);
         this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
         
         log.info("Open output file with header: " + OUTPUT.getName());
         final SAMFileWriter out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader,  true, OUTPUT);
         
+        this.TAG_TO_KEEP.add("RG");
+        
         log.info("Trimming records");
         for (SAMRecord record : in) {
-            if (this.ONLY_FORWARD_READ && record.getReadPairedFlag() && record.getFirstOfPairFlag()) {
-                
-                SAMRecord trimmedRecord = this.trimSAMRecord(record, this.FIRST_POSITION_TO_TRIM, this.TRIM_LENGTH, this.SAVE_TRIM);
+  
+            if ( this.ONLY_FORWARD_READ && record.getReadPairedFlag() && record.getSecondOfPairFlag() ){
+                out.addAlignment( this.removeAlignment(record, outputHeader) );         
+            }else{
+                SAMRecord newRecord = this.removeAlignment(record, outputHeader);
+                SAMRecord trimmedRecord = this.trimSAMRecord(newRecord, this.FIRST_POSITION_TO_TRIM, this.TRIM_LENGTH, this.SAVE_TRIM);
                 out.addAlignment(trimmedRecord);
-            } else {
-                
-                out.addAlignment(record);
             }
         }
         
@@ -109,10 +114,36 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
         return 0;
     }
     
-    public SAMRecord trimSAMRecord(SAMRecord record, int firstPos, int trimLength, boolean saveTrim){
-        
+    public SAMRecord removeAlignment(SAMRecord record, SAMFileHeader header){
+
         if (record.getReadNegativeStrandFlag()) {
-             throw new RuntimeException("Read "+ record.getReadName() + " is reverse complemented; did not expect this.");
+             SAMRecordUtil.reverseComplement(record);
+        }
+
+        SAMRecord newRecord = new SAMRecord(header);
+        
+        newRecord.setReadName(record.getReadName());
+        newRecord.setBaseQualities(record.getBaseQualities());
+        newRecord.setReadBases(record.getReadBases());
+        newRecord.setFirstOfPairFlag(record.getFirstOfPairFlag());
+        newRecord.setReadPairedFlag(record.getReadPairedFlag());
+        newRecord.setSecondOfPairFlag(record.getSecondOfPairFlag());
+        newRecord.setReadUnmappedFlag(true);
+        newRecord.setMateUnmappedFlag(true);
+        
+        for(String tag: this.TAG_TO_KEEP){
+            newRecord.setAttribute(tag, record.getAttribute(tag));
+        }
+        
+        return newRecord;
+    }
+    
+    public SAMRecord trimSAMRecord(SAMRecord record, int firstPos, int trimLength, boolean saveTrim){
+
+        boolean reversed = false;
+        if (record.getReadNegativeStrandFlag()) {
+             SAMRecordUtil.reverseComplement(record);
+             reversed = true;
         }
 
         byte[] bases = record.getReadBases();
@@ -154,6 +185,10 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
             record.setAttribute(this.TRIM_QUALITY_TAG, Illumina2bamUtils.convertPhredQualByteArrayToFastqString(qualitiesTrimmed));
         }
 
+        if(reversed){
+           SAMRecordUtil.reverseComplement(record);
+        }
+        
         return record;
     }
     

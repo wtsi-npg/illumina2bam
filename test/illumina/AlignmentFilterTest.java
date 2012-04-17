@@ -80,6 +80,9 @@ public class AlignmentFilterTest {
         String humanMd5 = humanMd5Stream.readLine();
 
         assertEquals(humanMd5, "6fb543f1c6bcc945ccb8eb579b53c70b");
+        
+        File metricsFile = new File("testdata/986_1_human.bam_alignment_filter_metrics.json");
+        metricsFile.deleteOnExit();
 
     }
     /**
@@ -134,7 +137,7 @@ public class AlignmentFilterTest {
         BufferedReader unalignedMd5Stream = new BufferedReader(new FileReader(unalignedMd5File));
         String unalignedMd5 = unalignedMd5Stream.readLine();
         
-        File metricsFile = new File("testdata/986_1_human.bam_alignment_filter_metrics.json");
+        File metricsFile = new File("testdata/986_1_unaligned.bam_alignment_filter_metrics.json");
         metricsFile.deleteOnExit();
 
         assertEquals(unalignedMd5, "2004eb37d54723f6d7e84eeb02965d71");

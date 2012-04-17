@@ -18,22 +18,16 @@
 
 package illumina;
 
-import net.sf.picard.util.TabbedTextFileWithHeaderParser;
-import net.sf.picard.metrics.MetricBase;
-import net.sf.picard.metrics.MetricsFile;
-import net.sf.samtools.util.SequenceUtil;
-import net.sf.samtools.util.StringUtil;
-
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import net.sf.picard.illumina.parser.IlluminaReadData;
+import net.sf.picard.metrics.MetricBase;
+import net.sf.picard.metrics.MetricsFile;
 import net.sf.picard.util.Log;
+import net.sf.picard.util.TabbedTextFileWithHeaderParser;
+import net.sf.samtools.util.SequenceUtil;
 
 /**
  * This class was separated from Picard ExtractIlluminaBarcodes class,
@@ -65,7 +59,7 @@ import net.sf.picard.util.Log;
 
 public class IndexDecoder {
 
-    private final Log log = Log.getInstance(ExtractIlluminaBarcodes.class);
+    private final Log log = Log.getInstance(IndexDecoder.class);
     
     private int maxMismatches = 1;
     private int minMismatchDelta = 1;
@@ -144,25 +138,6 @@ public class IndexDecoder {
         final BarcodeMatch match = findBestBarcode(barcodeRead, isPf);
         return match;
     } 
-
-    /**
-     * Assign barcodes for a single tile's qseq file
-     * @param ird
-     * @param writer
-     * @throws IOException 
-     */
-    public void extractBarcode(final IlluminaReadData ird, BufferedWriter writer ) throws IOException {
-        final String barcodeSubsequence = StringUtil.bytesToString(ird.getBarcodeRead().getBases());
-        final boolean passingFilter = ird.isPf();
-        final BarcodeMatch match = findBestBarcode(barcodeSubsequence, passingFilter);
-
-        final String yOrN = (match.matched ? "Y" : "N");
-       
-        writer.write(StringUtil.join("\t", barcodeSubsequence, yOrN, match.barcode,
-                                     String.valueOf(match.mismatches),
-                                     String.valueOf(match.mismatchesToSecondBest)));
-        writer.newLine();
-    }
 
     /**
      * 
