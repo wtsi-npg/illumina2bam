@@ -20,22 +20,18 @@
 
 package illumina;
 
-import java.util.TimeZone;
-import java.util.Date;
-import net.sf.samtools.SAMReadGroupRecord;
-import java.io.FileReader;
 import java.io.BufferedReader;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFileHeader;
-import java.io.IOException;
-import net.sf.samtools.SAMFileWriterFactory;
 import java.io.File;
-import net.sf.samtools.SAMProgramRecord;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
+import net.sf.samtools.*;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -178,7 +174,12 @@ public class LaneTest {
         int [] read2CycleRange = {51, 52};
         assertArrayEquals(cycleRangeByRead.get("read2"), read2CycleRange);
     }
-    
+
+    @Test
+    public void checkCycleRangeByReadFromRunInfoOK() throws Exception{
+        HashMap<String, int[]> cycleRangeByRead = lane.getCycleRangeByReadFromRunInfoFile();
+        assertNull(cycleRangeByRead);
+    }
     @Test
     public void readCycleRangeFromRunParameters(){
 
@@ -206,7 +207,11 @@ public class LaneTest {
         
         int [] readIndex1CycleRange = {101,108};
         assertArrayEquals(cycleRangeByRead.get("readIndex"), readIndex1CycleRange);
-        
+
+        HashMap<String, int[]> cycleRangeByReadFromRunInfo = lane2.getCycleRangeByReadFromRunInfoFile();
+        assertArrayEquals(cycleRangeByReadFromRunInfo.get("read1"), read1CycleRange);
+        assertArrayEquals(cycleRangeByReadFromRunInfo.get("readIndex"), readIndex1CycleRange);
+
         SAMProgramRecord instrumentProgram = lane2.readInstrumentProgramRecordFromRunParameterFile();
         assertEquals( instrumentProgram.getId(), "SCS");
         assertEquals( instrumentProgram.getProgramName(), "HiSeq Control Software");

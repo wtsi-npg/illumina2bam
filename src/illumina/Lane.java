@@ -22,37 +22,19 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
 import java.util.Map.Entry;
-import java.util.TreeMap;
+import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import javax.xml.xpath.*;
+import net.sf.picard.util.Log;
+import net.sf.samtools.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFileWriterFactory;
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMProgramRecord;
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.picard.util.Log;
-
-
 
 /**
  * Process an illumina lane
@@ -88,10 +70,12 @@ public class Lane {
     private final String baseCallsConfig;
     private final String intensityConfig ;
     private final String runParametersFile;
+    private final String runInfoFile;
     
     private Document baseCallsConfigDoc = null;
     private Document intensityConfigDoc = null;
     private Document runParametersDoc = null;
+    private Document runInfoDoc = null;
     
     //run config information from basecall config,
     //or from intersity config if not available there
@@ -156,13 +140,18 @@ public class Lane {
                              + File.separator
                              + "config.xml";
         
-        if(this.runFolder != null ){
-            
-             this.runParametersFile = this.runFolder 
-                                     + File.separator
-                                     + "runParameters.xml";
-        }else{
+        if (this.runFolder != null) {
+
+            this.runParametersFile = this.runFolder
+                    + File.separator
+                    + "runParameters.xml";
+            this.runInfoFile = this.runFolder
+                    + File.separator
+                    + "RunInfo.xml";
+        } else {
             this.runParametersFile = null;
+            this.runInfoFile       = null;
+        
         }
 
         XPathFactory factory = XPathFactory.newInstance();
@@ -172,15 +161,22 @@ public class Lane {
     }
 
     /**
-     * read both config XML files under BaseCalls and Intensities.
+     * Read both config XML files under BaseCalls and Intensities.
+     * And RunInfo and runParameters xml under runfolder.
      * 
      * @return true if successfully
      * @throws Exception
      */
     public boolean readConfigs() throws Exception{
 
+        //read basecall program record from basecalls config file
         this.readBaseCallsConfig();
+        
+        //read instrument program from runParameter xml, try intensity config if not available
         this.readIntensityConfig();
+        
+        // read tile list, run id, run date, run folder and instrument from runConfigXmlNodes
+        // get cycle range and read information from runInfo, or runParameters or runConfigXmlNodes. Try these files in order.
         this.readRunConfig();
 
         return true;
@@ -239,6 +235,11 @@ public class Lane {
 
     /**
      * initial XML document
+     * 
+     * covert basecalls and intensity config file, runInfo and runParameters xml file into xml document
+     * 
+     * try to get runConfigXmlNode from  basecalls or intensity config file.
+     * 
      */
     private void initConfigsDoc(){
 
@@ -291,25 +292,34 @@ public class Lane {
             throw new RuntimeException("Both Intensities and BassCalls config files are not available or format wrong");
         }
         
-        if(this.runParametersFile != null){
-            File runParametersFileObj = new File(this.runParametersFile);
-            if(runParametersFileObj.exists()){
-                try {
-                    this.runParametersDoc = db.parse(runParametersFileObj);
-                } catch (SAXException ex) {
-                    log.error(ex, "Problems to parsing runParameters xml file " + this.runParametersFile);
-                } catch (IOException ex) {
-                    log.error(ex, "Problems to read run parameters xml file " + this.runParametersFile);
-                }
-            }else{
-                log.warn("runParameters xml not exists " + this.runParametersFile);
-            }
-        }
-
+        this.runParametersDoc = this.fromXmlToDocument(this.runParametersFile, db);
+        
+        this.runInfoDoc       = this.fromXmlToDocument(this.runInfoFile, db);
+        
     }
     
+    private Document fromXmlToDocument(String xmlFileName, DocumentBuilder db) {
+
+        Document doc = null;
+        if (xmlFileName != null) {
+            File xmlFileObj = new File(xmlFileName);
+            if (xmlFileObj.exists()) {
+                try {
+                    doc = db.parse(xmlFileObj);
+                } catch (SAXException ex) {
+                    log.error(ex, "Problems to parsing runParameters xml file " + xmlFileName);
+                } catch (IOException ex) {
+                    log.error(ex, "Problems to read run parameters xml file " + xmlFileName);
+                }
+            } else {
+                log.warn("XML file not exists " + xmlFileName);
+            }
+        }
+        return doc;
+    }
+
     /**
-     * read base calls configure XML file
+     * read base calls configure XML file for basecalls Program Record
      * 
      * @throws Exception
      */
@@ -334,37 +344,44 @@ public class Lane {
     }
 
     /**
-     * read intensity configure XML file
+     * read runParameters or intensity configure XML file for Instrument Program Record
      * @throws Exception
      */
     private void readIntensityConfig() throws Exception {
 
-        log.info("Reading intensity config XML file " + this.intensityConfig );
-        
-        if (intensityConfigDoc == null) {
-            log.info("Intensity config xml file is not available");
+        if (intensityConfigDoc == null && this.runParametersDoc == null) {
+            log.info("Intensity config xml file and runParameters xml file both are not available");
             this.instrumentProgram = new SAMProgramRecord("SCS");
             return;
         }
 
         //read instrument software name and version
         if(this.runParametersDoc != null){
+            log.info("Reading runParameters XML file for instrument program record " + this.runParametersFile );
             this.instrumentProgram = this.readInstrumentProgramRecordFromRunParameterFile();
         }else{
+            log.info("Reading intensity config XML file for instrument program record " + this.intensityConfig );
             this.instrumentProgram = this.readInstrumentProgramRecord();
         }
         
         if(instrumentProgram == null){
-            throw new Exception("Problems to get instrument software version from config file: " + this.intensityConfig);
+            throw new Exception("Problems to get instrument software version from config or runParameters file: " + this.intensityConfig);
         }else{
             log.info("Instrument Program: " + instrumentProgram.getProgramName() + " " + instrumentProgram.getProgramVersion());
         }
 
     }
     
+    /**
+     * read runConfigXmlNode for tile list, run id , instrument, run folder, run date
+     * get cycle and read information from runInfo. Otherwise try runParameters file or runConfigXmlNode.
+     * 
+     * @throws Exception
+     */   
     private void readRunConfig() throws Exception{
         
-        log.info("Reading run config from BaseCalls or Intensities");
+        log.info("Reading run config from RunInfo, runParameters, BaseCalls or Intensities files");
+        
         //read tile list
         this.tileList = this.readTileList();
         if(tileList == null || tileList.length == 0){
@@ -384,16 +401,6 @@ public class Lane {
             log.info("Instrument name and run id to be used as part of read name: " + this.id );
         }
         
-        if(this.runParametersDoc != null){
-           log.info("Check cycle reange per read from run parameter file");
-           this.cycleRangeByRead = this.getCycleRangeByReadFromRunParametersFile();
-           this.mergeIndexReads();
-        }else{
-        
-           log.info("Check number of Reads and cycle numbers for each read");
-           this.cycleRangeByRead = this.checkCycleRangeByRead();
-        }
-        
         this.runfolderConfig = this.readRunfoder();
         if(this.runfolderConfig != null ){
             log.info("Runfolder: " + runfolderConfig);
@@ -403,7 +410,31 @@ public class Lane {
         if(this.runDateConfig != null){
             log.info("Run date: " + runDateConfig);
         }
-
+        
+        //try different file for cycle and read information
+        if(this.runInfoDoc != null){
+            
+            log.info("Check cycle reange per read from RunInfo file");
+            this.cycleRangeByRead = this.getCycleRangeByReadFromRunInfoFile();
+        }
+        
+        if(this.cycleRangeByRead == null && this.runParametersDoc != null){
+            
+           log.info("Check cycle reange per read from runParameter file");
+           this.cycleRangeByRead = this.getCycleRangeByReadFromRunParametersFile();
+        }
+        
+        if(this.cycleRangeByRead == null){
+        
+           log.info("Check number of Reads and cycle numbers for each read");
+           this.cycleRangeByRead = this.checkCycleRangeByRead();
+        }
+        
+        if(this.cycleRangeByRead == null){
+            throw new RuntimeException("Problems to get cycle and read infomation from config files");
+        }
+        
+        this.mergeIndexReads();
     }
     
     /**
@@ -535,6 +566,21 @@ public class Lane {
         return instrument + "_" + runID;
     }
 
+    /**
+     * 
+     * @return
+     */
+    public HashMap<String, int[]> getCycleRangeByReadFromRunInfoFile() {
+        if(this.runInfoDoc == null) {
+            return null;
+        }
+
+        TreeMap<Integer, NamedNodeMap> readAttributesList = this.getReadInfoFromRunParametersOrRunInfoFile("RunInfo/Run/Reads/Read", this.runInfoDoc);
+        if(readAttributesList == null || readAttributesList.isEmpty()){
+            return null;
+        }
+        return this.readCycleRangeByReadMap(readAttributesList);
+    }
         
     /**
      * 
@@ -542,46 +588,56 @@ public class Lane {
      */
     public HashMap<String, int[]> getCycleRangeByReadFromRunParametersFile(){
         
-        HashMap<String, int[]> cycleRangeByReadMap = new HashMap<String, int[]>();
+        HashMap<String, int[]> cycleRangeByReadMap;
         
-        TreeMap<Integer,NamedNodeMap> readAttributesList = null;
+        TreeMap<Integer,NamedNodeMap> readAttributesList;
         
         //for HiSeq run
-        readAttributesList= this.getReadInfoFromRunParametersFile("RunParameters/Setup/Reads/Read");
+        readAttributesList= this.getReadInfoFromRunParametersOrRunInfoFile("RunParameters/Setup/Reads/Read", this.runParametersDoc);
        
         if(readAttributesList== null || readAttributesList.isEmpty()){
             
             //if not, try MiSeq format
-            readAttributesList = this.getReadInfoFromRunParametersFile("RunParameters/Reads/RunInfoRead");            
+            readAttributesList = this.getReadInfoFromRunParametersOrRunInfoFile("RunParameters/Reads/RunInfoRead", this.runParametersDoc);            
         }
+        
+        cycleRangeByReadMap = this.readCycleRangeByReadMap(readAttributesList);
+   
+        return cycleRangeByReadMap;
+    }
+    
+    private HashMap<String, int[]> readCycleRangeByReadMap(TreeMap<Integer, NamedNodeMap> readAttributesList) {
+        
+        HashMap<String, int[]> cycleRangeByReadMap = new HashMap<String, int[]>();
         
         int readCount = 0;
         int indexReadCount = 0;
-        int cycleCount = 1;       
-        for (Entry<Integer,NamedNodeMap> entry : readAttributesList.entrySet()){
-            
+        int cycleCount = 1;
+        for (Entry<Integer, NamedNodeMap> entry : readAttributesList.entrySet()) {
+
             NamedNodeMap namedNodeMap = entry.getValue();
-            
+
             int readNumCycles = Integer.parseInt(namedNodeMap.getNamedItem("NumCycles").getNodeValue());
             String isIndexedRead = namedNodeMap.getNamedItem("IsIndexedRead").getNodeValue();
-            
-            int [] cycleRange = {cycleCount, cycleCount + readNumCycles-1};
+
+            int[] cycleRange = {cycleCount, cycleCount + readNumCycles - 1};
             cycleCount += readNumCycles;
-            
-            if(!isIndexedRead.equalsIgnoreCase("Y")){
-                readCount++;                
+
+            if (!isIndexedRead.equalsIgnoreCase("Y")) {
+                readCount++;
                 cycleRangeByReadMap.put("read" + readCount, cycleRange);
-            }else {
+            } else {
                 indexReadCount++;
                 String indexReadName = "readIndex";
-                if(indexReadCount != 1){
+                if (indexReadCount != 1) {
                     indexReadName += indexReadCount;
                 }
-                cycleRangeByReadMap.put(indexReadName, cycleRange);                
+                cycleRangeByReadMap.put(indexReadName, cycleRange);
             }
         }
 
         return cycleRangeByReadMap;
+
     }
     
     private void mergeIndexReads(){
@@ -608,22 +664,32 @@ public class Lane {
     }
     
     /**
+     * From runParameters file:
+     * "RunParameters/Setup/Reads/Read" for HiSeq, "RunParameters/Reads/RunInfoRead" for MiSeq and no file for GA
      * 
-     * @param readInfoPath "RunParameters/Setup/Reads/Read" for HiSeq run, "RunParameters/Reads/RunInfoRead" for MiSeq run
+     * From RunInfo file: "RunInfo/Run/Reads/Read" only for HiSeq and MiSeq, not cope with GA
+     * 
+     * @param readInfoPath
+     * 
      * @return
      */
-    public TreeMap<Integer,NamedNodeMap> getReadInfoFromRunParametersFile(String readInfoPath){
+    public TreeMap<Integer,NamedNodeMap> getReadInfoFromRunParametersOrRunInfoFile(String readInfoPath, Document xmlDoc){
 
         TreeMap<Integer, NamedNodeMap> readAttributesList = new TreeMap<Integer, NamedNodeMap>();
 
         try {
             XPathExpression exprReadList = xpath.compile(readInfoPath);
-            NodeList readNodeList = (NodeList) exprReadList.evaluate(this.runParametersDoc, XPathConstants.NODESET);
+            NodeList readNodeList = (NodeList) exprReadList.evaluate(xmlDoc, XPathConstants.NODESET);
             for (int i = 0; i < readNodeList.getLength(); i++) {
                 Node readNode = readNodeList.item(i);
                 NamedNodeMap readAttributes = readNode.getAttributes();
-                int readNumber = Integer.parseInt(readAttributes.getNamedItem("Number").getNodeValue());
-                readAttributesList.put(readNumber, readAttributes);
+                Node numberAttributeNode = readAttributes.getNamedItem("Number");
+                if (numberAttributeNode == null) {
+                    return null;
+                } else {
+                    int readNumber = Integer.parseInt(numberAttributeNode.getNodeValue());
+                    readAttributesList.put(readNumber, readAttributes);
+                }
             }
         }catch (XPathExpressionException ex) {
             log.error(ex, "Problems to get reads information from runParameters file based on xpath " + readInfoPath, ex);
