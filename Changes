@@ -1,7 +1,8 @@
 release-0.04
- - a new tool to decode bam file - BamIndexDecoder.
  - BamMerger allows extra reads in unmapped bam file and an option to add them to merged bam file, and merge flag information as well.
- - a new tool to split bam files by read group.
+ - read locs files if clocs file not available.
+ - allow one of Basecall and Intensity config xml file missing, try to use runParameters and RunInfo xml as well.
+ - new tools: BamIndexDecoder, SplitBamByReadGroup, AlignmentFilter, ChangeBamHeader, BamTagStripper and BamQualityQuantisation.
 
 release-0.03
  - cope with old format of filter file - no empty four bytes and version number in the header.

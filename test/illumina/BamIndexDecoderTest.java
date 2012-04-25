@@ -83,7 +83,7 @@ public class BamIndexDecoderTest {
         
         BufferedReader md5Stream = new BufferedReader(new FileReader(outputMd5 ));
         String md5 = md5Stream.readLine();
-        assertEquals(md5, "8306bd0953ab3f23e83c25f1b9ccd72a");
+        assertEquals(md5, "80c030cd06b2e003e8a2c1c8f7b00e66");
         
         outputFile.delete();
         outputMetrics.delete();
@@ -128,7 +128,7 @@ public class BamIndexDecoderTest {
         
         File outputMetrics = new File(outputName + "/6383_8.metrics");
         outputMetrics.delete();
-        String [] md5s = {"b733df40361a51368f64a55e7f5d2dc2", "7780bb31d5dcbef67472c182c0773cfc", "eb03854e37d3b98c0ae140b70f26e0ef"};
+        String [] md5s = {"360494d01907aa3335076e4dde5f929f", "04ee98a45692a0763c0d4d8cdf44ab91", "8c98cfb67951fdacb3959c9f100b5ddb"};
         for (int i=0;i<3;i++){
             File outputFile = new File(outputName + "/6383_8#" + i + ".bam");
             outputFile.delete();
