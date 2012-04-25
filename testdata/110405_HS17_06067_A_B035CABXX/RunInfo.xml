@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RunInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="2">
+  <Run Id="110405_HS17_06067_A_B035CABXX" Number="4">
+    <Flowcell>000000000-A0Y0M</Flowcell>
+    <Instrument>HS17</Instrument>
+    <Date>120416</Date>
+    <Reads>
+      <Read NumCycles="100" Number="1" IsIndexedRead="N"/>
+      <Read NumCycles="8" Number="2" IsIndexedRead="Y"/>
+      <Read NumCycles="100" Number="3" IsIndexedRead="N"/>
+    </Reads>
+    <FlowcellLayout LaneCount="1" SurfaceCount="1" SwathCount="1" TileCount="12"/>
+  </Run>
+</RunInfo>

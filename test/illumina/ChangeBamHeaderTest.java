@@ -99,6 +99,6 @@ public class ChangeBamHeaderTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "8acdf8b4f327994a0c1dc1f387f359dd");
+        assertEquals(md5, "4112f29335792ac9dd3e6e93633c3c85");
     }
 }

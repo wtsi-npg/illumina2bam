@@ -69,7 +69,7 @@ public class AlignmentFilterTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "be1ccf2127fb718e7e49b1b9ae84cd19");
+        assertEquals(md5, "9a6f720f3dd9c4e07e9feb33beaf07ab");
         
         File filteredHumanBamFile = new File("testdata/986_1_human.bam");
         //filteredHumanBamFile.deleteOnExit();
@@ -79,7 +79,7 @@ public class AlignmentFilterTest {
         BufferedReader humanMd5Stream = new BufferedReader(new FileReader(humanMd5File));
         String humanMd5 = humanMd5Stream.readLine();
 
-        assertEquals(humanMd5, "6fb543f1c6bcc945ccb8eb579b53c70b");
+        assertEquals(humanMd5, "0c7f2db05551fabfe4ff28aefbb2fb75");
         
         File metricsFile = new File("testdata/986_1_human.bam_alignment_filter_metrics.json");
         metricsFile.deleteOnExit();
@@ -117,7 +117,7 @@ public class AlignmentFilterTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "eeadf4a76bfd15528f10bcc575ca4132");
+        assertEquals(md5, "a7703e16d2db4c58bb5a45fe09a818ec");
         
         File filteredHumanBamFile = new File("testdata/986_1_human.bam");
         filteredHumanBamFile.deleteOnExit();
@@ -127,7 +127,7 @@ public class AlignmentFilterTest {
         BufferedReader humanMd5Stream = new BufferedReader(new FileReader(humanMd5File));
         String humanMd5 = humanMd5Stream.readLine();
 
-        assertEquals(humanMd5, "48c5f04d9624e4706f81b0df81e83bb6");
+        assertEquals(humanMd5, "ad1d872f65ba8658f45b7d669a718ecc");
         
         File unalignedBamFile = new File("testdata/986_1_unaligned.bam");
         unalignedBamFile.deleteOnExit();
@@ -140,7 +140,7 @@ public class AlignmentFilterTest {
         File metricsFile = new File("testdata/986_1_unaligned.bam_alignment_filter_metrics.json");
         metricsFile.deleteOnExit();
 
-        assertEquals(unalignedMd5, "2004eb37d54723f6d7e84eeb02965d71");
+        assertEquals(unalignedMd5, "70e549e9d1e5a6375e4ccfd2904c52f1");
 
     }
 

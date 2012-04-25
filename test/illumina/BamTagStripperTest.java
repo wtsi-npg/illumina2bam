@@ -70,7 +70,7 @@ public class BamTagStripperTest {
     public void testOutputBam() throws FileNotFoundException, IOException {
         System.out.println("checking bam md5");
         String md5 = getMd5();
-        assertEquals(md5, "34b1bbd6654237679bc43375689c3c9d");
+        assertEquals(md5, "141c0b21537f43c9b0c6acd981ec0e5a");
     }
     
     @Test
@@ -100,7 +100,7 @@ public class BamTagStripperTest {
     public void testOutputBamKeepCiStrippOQ() throws FileNotFoundException, IOException {
         System.out.println("checking bam md5");
         String md5 = getMd5();
-        assertEquals(md5, "3cf6173e969db72eb3edafc429aa9755");
+        assertEquals(md5, "466f52d961403ba3e5b79632c8a3aad0");
     }    
     
     private String getMd5() throws FileNotFoundException, IOException{
