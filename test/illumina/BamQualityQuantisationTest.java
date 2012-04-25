@@ -92,7 +92,7 @@ public class BamQualityQuantisationTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "71c6532f138c24c6ad8db5429ca6efaa");
+        assertEquals(md5, "5fe494967954b163c8671f27178616ef");
     }
  
 }
