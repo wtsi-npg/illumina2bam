@@ -16,21 +16,17 @@
  *
  *
  */
-package illumina;
+package uk.ac.sanger.npg.picard;
 
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.File;
+import java.io.*;
 import java.util.TimeZone;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * This is the test class for ChangeBamHeader
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 
 public class ChangeBamHeaderTest {
@@ -81,7 +77,7 @@ public class ChangeBamHeaderTest {
         
         System.out.println(changer.getCommandLine());
         assertEquals(changer.getCommandLine(),
-                "illumina.ChangeBamHeader INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_header_changed.bam PG=[ID:samtools_sorting;PN:samtools;VN:0.1.12a (r862);CL:samtools sort] SAMPLE=newSM LIBRARY=newLB DESCRIPTION=newDS TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
+                "uk.ac.sanger.npg.picard.ChangeBamHeader INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_header_changed.bam PG=[ID:samtools_sorting;PN:samtools;VN:0.1.12a (r862);CL:samtools sort] SAMPLE=newSM LIBRARY=newLB DESCRIPTION=newDS TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
                     );
     }
     
@@ -99,6 +95,6 @@ public class ChangeBamHeaderTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "4112f29335792ac9dd3e6e93633c3c85");
+        assertEquals(md5, "0acf94f4d3798315ff8159d79bbad663");
     }
 }

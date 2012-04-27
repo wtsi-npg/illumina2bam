@@ -16,7 +16,7 @@
  *
  */
 
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ import net.sf.samtools.*;
  * 
  */
 
-public class BamIndexDecoder extends Illumina2bamCommandLine {
+public class BamIndexDecoder extends PicardCommandLine {
     
     private final Log log = Log.getInstance(BamIndexDecoder.class);
     

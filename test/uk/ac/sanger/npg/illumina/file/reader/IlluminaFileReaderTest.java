@@ -17,15 +17,16 @@
  * The test class for IlluminaFileReader
  *
  */
-package illumina.file.reader;
+package uk.ac.sanger.npg.illumina.file.reader;
 
 import java.io.FileNotFoundException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 public class IlluminaFileReaderTest {
 

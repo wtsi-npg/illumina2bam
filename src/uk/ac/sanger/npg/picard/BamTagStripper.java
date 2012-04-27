@@ -16,7 +16,7 @@
  * 
  * 
  */
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,18 +29,14 @@ import net.sf.picard.cmdline.StandardOptionDefinitions;
 import net.sf.picard.cmdline.Usage;
 import net.sf.picard.io.IoUtil;
 import net.sf.picard.util.Log;
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFileWriterFactory;
-import net.sf.samtools.SAMRecord;
+import net.sf.samtools.*;
 import net.sf.samtools.SAMRecord.SAMTagAndValue;
 
 /**
  *
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
-public class BamTagStripper extends Illumina2bamCommandLine {
+public class BamTagStripper extends PicardCommandLine {
     
     private final Log log = Log.getInstance(BamTagStripper.class);
     

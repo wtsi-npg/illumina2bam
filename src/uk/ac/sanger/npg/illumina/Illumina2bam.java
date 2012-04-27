@@ -17,26 +17,26 @@
  *
  */
 
-package illumina;
+package uk.ac.sanger.npg.illumina;
 
 import java.io.File;
 import java.util.Date;
 import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.Usage;
-import net.sf.samtools.SAMFileWriter;
-
 import net.sf.picard.io.IoUtil;
 import net.sf.picard.util.Log;
+import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMReadGroupRecord;
 import net.sf.samtools.util.Iso8601Date;
+import uk.ac.sanger.npg.picard.PicardCommandLine;
 
 /**
  *
  * This is the main class to convert Illumina BCL files to BAM
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
-public class Illumina2bam extends Illumina2bamCommandLine {
+public class Illumina2bam extends PicardCommandLine {
     
     private final Log log = Log.getInstance(Illumina2bam.class);
     

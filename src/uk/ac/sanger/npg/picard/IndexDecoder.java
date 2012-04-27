@@ -16,7 +16,7 @@
  *
  */
 
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.io.File;
 import java.util.ArrayList;

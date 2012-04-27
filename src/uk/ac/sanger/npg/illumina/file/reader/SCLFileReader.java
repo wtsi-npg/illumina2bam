@@ -16,7 +16,7 @@
  * 
  * 
  */
-package illumina.file.reader;
+package uk.ac.sanger.npg.illumina.file.reader;
 
 import java.io.IOException;
 import net.sf.picard.util.Log;
@@ -24,7 +24,8 @@ import net.sf.picard.util.Log;
 /**
  * This class is a reader of a scl file
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
+ * 
  */
 public class SCLFileReader extends IlluminaFileReader {
     

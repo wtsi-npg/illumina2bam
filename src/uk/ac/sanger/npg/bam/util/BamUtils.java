@@ -18,14 +18,14 @@
  *
  */
 
-package illumina;
+package uk.ac.sanger.npg.bam.util;
 
 /**
- * illumina2bam util class
+ * illumina2bam bam util class
  *
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
-public final class Illumina2bamUtils {
+public final class BamUtils {
     
      /**
      *

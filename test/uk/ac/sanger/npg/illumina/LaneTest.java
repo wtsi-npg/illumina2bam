@@ -18,7 +18,7 @@
  *
  */
 
-package illumina;
+package uk.ac.sanger.npg.illumina;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,7 +35,7 @@ import org.junit.Test;
 
 /**
  *
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 public class LaneTest {
 

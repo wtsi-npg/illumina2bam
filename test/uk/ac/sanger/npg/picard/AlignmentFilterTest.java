@@ -17,7 +17,7 @@
  * 
  *
  */
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.io.*;
 import java.util.TimeZone;
@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  * This is the test class for BamMerger
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 
 public class AlignmentFilterTest {
@@ -58,7 +58,7 @@ public class AlignmentFilterTest {
         filter.instanceMain(args);
         assertEquals(
           filter.getCommandLine(),
-          "illumina.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human.sam] OUTPUT_ALIGNMENT=[testdata/986_1.bam, testdata/986_1_human.bam] TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
+          "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human.sam] OUTPUT_ALIGNMENT=[testdata/986_1.bam, testdata/986_1_human.bam] TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
                     );
         
         File filteredBamFile = new File("testdata/986_1.bam");
@@ -69,7 +69,7 @@ public class AlignmentFilterTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "9a6f720f3dd9c4e07e9feb33beaf07ab");
+        assertEquals(md5, "9a954685dcd8f808b7ab760c40b508ea");
         
         File filteredHumanBamFile = new File("testdata/986_1_human.bam");
         //filteredHumanBamFile.deleteOnExit();
@@ -79,7 +79,7 @@ public class AlignmentFilterTest {
         BufferedReader humanMd5Stream = new BufferedReader(new FileReader(humanMd5File));
         String humanMd5 = humanMd5Stream.readLine();
 
-        assertEquals(humanMd5, "0c7f2db05551fabfe4ff28aefbb2fb75");
+        assertEquals(humanMd5, "9ff600e6fd5585a130fb34ab0714ea41");
         
         File metricsFile = new File("testdata/986_1_human.bam_alignment_filter_metrics.json");
         metricsFile.deleteOnExit();
@@ -107,7 +107,7 @@ public class AlignmentFilterTest {
         filter.instanceMain(args);
         assertEquals(
           filter.getCommandLine(),
-          "illumina.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human_unmapped_with_ref.sam] OUTPUT_ALIGNMENT=[testdata/986_1.bam, testdata/986_1_human.bam] OUTPUT_UNALIGNED=testdata/986_1_unaligned.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+          "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human_unmapped_with_ref.sam] OUTPUT_ALIGNMENT=[testdata/986_1.bam, testdata/986_1_human.bam] OUTPUT_UNALIGNED=testdata/986_1_unaligned.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
         
         File filteredBamFile = new File("testdata/986_1.bam");
         filteredBamFile.deleteOnExit();
@@ -117,7 +117,7 @@ public class AlignmentFilterTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "a7703e16d2db4c58bb5a45fe09a818ec");
+        assertEquals(md5, "725ccca8cdf91d5f130a5aa373902482");
         
         File filteredHumanBamFile = new File("testdata/986_1_human.bam");
         filteredHumanBamFile.deleteOnExit();
@@ -127,7 +127,7 @@ public class AlignmentFilterTest {
         BufferedReader humanMd5Stream = new BufferedReader(new FileReader(humanMd5File));
         String humanMd5 = humanMd5Stream.readLine();
 
-        assertEquals(humanMd5, "ad1d872f65ba8658f45b7d669a718ecc");
+        assertEquals(humanMd5, "6710e7c3cfec763f2df1d6073b842ae3");
         
         File unalignedBamFile = new File("testdata/986_1_unaligned.bam");
         unalignedBamFile.deleteOnExit();
@@ -140,7 +140,7 @@ public class AlignmentFilterTest {
         File metricsFile = new File("testdata/986_1_unaligned.bam_alignment_filter_metrics.json");
         metricsFile.deleteOnExit();
 
-        assertEquals(unalignedMd5, "70e549e9d1e5a6375e4ccfd2904c52f1");
+        assertEquals(unalignedMd5, "b328e3b00cfd05ef3cc97a8068a5d750");
 
     }
 

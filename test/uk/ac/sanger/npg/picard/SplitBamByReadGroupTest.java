@@ -2,20 +2,22 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 
-import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.TimeZone;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
+ * 
  */
 public class SplitBamByReadGroupTest {
     
@@ -43,7 +45,7 @@ public class SplitBamByReadGroupTest {
 
         splitter.instanceMain(args);
         
-        assertEquals(splitter.getCommandLine(), "illumina.SplitBamByReadGroup INPUT=testdata/decode/6551_8.sam OUTPUT_PREFIX=testdata/6551_8_split OUTPUT_COMMON_RG_HEAD_TO_TRIM=1 TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"); 
+        assertEquals(splitter.getCommandLine(), "uk.ac.sanger.npg.picard.SplitBamByReadGroup INPUT=testdata/decode/6551_8.sam OUTPUT_PREFIX=testdata/6551_8_split OUTPUT_COMMON_RG_HEAD_TO_TRIM=1 TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"); 
     
         File splitFile1 = new File("testdata/6551_8_split#1.sam");
         splitFile1.deleteOnExit();
@@ -53,7 +55,7 @@ public class SplitBamByReadGroupTest {
         md5File1.deleteOnExit();
         BufferedReader md5Stream1 = new BufferedReader(new FileReader(md5File1));
         String md5 = md5Stream1.readLine();
-        assertEquals(md5, "a270a9867b500a09558cfa945e95b9fe");
+        assertEquals(md5, "a0e342d73962b0c31177d97983756e18");
         
         File splitFile9 = new File("testdata/6551_8_split#9.sam");
         splitFile9.deleteOnExit();
@@ -63,7 +65,7 @@ public class SplitBamByReadGroupTest {
         md5File9.deleteOnExit();
         BufferedReader md5Stream9 = new BufferedReader(new FileReader(md5File9));
         md5 = md5Stream9.readLine();
-        assertEquals(md5, "4380fd269f9bf19d6a9f3e2ea9465594");
+        assertEquals(md5, "6ca5de1dcaefc34c65be3b96adde35b3");
     
     }
 }

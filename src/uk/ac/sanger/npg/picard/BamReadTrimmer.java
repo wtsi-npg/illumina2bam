@@ -16,7 +16,7 @@
  *
  */
 
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,16 +27,17 @@ import net.sf.picard.cmdline.Usage;
 import net.sf.picard.io.IoUtil;
 import net.sf.picard.util.Log;
 import net.sf.samtools.*;
+import uk.ac.sanger.npg.bam.util.BamUtils;
 
 
 /**
  * The class to strip part of a read (fixed position) - typically a prefix of the forward read,
  * and optionally place this and its quality in BAM tags.
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 
-public class BamReadTrimmer extends Illumina2bamCommandLine {
+public class BamReadTrimmer extends PicardCommandLine {
     
     private final Log log = Log.getInstance(BamReadTrimmer.class);
     
@@ -181,8 +182,8 @@ public class BamReadTrimmer extends Illumina2bamCommandLine {
         record.setReadBases(newBases);
         record.setBaseQualities(newQualities);
         if(saveTrim){
-            record.setAttribute(this.TRIM_BASE_TAG,   Illumina2bamUtils.convertByteArrayToString( basesTrimmed));
-            record.setAttribute(this.TRIM_QUALITY_TAG, Illumina2bamUtils.convertPhredQualByteArrayToFastqString(qualitiesTrimmed));
+            record.setAttribute(this.TRIM_BASE_TAG,   BamUtils.convertByteArrayToString( basesTrimmed));
+            record.setAttribute(this.TRIM_QUALITY_TAG, BamUtils.convertPhredQualByteArrayToFastqString(qualitiesTrimmed));
         }
 
         if(reversed){

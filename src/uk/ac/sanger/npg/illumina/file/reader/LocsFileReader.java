@@ -17,7 +17,7 @@
  * 
  * 
  */
-package illumina.file.reader;
+package uk.ac.sanger.npg.illumina.file.reader;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,7 +26,8 @@ import net.sf.picard.util.Log;
 
 /**
  * This class is a reader of a locs file
- * @author Guoying Qi
+ * 
+ * @author gq1@sanger.ac.uk
  */
 
 public class LocsFileReader extends PositionFileReader {

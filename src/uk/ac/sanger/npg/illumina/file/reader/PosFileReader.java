@@ -16,7 +16,7 @@
  * 
  * 
  */
-package illumina.file.reader;
+package uk.ac.sanger.npg.illumina.file.reader;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

@@ -17,7 +17,7 @@
  * 
  */
 
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.io.File;
 import net.sf.picard.cmdline.Option;
@@ -31,7 +31,7 @@ import net.sf.samtools.*;
  *
  * @author gq1@sanger.ac.uk
  */
-public class BamQualityQuantisation extends Illumina2bamCommandLine {
+public class BamQualityQuantisation extends PicardCommandLine {
     
     private final Log log = Log.getInstance(BamQualityQuantisation.class);
     

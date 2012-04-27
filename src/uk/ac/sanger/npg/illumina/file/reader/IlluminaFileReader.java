@@ -16,25 +16,17 @@
  *
  * 
  */
-package illumina.file.reader;
+package uk.ac.sanger.npg.illumina.file.reader;
 
-import java.io.BufferedInputStream;
-import java.io.Closeable;
+import java.io.*;
 import java.util.Iterator;
-
-import java.io.FileInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import net.sf.picard.util.Log;
 
 
 /**
  * This class try to open a Illumina file into a data input stream, base class for all file reader classes
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 public class IlluminaFileReader implements Iterator<Object>, Closeable {
     

@@ -16,7 +16,7 @@
  *
  *
  */
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -29,7 +29,7 @@ import net.sf.samtools.SAMRecord;
 
 /**
  *
- * @author gq1
+ * @author gq1@sanger.ac.uk
  */
 public class AlignmentFilterMetric {
     

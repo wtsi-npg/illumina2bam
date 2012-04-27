@@ -16,21 +16,17 @@
  *
  *
  */
-package illumina;
+package uk.ac.sanger.npg.picard;
 
+import java.io.*;
 import java.util.TimeZone;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * This is the test class for BamReadTrimmer
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 
 public class BamTagStripperTest {
@@ -59,7 +55,7 @@ public class BamTagStripperTest {
 
         stripper.instanceMain(args);
         System.out.println(stripper.getCommandLine());
-        assertEquals(stripper.getCommandLine(), "illumina.BamTagStripper INPUT=testdata/bam/7351_8#8.sam OUTPUT=testdata/7351_8#8_stripped.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        assertEquals(stripper.getCommandLine(), "uk.ac.sanger.npg.picard.BamTagStripper INPUT=testdata/bam/7351_8#8.sam OUTPUT=testdata/7351_8#8_stripped.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
 
     }
     
@@ -70,7 +66,7 @@ public class BamTagStripperTest {
     public void testOutputBam() throws FileNotFoundException, IOException {
         System.out.println("checking bam md5");
         String md5 = getMd5();
-        assertEquals(md5, "141c0b21537f43c9b0c6acd981ec0e5a");
+        assertEquals(md5, "6cb1d14bbef4ed9c56ac2a87ea35d5c2");
     }
     
     @Test
@@ -90,7 +86,7 @@ public class BamTagStripperTest {
 
         stripper.instanceMain(args);
         System.out.println(stripper.getCommandLine());
-        assertEquals(stripper.getCommandLine(), "illumina.BamTagStripper INPUT=testdata/bam/7351_8#8.sam OUTPUT=testdata/7351_8#8_stripped.bam TAG_TO_KEEP=[ci] TAG_TO_STRIP=[OQ] TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        assertEquals(stripper.getCommandLine(), "uk.ac.sanger.npg.picard.BamTagStripper INPUT=testdata/bam/7351_8#8.sam OUTPUT=testdata/7351_8#8_stripped.bam TAG_TO_KEEP=[ci] TAG_TO_STRIP=[OQ] TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
 
     }
     /**
@@ -100,7 +96,7 @@ public class BamTagStripperTest {
     public void testOutputBamKeepCiStrippOQ() throws FileNotFoundException, IOException {
         System.out.println("checking bam md5");
         String md5 = getMd5();
-        assertEquals(md5, "466f52d961403ba3e5b79632c8a3aad0");
+        assertEquals(md5, "64c065773ca093294d7ecef27dc8afa3");
     }    
     
     private String getMd5() throws FileNotFoundException, IOException{

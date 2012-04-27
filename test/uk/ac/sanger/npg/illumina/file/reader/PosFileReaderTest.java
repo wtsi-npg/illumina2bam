@@ -17,17 +17,17 @@
  * 
  */
 
-package illumina.file.reader;
+package uk.ac.sanger.npg.illumina.file.reader;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import java.io.FileNotFoundException;
-import org.junit.Test;
+import org.junit.AfterClass;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 public class PosFileReaderTest {
 

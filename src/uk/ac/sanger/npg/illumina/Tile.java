@@ -16,33 +16,22 @@
  *
  * 
  */
-package illumina;
+package uk.ac.sanger.npg.illumina;
 
-import illumina.file.reader.FilterFileReader;
-import illumina.file.reader.CLocsFileReader;
-import illumina.file.reader.BCLFileReader;
-import illumina.file.reader.SCLFileReader;
-import illumina.file.reader.IlluminaFileReader;
-import illumina.file.reader.LocsFileReader;
-import illumina.file.reader.PosFileReader;
-import illumina.file.reader.PositionFileReader;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFileWriterFactory;
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMRecord;
 import net.sf.picard.util.Log;
+import net.sf.samtools.*;
+import uk.ac.sanger.npg.bam.util.BamUtils;
+import uk.ac.sanger.npg.illumina.file.reader.*;
 
 /**
  * Process an illumina tile
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 public class Tile {
     
@@ -680,7 +669,7 @@ public class Tile {
      * @return fastq quality string from phred qual byte array
      */
     public String convertPhredQualByteArrayToFastqString(byte [] array){
-        return Illumina2bamUtils.convertPhredQualByteArrayToFastqString(array);
+        return BamUtils.convertPhredQualByteArrayToFastqString(array);
     }
 
     /**
@@ -689,7 +678,7 @@ public class Tile {
      * @return string from a byte array
      */
     public String convertByteArrayToString(byte [] array){
-        return Illumina2bamUtils.convertByteArrayToString(array);
+        return BamUtils.convertByteArrayToString(array);
     }
 
     /**

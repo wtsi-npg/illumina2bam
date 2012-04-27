@@ -17,7 +17,7 @@
  * 
  *
  */
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.io.*;
 import java.util.TimeZone;
@@ -72,7 +72,7 @@ public class BamQualityQuantisationTest {
         };
 
         qualObj.instanceMain(args);   
-        assertEquals(qualObj.getCommandLine(), "illumina.BamQualityQuantisation INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_squashed.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    USE_OLD_QUALITY=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        assertEquals(qualObj.getCommandLine(), "uk.ac.sanger.npg.picard.BamQualityQuantisation INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_squashed.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    USE_OLD_QUALITY=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
 
     }
         
@@ -92,7 +92,7 @@ public class BamQualityQuantisationTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "5fe494967954b163c8671f27178616ef");
+        assertEquals(md5, "bb88f4e8abf41dae49a695b6a0f37f73");
     }
  
 }

@@ -17,7 +17,7 @@
  * 
  *
  */
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +30,7 @@ import net.sf.samtools.SAMProgramRecord;
  * 
  * @author Guoying Qi
  */
-public abstract class Illumina2bamCommandLine extends CommandLineProgram {
+public abstract class PicardCommandLine extends CommandLineProgram {
     
     public static final String version = "0.04";
     

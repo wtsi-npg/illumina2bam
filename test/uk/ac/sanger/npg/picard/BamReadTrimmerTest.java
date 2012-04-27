@@ -16,7 +16,7 @@
  *
  *
  */
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.io.*;
 import java.util.TimeZone;
@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * This is the test class for BamReadTrimmer
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 
 public class BamReadTrimmerTest {
@@ -60,7 +60,7 @@ public class BamReadTrimmerTest {
         trimmer.instanceMain(args);
         System.out.println(trimmer.getCommandLine());
  
-        assertEquals(trimmer.getCommandLine(), "illumina.BamReadTrimmer "
+        assertEquals(trimmer.getCommandLine(), "uk.ac.sanger.npg.picard.BamReadTrimmer "
                 + "INPUT=testdata/bam/6210_8.sam "
                 + "OUTPUT=testdata/6210_8_trimmed.bam "
                 + "FIRST_POSITION_TO_TRIM=1 TRIM_LENGTH=3 "
@@ -137,7 +137,7 @@ public class BamReadTrimmerTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "c1a808d291ac5e5bebef6704267a98ac");
+        assertEquals(md5, "4a133020310a137ff768b83577849287");
 
     }
 

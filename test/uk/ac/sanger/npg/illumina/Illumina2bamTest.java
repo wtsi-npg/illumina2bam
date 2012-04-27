@@ -17,21 +17,17 @@
  * This is the test class for Illumina2bam
  *
  */
-package illumina;
+package uk.ac.sanger.npg.illumina;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.TimeZone;
 import net.sf.samtools.SAMProgramRecord;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
- * @author gq1
+ * @author gq1@sanger.ac.uk
  */
 public class Illumina2bamTest {
     
@@ -71,9 +67,9 @@ public class Illumina2bamTest {
         md5File.deleteOnExit();
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
-        assertEquals(md5, "19074c8ee4b9073cd24dc9160892531a");
+        assertEquals(md5, "d480025a6685c44bac112e8ffd6558e9");
 
-        assertEquals(illumina2bam.getCommandLine(), "illumina.Illumina2bam"
+        assertEquals(illumina2bam.getCommandLine(), "uk.ac.sanger.npg.illumina.Illumina2bam"
                 + " INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities"
                 + " LANE=1 OUTPUT=testdata/6000_1.sam SAMPLE_ALIAS=Test Sample LIBRARY_NAME=Test library"
                 + " STUDY_NAME=testStudy RUN_START_DATE=2011-03-23T00:00:00+0000 FIRST_TILE=1101 TILE_LIMIT=1"

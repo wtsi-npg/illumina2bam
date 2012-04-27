@@ -16,7 +16,7 @@
  *
  */
 
-package illumina;
+package uk.ac.sanger.npg.illumina;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,9 +37,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Process an illumina lane
+ * Process an illumina run lane
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 public class Lane {
     

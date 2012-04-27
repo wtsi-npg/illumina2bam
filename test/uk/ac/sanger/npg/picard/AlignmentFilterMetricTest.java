@@ -17,7 +17,7 @@
  *
  */
 
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import org.junit.Test;
 
 /**
  *
- * @author gq1
+ * @author gq1@sanger.ac.uk
  */
 public class AlignmentFilterMetricTest {
     

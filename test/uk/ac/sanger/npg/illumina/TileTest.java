@@ -17,28 +17,25 @@
  * This is the test class for Tile
  * 
  */
-package illumina;
+package uk.ac.sanger.npg.illumina;
 
-import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileWriterFactory;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMRecord;
-
 import java.util.HashMap;
-
+import net.sf.samtools.SAMFileHeader;
+import net.sf.samtools.SAMFileWriter;
+import net.sf.samtools.SAMFileWriterFactory;
+import net.sf.samtools.SAMRecord;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 public class TileTest {
 

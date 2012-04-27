@@ -16,7 +16,7 @@
  *
  *
  */
-package illumina;
+package uk.ac.sanger.npg.picard;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,9 +29,9 @@ import net.sf.samtools.*;
 
 /**
  *
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
-public class AlignmentFilter extends Illumina2bamCommandLine {
+public class AlignmentFilter extends PicardCommandLine {
 
     private final Log log = Log.getInstance(AlignmentFilter.class);
 
