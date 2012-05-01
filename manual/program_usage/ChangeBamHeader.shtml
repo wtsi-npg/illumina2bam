@@ -1,0 +1,16 @@
+<a name="ChangeBamHeader"/>
+<h3>ChangeBamHeader</h3>
+<p>USAGE: ChangeBamHeader [options]
+<p>
+<p>Add extra PGs into bam header, or change SM, LB or DS tag in RG line in header and this only works with one read group in the input bam. . Version: 0.04
+<p></p>
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>INPUT=File</td><td>The input SAM or BAM file.   Required. </td></tr>
+<tr><td>OUTPUT=File</td><td>The ouput SAM or BAM file.   Required. </td></tr>
+<tr><td>PG=String</td><td>The extra PG line with fields separated by semicolon for bam header including ID, PN, VN and CL etc, PP id will be reset. Each field including tag name and value separated by colon.  This option may be specified 0 or more times. </td></tr>
+<tr><td>SAMPLE=String</td><td>The sample name in the only RG group.   Default value: null. </td></tr>
+<tr><td>LIBRARY=String</td><td>The library name in the only RG group.   Default value: null. </td></tr>
+<tr><td>DESCRIPTION=String</td><td>The description in the only RG group.   Default value: null. </td></tr>
+</table>
+<br/>

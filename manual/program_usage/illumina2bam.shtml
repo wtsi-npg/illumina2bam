@@ -1,0 +1,31 @@
+<a name="Illumina2bam"/>
+<h3>Illumina2bam</h3>
+<p>USAGE: Illumina2bam [options]
+<p>
+<p>Convert Illumina BCL to BAM or SAM file. Version: 0.04
+<p></p>
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>RUN_FOLDER=File</td><td>Illumina runfolder directory including runParameters xml file under it, upwards two levels from Intensities directory if not given.  Default value: null. </td></tr>
+<tr><td>INTENSITY_DIR=File</td><td>Illumina intensities directory including config xml file, and clocs, locs or pos files under lane directory.  Required. </td></tr>
+<tr><td>BASECALLS_DIR=File</td><td>Illumina basecalls directory including config xml file, and filter files, bcl, maybe scl files under lane cycle directory, using BaseCalls directory under intensities if not given.   Default value: null. </td></tr>
+<tr><td>LANE=Integer</td><td>Lane number.  Required. </td></tr>
+<tr><td>OUTPUT=File</td><td>Output file name.  Required. </td></tr>
+<tr><td>GENERATE_SECONDARY_BASE_CALLS=Boolean</td><td>Including second base call or not, default false.  Default value: false. This option can be set to 'null' to clear the default value. Possible values: {true, false} </td></tr>
+<tr><td>PF_FILTER=Boolean</td><td>Filter cluster or not, default true.  Default value: true. This option can be set to 'null' to clear the default value. Possible values: {true, false} </td></tr>
+<tr><td>READ_GROUP_ID=String</td><td>ID used to link RG header record with RG tag in SAM record, default 1.  Default value: 1. This option can be set to 'null' to clear the default value. </td></tr>
+<tr><td>SAMPLE_ALIAS=String</td><td>The name of the sequenced sample, using library name if not given.  Default value: null. </td></tr>
+<tr><td>LIBRARY_NAME=String</td><td>The name of the sequenced library, default unknown.  Default value: unknown. This option can be set to 'null' to clear the default value. </td></tr>
+<tr><td>STUDY_NAME=String</td><td>The name of the study.  Default value: null. </td></tr>
+<tr><td>PLATFORM_UNIT=String</td><td>The platform unit, using runfolder name plus lane number if not given.  Default value: null. </td></tr>
+<tr><td>RUN_START_DATE=Iso8601Date</td><td>The start date of the run, read from config file if not given.  Default value: null. </td></tr>
+<tr><td>SEQUENCING_CENTER=String</td><td>Sequence center name, default SC for Sanger Center.  Default value: SC. This option can be set to 'null' to clear the default value. </td></tr>
+<tr><td>PLATFORM=String</td><td>The name of the sequencing technology that produced the read, default ILLUMINA.  Default value: ILLUMINA. This option can be set to 'null' to clear the default value. </td></tr>
+<tr><td>FIRST_TILE=Integer</td><td>If set, this is the first tile to be processed (for debugging).  Note that tiles are not processed in numerical order.  Default value: null. </td></tr>
+<tr><td>TILE_LIMIT=Integer</td><td>If set, process no more than this many tiles (for debugging).  Default value: null. </td></tr>
+<tr><td>BARCODE_SEQUENCE_TAG_NAME=String</td><td>Tag name for barcode sequence.  Default value: BC. This option can be set to 'null' to clear the default value. </td></tr>
+<tr><td>BARCODE_QUALITY_TAG_NAME=String</td><td>Tag name for barcode quality.  Default value: QT. This option can be set to 'null' to clear the default value. </td></tr>
+<tr><td>SECOND_BARCODE_SEQUENCE_TAG_NAME=String</td><td>Tag name for second  barcode sequence.  Default value: null. </td></tr>
+<tr><td>SECOND_BARCODE_QUALITY_TAG_NAME=String</td><td>Tag name for second barcode quality.  Default value: null. </td></tr>
+</table>
+<br/>

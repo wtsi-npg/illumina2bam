@@ -1,0 +1,19 @@
+<a name="BamReadTrimmer"/>
+<h3>BamReadTrimmer</h3>
+<p>USAGE: BamReadTrimmer [options]
+<p>
+<p>Strip part of a read in fixed positionos, optionally place this and its quality in BAM tags. Version: 0.04
+<p></p>
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>INPUT=File</td><td>The input SAM or BAM file to trim.  Required. </td></tr>
+<tr><td>OUTPUT=File</td><td>The output file after trimming.  Required. </td></tr>
+<tr><td>ONLY_FORWARD_READ=Boolean</td><td>Just trim the forward read if true.  Default value: true. This option can be set to 'null' to clear the default value. Possible values: {true, false} </td></tr>
+<tr><td>FIRST_POSITION_TO_TRIM=Integer</td><td>First position to be trimmed.  Required. </td></tr>
+<tr><td>TRIM_LENGTH=Integer</td><td>The lenght to be trimmed.  Required. </td></tr>
+<tr><td>SAVE_TRIM=Boolean</td><td>Timmed bases to be saved?  Default value: true. This option can be set to 'null' to clear the default value. Possible values: {true, false} </td></tr>
+<tr><td>TRIM_BASE_TAG=String</td><td>Tag name to be used for timmed bases.  Default value: rs. This option can be set to 'null' to clear the default value. </td></tr>
+<tr><td>TRIM_QUALITY_TAG=String</td><td>Tag name to be used for timmed qualities.  Default value: qs. This option can be set to 'null' to clear the default value. </td></tr>
+<tr><td>TAG_TO_KEEP=String</td><td>A list of tags to keep.  This option may be specified 0 or more times. </td></tr>
+</table>
+<br/>

@@ -1,0 +1,9 @@
+<!--#include virtual="illumina2bam.shtml" -->
+<!--#include virtual="BamQualityQuantisation.shtml" -->
+<!--#include virtual="BamTagStripper.shtml" -->
+<!--#include virtual="ChangeBamHeader.shtml" -->
+<!--#include virtual="AlignmentFilter.shtml" -->
+<!--#include virtual="SplitBamByReadGroup.shtml" -->
+<!--#include virtual="BamIndexDecoder.shtml" -->
+<!--#include virtual="BamReadTrimmer.shtml" -->
+<!--#include virtual="BamMerger.shtml" -->

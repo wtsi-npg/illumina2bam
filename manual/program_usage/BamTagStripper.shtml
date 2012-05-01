@@ -1,0 +1,14 @@
+<a name="BamTagStripper"/>
+<h3>BamTagStripper</h3>
+<p>USAGE: BamTagStripper [options]
+<p>
+<p>Strip a list of tags in bam/sam record. By default, any tags containing lowercase letters will be stripped and other tags will be kept. A list of tags can be given to keep or strip. Version: 0.04
+<p></p>
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>INPUT=File</td><td>The input SAM or BAM file to strip.  Required. </td></tr>
+<tr><td>OUTPUT=File</td><td>The stripped ouput SAM or BAM file.  Required. </td></tr>
+<tr><td>TAG_TO_KEEP=String</td><td>A list of tag containing lowercase letters to keep.  This option may be specified 0 or more times. </td></tr>
+<tr><td>TAG_TO_STRIP=String</td><td>A list of tag only containing uppercase letters to strip.  This option may be specified 0 or more times. </td></tr>
+</table>
+<br/>
