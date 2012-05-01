@@ -1,2 +1,4 @@
-illumina
-illumina.file.reader
+uk.ac.sanger.npg.bam.util
+uk.ac.sanger.npg.illumina
+uk.ac.sanger.npg.illumina.file.reader
+uk.ac.sanger.npg.picard
