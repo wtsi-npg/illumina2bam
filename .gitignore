@@ -1,0 +1,6 @@
+/build/
+/nbproject/private/
+dist/manual
+dist/javadoc
+dist/Illumina2bam-*.jar
+

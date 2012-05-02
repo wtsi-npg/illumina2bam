@@ -71,4 +71,103 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <target name="-post-jar" depends="-package-commands"/>
+    
+    <target name="-package-commands" depends="-document-standard-options">
+         <package-and-document-command title="Illumina2bam"  main-class="uk.ac.sanger.npg.illumina.Illumina2bam"/>
+         <package-and-document-command title="BamQualityQuantisation"  main-class="uk.ac.sanger.npg.picard.BamQualityQuantisation"/>
+         <package-and-document-command title="BamTagStripper"  main-class="uk.ac.sanger.npg.picard.BamTagStripper"/>
+         <package-and-document-command title="ChangeBamHeader"  main-class="uk.ac.sanger.npg.picard.ChangeBamHeader"/>
+         <package-and-document-command title="AlignmentFilter"  main-class="uk.ac.sanger.npg.picard.AlignmentFilter"/>
+         <package-and-document-command title="SplitBamByReadGroup"  main-class="uk.ac.sanger.npg.picard.SplitBamByReadGroup"/>
+         <package-and-document-command title="BamIndexDecoder"  main-class="uk.ac.sanger.npg.picard.BamIndexDecoder"/>
+         <package-and-document-command title="BamReadTrimmer"  main-class="uk.ac.sanger.npg.picard.BamReadTrimmer"/>
+         <package-and-document-command title="BamMerger"  main-class="uk.ac.sanger.npg.picard.BamMerger"/>
+    </target>
+
+    <!-- ************************************************************************************** -->
+    <!-- ************************************************************************************** -->
+    <!-- Beginning of taskdefs that are used elsewhere in the build file                        -->
+    <!-- ************************************************************************************** -->
+    <!-- ************************************************************************************** -->
+   
+    <!-- Create a jar for a command-line class so it can be run java -jar jarfile -->
+    <macrodef name="package-command">
+        <attribute name="main-class"/>
+        <attribute name="title"/>
+        <element name="filesets" optional="yes"/>
+        <sequential>
+            <classfileset dir="${build.classes.dir}" id="reqdClasses">
+                <root classname="@{main-class}"/>
+            </classfileset>
+            <jar destfile="${dist.dir}/@{title}.jar">
+                <fileset  refid="reqdClasses"/>
+                <manifest>
+                    <attribute name="Implementation-Title" value="@{title}"/>
+                    <attribute name="Main-Class" value="@{main-class}"/>
+                    <attribute name="Implementation-Version" value="${illumina2bam.version}"/>
+                    <attribute name="Implementation-Vendor" value="${application.vendor}"/>
+                    <attribute name="Class-Path" value="${jar.classpath}"/>
+                </manifest>
+            </jar>
+        </sequential>
+    </macrodef>
+
+    <!-- generate HTML documentation for command-line program -->
+    <macrodef name="document-command">
+        <attribute name="main-class"/>
+        <attribute name="title"/>
+        <element name="filesets" optional="yes"/>
+        <sequential>
+            <!-- For project website -->
+            <mkdir dir="${dist.commandline.html.dir}"/>
+
+            <!-- Generate HTML for each command -->
+            <java classname="net.sf.picard.cmdline.CreateHtmlDocForProgram"
+                  output="${dist.commandline.html.dir}/@{title}.shtml"
+                  failonerror="true">
+                <classpath>
+                    <path path="${run.classpath}"/>
+                </classpath>
+                <arg value="@{main-class}"/>
+            </java>
+
+            <!-- Generate links to each command -->
+            <echo file="${dist.commandline.html.dir}/command-line-sidebar.shtml" append="true"
+                  message="&lt;li>&lt;a href=&quot;index.shtml#@{title}&quot;>@{title}&lt;/a>${line.separator}"/>
+
+            <!-- include usage for each command -->
+            <echo  file="${dist.commandline.html.dir}/command-line-usage.shtml" append="true"
+                    message="&lt;!--#include virtual=&quot;@{title}.shtml&quot; -->${line.separator}"/>
+        </sequential>
+    </macrodef>
+
+    <!-- Create a jar for a command-line class so it can be run java -jar jarfile, and generate on-line doc for it. -->
+    <macrodef name="package-and-document-command">
+        <attribute name="main-class"/>
+        <attribute name="title"/>
+        <element name="filesets" optional="yes"/>
+        <sequential>
+            <package-command title="@{title}" main-class="@{main-class}"/>
+            <document-command title="@{title}" main-class="@{main-class}"/>
+        </sequential>
+    </macrodef>
+    
+    <target name="-document-standard-options">
+        <sequential>
+            <!-- For project website -->
+            <mkdir dir="${dist.commandline.html.dir}"/>
+
+            <!-- Generate HTML for each command -->
+            <java classname="net.sf.picard.cmdline.CreateHtmlDocForStandardOptions"
+                  output="${dist.commandline.html.dir}/standard-options.shtml"
+                  failonerror="true">
+                <classpath>
+                    <path path="${run.classpath}"/>
+                </classpath>
+            </java>
+        </sequential>
+    </target>
+ 
 </project>
