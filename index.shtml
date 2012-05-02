@@ -60,7 +60,6 @@
 <h3>Standard Options</h3>
 <p>The following options are relevant for most Picard programs:</p>
 <!--#include virtual="manual/standard-options.shtml"-->
-
 <!--#include virtual="manual/command-line-usage.shtml"-->
 </div>
 </div>
