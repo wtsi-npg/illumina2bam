@@ -1,9 +1,23 @@
 <html><head>
-<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 <title>Overview of Illumina2bam command-line tools</title>
 <link rel="stylesheet" type="text/css" href="style.css" media="screen">
+<script type="text/javascript" src="prototype.js">
+</script>
+
+<script type="text/javascript">
+function update_contents()
+{
+    alert("Page loaded");
+    new Ajax.Updater('stand-options','manual/standard-options.html',{method: 'get'});
+    alert("2");
+    new Ajax.Updater('sidebar-commands','manual/command-line-sidebar.html',{method: 'get'});
+    alert("3");
+    new Ajax.Updater('command-line-usage','manual/command-line-usage.html',{method: 'get'});
+    alert("4");
+}
+</script>
 </head>
-<body>
+<body onload="update_contents()">
 
 <div id="wrap">
 
@@ -11,7 +25,7 @@
   <table border="0" bordercolor="white" cellspacing="0" width="100%">
 	  <tbody><tr>
 	  <td width="83%"><h1><a href="index.html">Illumina2bam</a></h1></td>
-	  <td style="vertical-align: middle;"><a href="https://github.com/gq1/illumina2bam"><img src="github.png" alt="Github logo" border="0" height="24" width="56"></a></td>
+	  <td style="vertical-align:middle"><a href="https://github.com/gq1/illumina2bam"><img src="github.png" width="56" height="24" border="0" alt="Github logo" /></a></td>
 	  </tr></tbody>
 	</table>
 </div>
@@ -38,28 +52,19 @@
 
 <ul>
 <li><a href="index.html#Overview">Overview</a>
-</li><li><a href="index.html#Illumina2bam">Illumina2bam</a>
-</li><li><a href="index.html#BamQualityQuantisation">BamQualityQuantisation</a>
-</li><li><a href="index.html#BamTagStripper">BamTagStripper</a>
-</li><li><a href="index.html#ChangeBamHeader">ChangeBamHeader</a>
-</li><li><a href="index.html#AlignmentFilter">AlignmentFilter</a>
-</li><li><a href="index.html#SplitBamByReadGroup">SplitBamByReadGroup</a>
-</li><li><a href="index.html#BamIndexDecoder">BamIndexDecoder</a>
-</li><li><a href="index.html#BamReadTrimmer">BamReadTrimmer</a>
-</li><li><a href="index.html#BamMerger">BamMerger</a>
-
-</li></ul>
+<div id="sidebar-commands"/>
+</ul>
 
 <h3>Picard Project</h3>
 <ul>
-  <li><a href="http://picard.sourceforge.net/">Picard</a></li>
+  <li><a href="http://picard.sourceforge.net">Picard</a></li>
 </ul>
 
 </div>
 
 <div id="main">
 
-<a name="Overview">
+<a name="Overview"/>
 <h2>Overview of Illumina2bam Picard command-line tools</h2>
 
 <p>The Picard command-line tools are packaged as executable jar files.  They require Java
@@ -69,302 +74,8 @@
   recommended.</p>
 <h3>Standard Options</h3>
 <p>The following options are relevant for most Picard programs:</p>
-<table>
-<tbody><tr><th>Option</th><th>Description</th></tr>
-<tr><td>--help</td><td>Displays options specific to this tool.</td></tr>
-<tr><td>--stdhelp</td><td>Displays options specific to this tool AND options common to all Picard command line tools.</td></tr>
-<tr><td>--version</td><td>Displays program version.</td></tr>
-<tr><td>TMP_DIR=File</td><td>This option may be specified 0 or more times. </td></tr>
-<tr><td>VERBOSITY=LogLevel</td><td>Control verbosity of logging.  
-Default value: INFO. This option can be set to 'null' to clear the 
-default value. Possible values: {ERROR, WARNING, INFO, DEBUG} </td></tr>
-<tr><td>QUIET=Boolean</td><td>Whether to suppress job-summary info on 
-System.err.  Default value: false. This option can be set to 'null' to 
-clear the default value. Possible values: {true, false} </td></tr>
-<tr><td>VALIDATION_STRINGENCY=ValidationStringency</td><td>Validation 
-stringency for all SAM files read by this program.  Setting stringency 
-to SILENT can improve performance when processing a BAM file in which 
-variable-length data (read, qualities, tags) do not otherwise need to be
- decoded.  Default value: STRICT. This option can be set to 'null' to 
-clear the default value. Possible values: {STRICT, LENIENT, SILENT} </td></tr>
-<tr><td>COMPRESSION_LEVEL=Integer</td><td>Compression level for all 
-compressed files created (e.g. BAM and GELI).  Default value: 5. This 
-option can be set to 'null' to clear the default value. </td></tr>
-<tr><td>MAX_RECORDS_IN_RAM=Integer</td><td>When writing SAM files that 
-need to be sorted, this will specify the number of records stored in RAM
- before spilling to disk. Increasing this number reduces the number of 
-file handles needed to sort a SAM file, and increases the amount of RAM 
-needed.  Default value: 500000. This option can be set to 'null' to 
-clear the default value. </td></tr>
-<tr><td>CREATE_INDEX=Boolean</td><td>Whether to create a BAM index when 
-writing a coordinate-sorted BAM file.  Default value: false. This option
- can be set to 'null' to clear the default value. Possible values: 
-{true, false} </td></tr>
-<tr><td>CREATE_MD5_FILE=Boolean</td><td>Whether to create an MD5 digest 
-for any BAM files created.    Default value: false. This option can be 
-set to 'null' to clear the default value. Possible values: {true, false}
- </td></tr>
-</tbody></table>
-
-
-</a><a name="Illumina2bam">
-<h3>Illumina2bam</h3>
-<p>USAGE: Illumina2bam [options]
-</p><p>
-</p><p>Convert Illumina BCL to BAM or SAM file. Version: 0.04
-</p><p></p>
-<table>
-<tbody><tr><th>Option</th><th>Description</th></tr>
-<tr><td>RUN_FOLDER=File</td><td>Illumina runfolder directory including 
-runParameters xml file under it, upwards two levels from Intensities 
-directory if not given.  Default value: null. </td></tr>
-<tr><td>INTENSITY_DIR=File</td><td>Illumina intensities directory including config xml file, and clocs, locs or pos files under lane directory.  Required. </td></tr>
-<tr><td>BASECALLS_DIR=File</td><td>Illumina basecalls directory 
-including config xml file, and filter files, bcl, maybe scl files under 
-lane cycle directory, using BaseCalls directory under intensities if not
- given.   Default value: null. </td></tr>
-<tr><td>LANE=Integer</td><td>Lane number.  Required. </td></tr>
-<tr><td>OUTPUT=File</td><td>Output file name.  Required. </td></tr>
-<tr><td>GENERATE_SECONDARY_BASE_CALLS=Boolean</td><td>Including second 
-base call or not, default false.  Default value: false. This option can 
-be set to 'null' to clear the default value. Possible values: {true, 
-false} </td></tr>
-<tr><td>PF_FILTER=Boolean</td><td>Filter cluster or not, default true.  
-Default value: true. This option can be set to 'null' to clear the 
-default value. Possible values: {true, false} </td></tr>
-<tr><td>READ_GROUP_ID=String</td><td>ID used to link RG header record 
-with RG tag in SAM record, default 1.  Default value: 1. This option can
- be set to 'null' to clear the default value. </td></tr>
-<tr><td>SAMPLE_ALIAS=String</td><td>The name of the sequenced sample, using library name if not given.  Default value: null. </td></tr>
-<tr><td>LIBRARY_NAME=String</td><td>The name of the sequenced library, 
-default unknown.  Default value: unknown. This option can be set to 
-'null' to clear the default value. </td></tr>
-<tr><td>STUDY_NAME=String</td><td>The name of the study.  Default value: null. </td></tr>
-<tr><td>PLATFORM_UNIT=String</td><td>The platform unit, using runfolder name plus lane number if not given.  Default value: null. </td></tr>
-<tr><td>RUN_START_DATE=Iso8601Date</td><td>The start date of the run, read from config file if not given.  Default value: null. </td></tr>
-<tr><td>SEQUENCING_CENTER=String</td><td>Sequence center name, default 
-SC for Sanger Center.  Default value: SC. This option can be set to 
-'null' to clear the default value. </td></tr>
-<tr><td>PLATFORM=String</td><td>The name of the sequencing technology 
-that produced the read, default ILLUMINA.  Default value: ILLUMINA. This
- option can be set to 'null' to clear the default value. </td></tr>
-<tr><td>FIRST_TILE=Integer</td><td>If set, this is the first tile to be 
-processed (for debugging).  Note that tiles are not processed in 
-numerical order.  Default value: null. </td></tr>
-<tr><td>TILE_LIMIT=Integer</td><td>If set, process no more than this many tiles (for debugging).  Default value: null. </td></tr>
-<tr><td>BARCODE_SEQUENCE_TAG_NAME=String</td><td>Tag name for barcode sequence.  Default value: BC. This option can be set to 'null' to clear the default value. </td></tr>
-<tr><td>BARCODE_QUALITY_TAG_NAME=String</td><td>Tag name for barcode quality.  Default value: QT. This option can be set to 'null' to clear the default value. </td></tr>
-<tr><td>SECOND_BARCODE_SEQUENCE_TAG_NAME=String</td><td>Tag name for second  barcode sequence.  Default value: null. </td></tr>
-<tr><td>SECOND_BARCODE_QUALITY_TAG_NAME=String</td><td>Tag name for second barcode quality.  Default value: null. </td></tr>
-</tbody></table>
-<br>
-
-</a><a name="BamQualityQuantisation">
-<h3>BamQualityQuantisation</h3>
-<p>USAGE: BamQualityQuantisation [options]
-</p><p>
-</p><p>Quantise the original Illumina canned qualities into reduced 
-resolution scores using bins 
-1-&gt;9=6,10-&gt;19=15,20-&gt;24=22,25-&gt;29=27,30-&gt;34=33,35-&gt;39=37,40-&gt;59=41.
- Version: 0.04
-</p><p></p>
-<table>
-<tbody><tr><th>Option</th><th>Description</th></tr>
-<tr><td>INPUT=File</td><td>The input SAM or BAM file.   Required. </td></tr>
-<tr><td>OUTPUT=File</td><td>The ouput SAM or BAM file.   Required. </td></tr>
-<tr><td>USE_OLD_QUALITY=Boolean</td><td>Use original quality scores from
- OQ tag.   Default value: false. This option can be set to 'null' to 
-clear the default value. Possible values: {true, false} </td></tr>
-</tbody></table>
-<br>
-
-</a><a name="BamTagStripper">
-<h3>BamTagStripper</h3>
-<p>USAGE: BamTagStripper [options]
-</p><p>
-</p><p>Strip a list of tags in bam/sam record. By default, any tags 
-containing lowercase letters will be stripped and other tags will be 
-kept. A list of tags can be given to keep or strip. Version: 0.04
-</p><p></p>
-<table>
-<tbody><tr><th>Option</th><th>Description</th></tr>
-<tr><td>INPUT=File</td><td>The input SAM or BAM file to strip.  Required. </td></tr>
-<tr><td>OUTPUT=File</td><td>The stripped ouput SAM or BAM file.  Required. </td></tr>
-<tr><td>TAG_TO_KEEP=String</td><td>A list of tag containing lowercase letters to keep.  This option may be specified 0 or more times. </td></tr>
-<tr><td>TAG_TO_STRIP=String</td><td>A list of tag only containing uppercase letters to strip.  This option may be specified 0 or more times. </td></tr>
-</tbody></table>
-<br>
-
-</a><a name="ChangeBamHeader">
-<h3>ChangeBamHeader</h3>
-<p>USAGE: ChangeBamHeader [options]
-</p><p>
-</p><p>Add extra PGs into bam header, or change SM, LB or DS tag in RG 
-line in header and this only works with one read group in the input bam.
- . Version: 0.04
-</p><p></p>
-<table>
-<tbody><tr><th>Option</th><th>Description</th></tr>
-<tr><td>INPUT=File</td><td>The input SAM or BAM file.   Required. </td></tr>
-<tr><td>OUTPUT=File</td><td>The ouput SAM or BAM file.   Required. </td></tr>
-<tr><td>PG=String</td><td>The extra PG line with fields separated by 
-semicolon for bam header including ID, PN, VN and CL etc, PP id will be 
-reset. Each field including tag name and value separated by colon.  This
- option may be specified 0 or more times. </td></tr>
-<tr><td>SAMPLE=String</td><td>The sample name in the only RG group.   Default value: null. </td></tr>
-<tr><td>LIBRARY=String</td><td>The library name in the only RG group.   Default value: null. </td></tr>
-<tr><td>DESCRIPTION=String</td><td>The description in the only RG group.   Default value: null. </td></tr>
-</tbody></table>
-<br>
-
-</a><a name="AlignmentFilter">
-<h3>AlignmentFilter</h3>
-<p>USAGE: AlignmentFilter [options]
-</p><p>
-</p><p>Give a list of SAM/BAM files with the same set of records and in 
-the same order but aligned with different references, split reads into 
-different files according to alignments. You have option to put 
-unaligned reads into one of output files or a separate file. Version: 
-0.04
-</p><p></p>
-<table>
-<tbody><tr><th>Option</th><th>Description</th></tr>
-<tr><td>INPUT_ALIGNMENT=File</td><td>The input SAM or BAM file with alignment.  This option must be specified at least 1 times. </td></tr>
-<tr><td>OUTPUT_ALIGNMENT=File</td><td>The ouput SAM or BAM file. It 
-should have the same number of files as the input.  This option must be 
-specified at least 1 times. </td></tr>
-<tr><td>OUTPUT_UNALIGNED=File</td><td>The ouput SAM or BAM file for 
-unaligned. If not given, the unaligned reads will put into the last 
-output file.  Default value: null. </td></tr>
-<tr><td>METRICS_FILE=File</td><td>Metrics file name  Default value: null. </td></tr>
-</tbody></table>
-<br>
-
-</a><a name="SplitBamByReadGroup">
-<h3>SplitBamByReadGroup</h3>
-<p>USAGE: SplitBamByReadGroup [options]
-</p><p>
-</p><p>Split a BAM file into multiple BAM files based on ReadGroup. 
-Headers are a copy of the original file, removing @RGs where IDs match 
-with the other ReadGroup IDs. Version: 0.04
-</p><p></p>
-<table>
-<tbody><tr><th>Option</th><th>Description</th></tr>
-<tr><td>INPUT=File</td><td>The input SAM or BAM file with multiple read groups.  Required. </td></tr>
-<tr><td>OUTPUT_PREFIX=String</td><td>The prefix for output bam/sam file.  Required. </td></tr>
-<tr><td>OUTPUT_COMMON_RG_HEAD_TO_TRIM=String</td><td>The common RG name head to trim from the output file name.  Default value: null. </td></tr>
-</tbody></table>
-<br>
-
-</a><a name="BamIndexDecoder">
-<h3>BamIndexDecoder</h3>
-<p>USAGE: BamIndexDecoder [options]
-</p><p>
-</p><p>A command-line tool to decode multiplexed bam file. Version: 0.04
-</p><p></p>
-<table>
-<tbody><tr><th>Option</th><th>Description</th></tr>
-<tr><td>INPUT=File</td><td>The input SAM or BAM file to decode.  Required. </td></tr>
-<tr><td>OUTPUT=File</td><td>The output file after decoding.  Required.  Cannot be used in conjuction with option(s) OUTPUT_FORMAT OUTPUT_PREFIX OUTPUT_DIR</td></tr>
-<tr><td>OUTPUT_DIR=File</td><td>The output directory for bam files for 
-each barcode if you want to split the output  Required.  Cannot be used 
-in conjuction with option(s) OUTPUT (O)</td></tr>
-<tr><td>OUTPUT_PREFIX=String</td><td>The prefix for bam or sam file when
- you want to split output by barcodes  Required.  Cannot be used in 
-conjuction with option(s) OUTPUT (O)</td></tr>
-<tr><td>OUTPUT_FORMAT=String</td><td>The extension name for split file 
-when you want to split output by barcodes: bam or sam  Required.  Cannot
- be used in conjuction with option(s) OUTPUT (O)</td></tr>
-<tr><td>BARCODE_TAG_NAME=String</td><td>The tag name used to store 
-barcode read in bam records  Default value: BC. This option can be set 
-to 'null' to clear the default value. </td></tr>
-<tr><td>BARCODE_QUALITY_TAG_NAME=String</td><td>Tag name for barcode quality.  Default value: QT. This option can be set to 'null' to clear the default value. </td></tr>
-<tr><td>BARCODE=String</td><td>Barcode sequence.  These must be unique, 
-and all the same length.  This option may be specified 0 or more times. 
- Cannot be used in conjuction with option(s) BARCODE_FILE</td></tr>
-<tr><td>BARCODE_FILE=File</td><td>Tab-delimited file of barcode 
-sequences, and optionally barcode name and library name.  Barcodes must 
-be unique, and all the same length.  Column headers must be 
-'barcode_sequence', 'barcode_name', and 'library_name'.  Required.  
-Cannot be used in conjuction with option(s) BARCODE</td></tr>
-<tr><td>METRICS_FILE=File</td><td>Per-barcode and per-lane metrics written to this file.  Required. </td></tr>
-<tr><td>MAX_MISMATCHES=Integer</td><td>Maximum mismatches for a barcode 
-to be considered a match.  Default value: 1. This option can be set to 
-'null' to clear the default value. </td></tr>
-<tr><td>MIN_MISMATCH_DELTA=Integer</td><td>Minimum difference between 
-number of mismatches in the best and second best barcodes for a barcode 
-to be considered a match.  Default value: 1. This option can be set to 
-'null' to clear the default value. </td></tr>
-<tr><td>MAX_NO_CALLS=Integer</td><td>Maximum allowable number of 
-no-calls in a barcode read before it is considered unmatchable.  Default
- value: 2. This option can be set to 'null' to clear the default value. </td></tr>
-<tr><td>CONVERT_LOW_QUALITY_TO_NO_CALL=Boolean</td><td>Convert low 
-quality bases in barcode read to Ns .  Default value: false. This option
- can be set to 'null' to clear the default value. Possible values: 
-{true, false} </td></tr>
-<tr><td>MAX_LOW_QUALITY_TO_CONVERT=Integer</td><td>Max low quality phred
- value to convert bases in barcode read to Ns .  Default value: 15. This
- option can be set to 'null' to clear the default value. </td></tr>
-</tbody></table>
-<br>
-
-</a><a name="BamReadTrimmer">
-<h3>BamReadTrimmer</h3>
-<p>USAGE: BamReadTrimmer [options]
-</p><p>
-</p><p>Strip part of a read in fixed positionos, optionally place this and its quality in BAM tags. Version: 0.04
-</p><p></p>
-<table>
-<tbody><tr><th>Option</th><th>Description</th></tr>
-<tr><td>INPUT=File</td><td>The input SAM or BAM file to trim.  Required. </td></tr>
-<tr><td>OUTPUT=File</td><td>The output file after trimming.  Required. </td></tr>
-<tr><td>ONLY_FORWARD_READ=Boolean</td><td>Just trim the forward read if 
-true.  Default value: true. This option can be set to 'null' to clear 
-the default value. Possible values: {true, false} </td></tr>
-<tr><td>FIRST_POSITION_TO_TRIM=Integer</td><td>First position to be trimmed.  Required. </td></tr>
-<tr><td>TRIM_LENGTH=Integer</td><td>The lenght to be trimmed.  Required. </td></tr>
-<tr><td>SAVE_TRIM=Boolean</td><td>Timmed bases to be saved?  Default 
-value: true. This option can be set to 'null' to clear the default 
-value. Possible values: {true, false} </td></tr>
-<tr><td>TRIM_BASE_TAG=String</td><td>Tag name to be used for timmed bases.  Default value: rs. This option can be set to 'null' to clear the default value. </td></tr>
-<tr><td>TRIM_QUALITY_TAG=String</td><td>Tag name to be used for timmed qualities.  Default value: qs. This option can be set to 'null' to clear the default value. </td></tr>
-<tr><td>TAG_TO_KEEP=String</td><td>A list of tags to keep.  This option may be specified 0 or more times. </td></tr>
-</tbody></table>
-<br>
-
-</a><a name="BamMerger">
-<h3>BamMerger</h3>
-<p>USAGE: BamMerger [options]
-</p><p>
-</p><p>A command-line tool to merge BAM/SAM alignment info in the first 
-input file with the data in an unmapped BAM file, producing a third BAM 
-file that has alignment data and all the additional data from the 
-unmapped BAM. Version: 0.04
-</p><p></p>
-<table>
-<tbody><tr><th>Option</th><th>Description</th></tr>
-<tr><td>ALIGNED_BAM=File</td><td>The input SAM or BAM file with alignment.  Required. </td></tr>
-<tr><td>ALIGNMENT_PROGRAM_ID=String</td><td>The alignment program ID in 
-the header of the SAM or BAM file with alignment.  Default value: bwa. 
-This option can be set to 'null' to clear the default value. </td></tr>
-<tr><td>KEEP_ALL_PG=Boolean</td><td>keep all other PGs in aligned bam 
-into output  Default value: false. This option can be set to 'null' to 
-clear the default value. Possible values: {true, false} </td></tr>
-<tr><td>INPUT=File</td><td>The input unmapped SAM or BAM file to merge.  Required. </td></tr>
-<tr><td>OUTPUT=File</td><td>The output file after merging.  Required. </td></tr>
-<tr><td>KEEP_EXTRA_UNMAPPED_READS=Boolean</td><td>KEEP extra unmapped 
-reads in unmapped bam file to the final output if true.  Default value: 
-false. This option can be set to 'null' to clear the default value. 
-Possible values: {true, false} </td></tr>
-<tr><td>REPLACE_ALIGNED_BASE_QUALITY=Boolean</td><td>Replace base 
-qualities in aligned bam wtih the ones in unaligned bam if true.  
-Default value: false. This option can be set to 'null' to clear the 
-default value. Possible values: {true, false} </td></tr>
-</tbody></table>
-<br>
-
-
-</a></div><a name="BamMerger">
-</a></div><a name="BamMerger">
-
-</a></body></html>
+<div id="stand-options"></div>
+<div id="command-line-usage"></div>
+</div>
+</div>
+</body></html>
