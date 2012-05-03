@@ -7,13 +7,9 @@
 <script type="text/javascript">
 function update_contents()
 {
-    alert("Page loaded");
     new Ajax.Updater('stand-options','manual/standard-options.html',{method: 'get'});
-    alert("2");
     new Ajax.Updater('sidebar-commands','manual/command-line-sidebar.html',{method: 'get'});
-    alert("3");
     new Ajax.Updater('command-line-usage','manual/command-line-usage.html',{method: 'get'});
-    alert("4");
 }
 </script>
 </head>
