@@ -19,12 +19,16 @@
  */
 package uk.ac.sanger.npg.picard;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.TimeZone;
+import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMUtils;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import uk.ac.sanger.npg.bam.util.CheckBamMd5;
 /**
  * This is the test class for BamQualityQuantisation
  * 
@@ -37,6 +41,7 @@ public class BamQualityQuantisationTest {
 
     public BamQualityQuantisationTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        SAMFileReader.setDefaultValidationStringency(SAMFileReader.ValidationStringency.SILENT);
     }
     
     @Test
@@ -89,10 +94,8 @@ public class BamQualityQuantisationTest {
 
         File md5File = new File("testdata/6210_8_squashed.bam.md5");
         md5File.deleteOnExit();
-        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
-        String md5 = md5Stream.readLine();
-
-        assertEquals(md5, "bb88f4e8abf41dae49a695b6a0f37f73");
+        
+        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(squashedBamFile, "BamQualityQuantisation"), "2afc6143cd5acf58d2b11bbf814bcf23");
     }
  
 }

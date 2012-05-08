@@ -28,7 +28,7 @@ import net.sf.samtools.SAMProgramRecord;
 /**
  * This is the base class for any command line program class
  * 
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 public abstract class PicardCommandLine extends CommandLineProgram {
     

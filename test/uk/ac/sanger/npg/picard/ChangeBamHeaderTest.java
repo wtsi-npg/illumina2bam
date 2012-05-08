@@ -18,10 +18,15 @@
  */
 package uk.ac.sanger.npg.picard;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.TimeZone;
+import net.sf.samtools.SAMFileReader;
+import net.sf.samtools.SAMFileReader;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import uk.ac.sanger.npg.bam.util.CheckBamMd5;
 
 /**
  * This is the test class for ChangeBamHeader
@@ -35,6 +40,7 @@ public class ChangeBamHeaderTest {
     
     public ChangeBamHeaderTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        SAMFileReader.setDefaultValidationStringency(SAMFileReader.ValidationStringency.SILENT);
     }
     
     /**
@@ -92,9 +98,7 @@ public class ChangeBamHeaderTest {
 
         File md5File = new File("testdata/6210_8_header_changed.bam.md5");
         md5File.deleteOnExit();
-        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
-        String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "0acf94f4d3798315ff8159d79bbad663");
+        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(newBamFile, "ChangeBamHeader"), "09d32a078c13b96acb079f1daa33afdb");
     }
 }

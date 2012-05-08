@@ -115,6 +115,12 @@ public class BamReadTrimmer extends PicardCommandLine {
         return 0;
     }
     
+    /**
+     * 
+     * @param record
+     * @param header
+     * @return
+     */
     public SAMRecord removeAlignment(SAMRecord record, SAMFileHeader header){
 
         if (record.getReadNegativeStrandFlag()) {
@@ -139,6 +145,14 @@ public class BamReadTrimmer extends PicardCommandLine {
         return newRecord;
     }
     
+    /**
+     * 
+     * @param record
+     * @param firstPos
+     * @param trimLength
+     * @param saveTrim
+     * @return
+     */
     public SAMRecord trimSAMRecord(SAMRecord record, int firstPos, int trimLength, boolean saveTrim){
 
         boolean reversed = false;

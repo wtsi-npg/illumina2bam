@@ -18,16 +18,12 @@
  */
 package uk.ac.sanger.npg.illumina.file.reader;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
+import java.io.*;
 import net.sf.picard.util.Log;
 
 /**
  *
- * @author Guoying Qi
+ * @author gq1@sanger.ac.uk
  */
 public class PosFileReader extends PositionFileReader  {
 
@@ -108,6 +104,17 @@ public class PosFileReader extends PositionFileReader  {
         }
     }
     
+    /**
+     * @return the totalCluster
+     */
+    public int getTotalCluster() {
+        return totalCluster;
+    }
+    
+    /**
+     * 
+     * @param args
+     */
     public static void main (String [] args){
         PosFileReader posFileReader = null;
         try {
@@ -119,13 +126,5 @@ public class PosFileReader extends PositionFileReader  {
              PositionFileReader.Position pos = posFileReader.next();
              System.out.println(pos.x + " " + pos.y);
         }
-    }
-
-    /**
-     * @return the totalCluster
-     */
-    public int getTotalCluster() {
-        return totalCluster;
-    }
-    
+    } 
 }

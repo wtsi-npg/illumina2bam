@@ -5,14 +5,14 @@
 package uk.ac.sanger.npg.picard;
 
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.TimeZone;
+import net.sf.samtools.SAMFileReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import uk.ac.sanger.npg.bam.util.CheckBamMd5;
 
 /**
  *
@@ -25,6 +25,7 @@ public class SplitBamByReadGroupTest {
     
     public SplitBamByReadGroupTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        SAMFileReader.setDefaultValidationStringency(SAMFileReader.ValidationStringency.SILENT);
     }
 
     /**
@@ -53,9 +54,7 @@ public class SplitBamByReadGroupTest {
 
         File md5File1 = new File("testdata/6551_8_split#1.sam.md5");
         md5File1.deleteOnExit();
-        BufferedReader md5Stream1 = new BufferedReader(new FileReader(md5File1));
-        String md5 = md5Stream1.readLine();
-        assertEquals(md5, "a0e342d73962b0c31177d97983756e18");
+        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(splitFile1, "SplitBamByReadGroup"), "90610abeff353dcd0c0eb80544148580");
         
         File splitFile9 = new File("testdata/6551_8_split#9.sam");
         splitFile9.deleteOnExit();
@@ -63,9 +62,8 @@ public class SplitBamByReadGroupTest {
 
         File md5File9 = new File("testdata/6551_8_split#9.sam.md5");
         md5File9.deleteOnExit();
-        BufferedReader md5Stream9 = new BufferedReader(new FileReader(md5File9));
-        md5 = md5Stream9.readLine();
-        assertEquals(md5, "6ca5de1dcaefc34c65be3b96adde35b3");
+        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(splitFile9, "SplitBamByReadGroup"), "28a7c1c509a66a9261190eea586a23f8");
+
     
     }
 }

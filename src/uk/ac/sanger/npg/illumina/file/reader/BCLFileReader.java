@@ -42,7 +42,7 @@ public class BCLFileReader extends IlluminaFileReader {
 
     /**
      * constructor to generate bcl file input stream
-     *  and read the number of clusters
+     * and read the number of clusters
      *
      * @param bclFileName bcl file name
      * @throws Exception
@@ -137,6 +137,11 @@ public class BCLFileReader extends IlluminaFileReader {
         return totalClusters;
     }
 
+    /**
+     * 
+     * @param args
+     * @throws Exception
+     */
     public static void main(String args[]) throws Exception {
 
         String bclFileName = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C1.1/s_1_1101.bcl";

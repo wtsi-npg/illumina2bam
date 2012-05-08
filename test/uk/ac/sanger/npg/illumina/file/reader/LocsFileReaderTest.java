@@ -33,9 +33,6 @@ public class LocsFileReaderTest {
 
     private static LocsFileReader locsFileReader = null;
 
-    public LocsFileReaderTest() {
-    }
-    
     @BeforeClass
     public static void setUpClass() throws Exception {
         System.out.println("Creating a locs file reader");
@@ -45,6 +42,7 @@ public class LocsFileReaderTest {
     
     @AfterClass
     public static void tearDownClass() throws Exception {
+        System.out.println("Close the locs file reader");
         locsFileReader.close();
     }
     

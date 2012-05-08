@@ -35,17 +35,19 @@ public class SCLFileReaderTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        System.out.println("Create a scl file reader");
         sclFileReader = new SCLFileReader(testSCLFile);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+        System.out.println("Close the scl file reader");
         sclFileReader.close();
     }
 
     @Test
     public void checkBCLHeaderOK() {
-
+        System.out.println("Read the scl file header");
         assertEquals(sclFileReader.getTotalClusters(), 2609912);
         assertEquals(sclFileReader.getCurrentCluster(), 0);
         assertTrue(sclFileReader.hasNext());
@@ -53,7 +55,7 @@ public class SCLFileReaderTest {
 
     @Test
     public void checkNextFirstClusterOK() {
-
+        System.out.println("Read the first clsuter from scl file");
         char cluster = sclFileReader.next();
         assertEquals(cluster, 'A');
         assertEquals(sclFileReader.getCurrentCluster(), 1);
@@ -62,7 +64,7 @@ public class SCLFileReaderTest {
 
     @Test
     public void checkNextMiddleClusterOK() {
-
+        System.out.println("Read more clusters and check 307th cluster");
         for (int i = 0; i < 305; i++) {
             sclFileReader.next();
         }
@@ -77,6 +79,8 @@ public class SCLFileReaderTest {
     @Test
     public void checkNextLastClusterOK() {
 
+        System.out.println("Read more clusters till the last one");
+        
         char cluster = ' ';
 
         while (sclFileReader.hasNext()) {

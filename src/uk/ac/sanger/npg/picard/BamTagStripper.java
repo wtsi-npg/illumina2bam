@@ -115,6 +115,10 @@ public class BamTagStripper extends PicardCommandLine {
         return 0;
     }
     
+    /**
+     * 
+     * @param args
+     */
     public static void main(final String[] args) {
 
         System.exit(new BamTagStripper().instanceMain(args));

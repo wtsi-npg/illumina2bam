@@ -35,17 +35,19 @@ public class FilterFileReaderTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        System.out.println("Crate a filter file reader");
         filterFileReader = new FilterFileReader(testFilterFile);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+        System.out.println("Close filter file reader");
         filterFileReader.close();
     }
 
     @Test
     public void checkBCLHeaderOK() {
-
+        System.out.println("Read header");
         assertEquals(filterFileReader.getTotalClusters(), 2609912);
         assertEquals(filterFileReader.getCurrentCluster(), 0);
         assertTrue(filterFileReader.hasNext());
@@ -53,7 +55,7 @@ public class FilterFileReaderTest {
 
     @Test
     public void checkNextFirstClusterOK() {
-
+        System.out.println("Read first cluster");
         int filter = (Integer) filterFileReader.next();
         assertEquals(filter, 0);
         assertEquals(filterFileReader.getCurrentCluster(), 1);
@@ -63,7 +65,7 @@ public class FilterFileReaderTest {
 
     @Test
     public void checkNextMiddleClusterOK() {
-
+        System.out.println("Read some more clusters and check 319th clsuter");
         for (int i = 0; i < 317; i++) {
             filterFileReader.next();
         }
@@ -77,7 +79,7 @@ public class FilterFileReaderTest {
 
     @Test
     public void checkNextLastClusterOK() {
-
+        System.out.println("Read all clusters till the last one");
         int filter = -1;
 
         while (filterFileReader.hasNext()) {

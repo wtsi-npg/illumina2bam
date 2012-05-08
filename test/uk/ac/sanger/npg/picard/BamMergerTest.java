@@ -21,8 +21,11 @@ package uk.ac.sanger.npg.picard;
 
 import java.io.*;
 import java.util.TimeZone;
+import net.sf.samtools.SAMFileReader;
+import net.sf.samtools.SAMFileReader;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import uk.ac.sanger.npg.bam.util.CheckBamMd5;
 
 /**
  * This is the test class for BamMerger
@@ -36,6 +39,7 @@ public class BamMergerTest {
 
     public BamMergerTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        SAMFileReader.setDefaultValidationStringency(SAMFileReader.ValidationStringency.SILENT);
     }
     /**
      * Test of instanceMain method and program record.
@@ -71,10 +75,8 @@ public class BamMergerTest {
 
         File md5File = new File("testdata/6210_8_merged.bam.md5");
         md5File.deleteOnExit();
-        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
-        String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "9da51da4cbcfc113f03728325e0b7a5e");
+        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"), "757a20138b8d499b958a1d3bcb79e0de");
     }
 
     /**
@@ -103,10 +105,8 @@ public class BamMergerTest {
 
         File md5File = new File("testdata/6210_8_merged_extra_reads.bam.md5");
         md5File.deleteOnExit();
-        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
-        String md5 = md5Stream.readLine();
-
-        assertEquals(md5, "871e5067a65c6ece048ce4759ddd7d8d");
+        
+        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"), "c248aeec291ad3802dba315ac6c602b7");
     }
     
     /**
@@ -134,9 +134,7 @@ public class BamMergerTest {
 
         File md5File = new File("testdata/6210_8_merged_extra_reads_no_keep.bam.md5");
         md5File.deleteOnExit();
-        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
-        String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "fdf18057891c1f84a15db35552682f2d");
+         assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"), "bd54f5431f95ee597f69fa61e111f614");
     }
 }

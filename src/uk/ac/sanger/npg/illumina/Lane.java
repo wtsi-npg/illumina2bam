@@ -671,6 +671,7 @@ public class Lane {
      * 
      * @param readInfoPath
      * 
+     * @param xmlDoc 
      * @return
      */
     public TreeMap<Integer,NamedNodeMap> getReadInfoFromRunParametersOrRunInfoFile(String readInfoPath, Document xmlDoc){

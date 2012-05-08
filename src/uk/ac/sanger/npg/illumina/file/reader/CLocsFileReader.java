@@ -43,6 +43,7 @@ public class CLocsFileReader extends PositionFileReader {
      * Constructor
      *
      * @param cLocsFileName clocs file name
+     * @throws Exception  
      */
     public CLocsFileReader(String cLocsFileName) throws Exception {
 
@@ -74,12 +75,12 @@ public class CLocsFileReader extends PositionFileReader {
     }
 
     /**
-     * this method should mean has Next Block
-     * Maybe no any cluster available anymore and return null when next method called
-     * in
+     * this method should mean hasNextBlock
+     * Maybe no any cluster available in the rest of blocks
      * 
      * @return true if there is next cluster
-     * but next method will return null and this method will return true as well when in last block but no cluster there
+     * but the next() method will return null even if this method return true when the rest of blocks have no cluster there
+     * 
      */
     @Override
     public boolean hasNext() {
@@ -155,6 +156,11 @@ public class CLocsFileReader extends PositionFileReader {
     }
 
 
+    /**
+     * 
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
 
         String clocsFileName = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.clocs";

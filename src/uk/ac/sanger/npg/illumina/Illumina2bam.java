@@ -40,7 +40,7 @@ public class Illumina2bam extends PicardCommandLine {
     
     private final Log log = Log.getInstance(Illumina2bam.class);
     
-    private final String programName = "illumina2bam";
+    private final String programName = "Illumina2bam";
     private final String programDS = "Convert Illumina BCL to BAM or SAM file";
     
     @Usage(programVersion=version)
@@ -48,7 +48,7 @@ public class Illumina2bam extends PicardCommandLine {
     
     @Option(shortName="R", doc="Illumina runfolder directory including runParameters xml file under it, upwards two levels from Intensities directory if not given.", optional=true)
     public File RUN_FOLDER;
-    
+
     @Option(shortName="I", doc="Illumina intensities directory including config xml file, and clocs, locs or pos files under lane directory.")
     public File INTENSITY_DIR;
 
@@ -94,23 +94,23 @@ public class Illumina2bam extends PicardCommandLine {
     @Option(doc="If set, this is the first tile to be processed (for debugging).  Note that tiles are not processed in numerical order.",
     optional = true)
     public Integer FIRST_TILE;
-    
+
     @Option(doc="If set, process no more than this many tiles (for debugging).", optional=true)
     public Integer TILE_LIMIT;
-    
+
     @Option(shortName="BC_SEQ", doc="Tag name for barcode sequence.")
     public String BARCODE_SEQUENCE_TAG_NAME = "BC";
 
     @Option(shortName="BC_QUAL", doc="Tag name for barcode quality.")
     public String BARCODE_QUALITY_TAG_NAME = "QT";
-    
+
     @Option(shortName="SEC_BC_SEQ", doc="Tag name for second  barcode sequence.", optional=true)
     public String SECOND_BARCODE_SEQUENCE_TAG_NAME;
 
     @Option(shortName="SEC_BC_QUAL", doc="Tag name for second barcode quality.", optional=true)
     public String SECOND_BARCODE_QUALITY_TAG_NAME;  
 
-    //TODO: add command option to add ci tag
+    //TODO: add command option to skip adding ci tag
     
     //TODO: add command option to overwrite cycle range per read   
     

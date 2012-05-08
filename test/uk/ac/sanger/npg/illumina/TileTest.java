@@ -57,6 +57,8 @@ public class TileTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        
+        System.out.println("Create a new tile");
         HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(3);
         cycleRangeByRead.put("read1", cycleRangeRead1);
         cycleRangeByRead.put("read2", cycleRangeRead2);
@@ -66,47 +68,59 @@ public class TileTest {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+        
+        System.out.println("Close all basecall files");
         tile.closeBaseCallFiles();
     }
 
     @Test
     public void checkBclSclFileName() {
+        
+        System.out.println("getBaseCallFileName");
         assertEquals(tile.getBaseCallFileName(100, true), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C100.1/s_1_1101.bcl");
         assertEquals(tile.getBaseCallFileName(100, false), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C100.1/s_1_1101.scl");
     }
     
     @Test
     public void checkFilterFileName(){
+        
         System.out.println("Checking filter file name in base call lane directory");
         assertEquals(tile.getFilterFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/s_1_1101.filter");
     }
 
     @Test
     public void checkPosFileName(){
+        
         System.out.println("Checking pos file name");
         assertEquals(tile.getPosFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/s_1_1101_pos.txt");
     }   
  
     @Test
     public void checkclocsFileName(){
+        
         System.out.println("Checking clocs file name");
         assertEquals(tile.getcLocsFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.clocs");
     }
         
     @Test
     public void checkLocsFileName(){
+        
         System.out.println("Checking locs file name");
         assertEquals(tile.getLocsFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.locs");
     }
  
     @Test
     public void checkReadName() {
+        
+        System.out.println("getReadName");
         String[] pos = {"21238", "9999"};
         assertEquals(tile.getReadName(pos), "HS13_6000:1:1101:21238:9999");
     }
 
     @Test
     public void checkOneSAMRecord() {
+        
+        System.out.println("getSAMRecord");
         byte [][] baseQuals = { {78, 71}, {33, 32}};
         String readName = "HS13_6000:1:1101:21238:9999";
         String secondBases = "AAA";
@@ -121,6 +135,8 @@ public class TileTest {
     
     @Test
     public void checkOneSAMRecordDualIndex() {
+        
+        System.out.println("getSAMRecord with dual index reads");
         byte [][] baseQuals = { {78, 71}, {33, 32}};
         String readName = "HS13_6000:1:1101:21238:9999";
         String secondBases = "AAA";
@@ -136,6 +152,8 @@ public class TileTest {
 
     @Test
     public void checkFullInitialMethods() throws Exception {
+        
+        System.out.println("Check initial methods");
         assertEquals(tile.getcLocsFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.clocs");
         assertEquals(tile.getFilterFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/s_1_1101.filter");
         assertTrue(tile.isIndexed());
@@ -146,6 +164,8 @@ public class TileTest {
 
     @Test
     public void checkOpenBaseCallFiles() throws Exception {
+        
+        System.out.println("Open basecall files");
         tile.openBaseCallFiles();
         assertEquals(tile.getBclFileReaderListByRead().size(), 3);
         assertEquals(tile.getSclFileReaderListByRead().size(), 3);
@@ -157,6 +177,7 @@ public class TileTest {
     @Test
     public void checkNextClusterMethods() throws Exception {
 
+        System.out.println("Next Cluster methods");
         byte [][] read1 = tile.getNextClusterBaseQuals("read1");
         assertEquals(tile.convertByteArrayToString(read1[0]), "NG");
         assertEquals(tile.convertPhredQualByteArrayToFastqString(read1[1]), "!*");
@@ -174,6 +195,7 @@ public class TileTest {
     @Test
     public void checkProcessTileOK() throws Exception {
 
+        System.out.println("ProcessTile");
         File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
         tempBamFile.deleteOnExit();
 
@@ -196,6 +218,8 @@ public class TileTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void checkCorruptedBCLFile() throws Exception {
+        
+        System.out.println("Corrupted bcl file");
         File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
         tempBamFile.deleteOnExit();
 
@@ -221,7 +245,9 @@ public class TileTest {
     }
 
     @Test
-    public void checkClocsFile() throws Exception {
+    public void processAnotherTile() throws Exception {
+        
+        System.out.println("Process another tile from antoher run");
         File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
         tempBamFile.deleteOnExit();
 

@@ -239,6 +239,13 @@ public class AlignmentFilter extends PicardCommandLine {
     }
 
 
+    /**
+     * 
+     * @param recordList
+     * @param pairedRecordList
+     * @param isPairedRead
+     * @return
+     */
     public int checkOneRecord ( List<SAMRecord> recordList,  List<SAMRecord> pairedRecordList, boolean isPairedRead){
 
         if( isPairedRead && ( recordList.size() != pairedRecordList.size() ) ){
@@ -310,6 +317,10 @@ public class AlignmentFilter extends PicardCommandLine {
 
     }
     
+    /**
+     * 
+     * @param args
+     */
     public static void main(final String[] args) {
 
         System.exit(new AlignmentFilter().instanceMain(args));

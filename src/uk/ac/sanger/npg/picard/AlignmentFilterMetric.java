@@ -168,7 +168,6 @@ public class AlignmentFilterMetric {
     /**
      * 
      * @param outJson
-     * @throws IOException
      */
     public void output(File outJson){
         

@@ -128,6 +128,11 @@ public class FilterFileReader extends IlluminaFileReader {
         return currentPFClusters;
     }
 
+    /**
+     * 
+     * @param args
+     * @throws Exception
+     */
     public static void main(String args[]) throws Exception {
 
         String filterFileName = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/s_1_1101.filter";

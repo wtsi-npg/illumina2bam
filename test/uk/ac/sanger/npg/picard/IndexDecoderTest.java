@@ -21,7 +21,7 @@ package uk.ac.sanger.npg.picard;
 import java.io.File;
 import java.util.ArrayList;
 import static org.junit.Assert.*;
-import org.junit.*;
+import org.junit.Test;
 import uk.ac.sanger.npg.picard.IndexDecoder.NamedBarcode;
 
 /**
@@ -30,25 +30,6 @@ import uk.ac.sanger.npg.picard.IndexDecoder.NamedBarcode;
  * @author gq1@sanger.ac.uk
  */
 public class IndexDecoderTest {
-    
-    public IndexDecoderTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void testParseBarcodeString(){

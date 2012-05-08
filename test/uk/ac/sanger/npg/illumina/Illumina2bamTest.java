@@ -19,11 +19,15 @@
  */
 package uk.ac.sanger.npg.illumina;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.TimeZone;
 import net.sf.samtools.SAMProgramRecord;
 import static org.junit.Assert.assertEquals;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import uk.ac.sanger.npg.bam.util.CheckBamMd5;
 
 /**
  *
@@ -31,21 +35,31 @@ import org.junit.Test;
  */
 public class Illumina2bamTest {
     
-    Illumina2bam illumina2bam = new Illumina2bam();
+    public static Illumina2bam illumina2bam = null;
+    public static File tempBamFile = null;
+    public static File md5File = null;
     
-    public Illumina2bamTest() {
+        @BeforeClass
+    public static void setUpClass() throws Exception {
+            
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        illumina2bam =  new Illumina2bam();
+        tempBamFile = new File("testdata/test_6000_1.sam");
+        tempBamFile.deleteOnExit();
+        md5File = new File(tempBamFile.getPath() + ".md5");
+        md5File.deleteOnExit();
     }
-    
+
     /**
      * Test of instanceMain method and program record.
      */
     @Test
     public void testMain() throws FileNotFoundException, IOException {
-        System.out.println("instanceMain and this program record");
+        
+        System.out.println("instanceMain and this program record command line");
         String[] args = {"INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities",
             "LANE=1",
-            "OUTPUT=testdata/6000_1.sam",
+            "OUTPUT=testdata/test_6000_1.sam",
             "VALIDATION_STRINGENCY=STRICT",
             "CREATE_MD5_FILE=true",
             "FIRST_TILE=1101",
@@ -59,31 +73,28 @@ public class Illumina2bamTest {
         };
         illumina2bam.instanceMain(args);
         
-
-        File samFile = new File("testdata/6000_1.sam");
-        samFile.deleteOnExit();      
-
-        File md5File = new File("testdata/6000_1.sam.md5");
-        md5File.deleteOnExit();
-        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
-        String md5 = md5Stream.readLine();
-        assertEquals(md5, "d480025a6685c44bac112e8ffd6558e9");
-
         assertEquals(illumina2bam.getCommandLine(), "uk.ac.sanger.npg.illumina.Illumina2bam"
                 + " INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities"
-                + " LANE=1 OUTPUT=testdata/6000_1.sam SAMPLE_ALIAS=Test Sample LIBRARY_NAME=Test library"
+                + " LANE=1 OUTPUT=" + tempBamFile.getPath()
+                + " SAMPLE_ALIAS=Test Sample LIBRARY_NAME=Test library"
                 + " STUDY_NAME=testStudy RUN_START_DATE=2011-03-23T00:00:00+0000 FIRST_TILE=1101 TILE_LIMIT=1"
                 + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
                 + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
                 + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
                 + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
                );
+     
+        System.out.println("getThisProgramRecord");
         
-        SAMProgramRecord result = illumina2bam.getThisProgramRecord("illumina2bam", "Convert Illumina BCL to BAM or SAM file");
-        assertEquals(result.getId(), "illumina2bam");
-        assertEquals(result.getProgramName(), "illumina2bam");
+        SAMProgramRecord result = illumina2bam.getThisProgramRecord("Illumina2bam", "Convert Illumina BCL to BAM or SAM file");
+        assertEquals(result.getId(), "Illumina2bam");
+        assertEquals(result.getProgramName(), "Illumina2bam");
         assertEquals(result.getProgramVersion(), illumina2bam.getProgramVersion());
         assertEquals(result.getAttribute("DS"), "Convert Illumina BCL to BAM or SAM file");
     }
-
+    
+    @Test 
+    public void checkOutputMd5(){
+        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(tempBamFile, "Illumina2bam"), "62749a4c4cd90e192cd7b8765108d6f8");
+    }
 }

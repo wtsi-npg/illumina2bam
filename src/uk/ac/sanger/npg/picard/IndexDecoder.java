@@ -134,6 +134,12 @@ public class IndexDecoder {
         noMatchBarcodeMetric = new BarcodeMetric(new NamedBarcode(noMatchBarcode.toString()));
     }
 
+    /**
+     * 
+     * @param barcodeRead
+     * @param isPf
+     * @return
+     */
     public BarcodeMatch extractBarcode(String barcodeRead, boolean isPf){
         final BarcodeMatch match = findBestBarcode(barcodeRead, isPf);
         return match;
@@ -443,6 +449,14 @@ public class IndexDecoder {
         public final String sampleName;
         public final String description;
 
+        /**
+         * 
+         * @param barcode
+         * @param barcodeName
+         * @param libraryName
+         * @param sampleName
+         * @param description
+         */
         public NamedBarcode(String barcode, String barcodeName, String libraryName, String sampleName, String description) {
             this.barcode = barcode;
             this.barcodeName = barcodeName;
@@ -451,6 +465,10 @@ public class IndexDecoder {
             this.description = description;
         }
 
+        /**
+         * 
+         * @param barcode
+         */
         public NamedBarcode(String barcode) {
             this.barcode = barcode;
             this.barcodeName = "";
@@ -532,6 +550,10 @@ public class IndexDecoder {
 
         protected final byte[] barcodeBytes;
 
+        /**
+         * 
+         * @param namedBarcode
+         */
         public BarcodeMetric(final NamedBarcode namedBarcode) {
             this.BARCODE = namedBarcode.barcode;
             this.BARCODE_NAME = namedBarcode.barcodeName;

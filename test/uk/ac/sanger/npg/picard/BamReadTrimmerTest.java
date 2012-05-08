@@ -18,12 +18,16 @@
  */
 package uk.ac.sanger.npg.picard;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.TimeZone;
 import net.sf.samtools.SAMFileHeader;
+import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import uk.ac.sanger.npg.bam.util.CheckBamMd5;
 
 /**
  * This is the test class for BamReadTrimmer
@@ -37,6 +41,7 @@ public class BamReadTrimmerTest {
     
     public BamReadTrimmerTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        SAMFileReader.setDefaultValidationStringency(SAMFileReader.ValidationStringency.SILENT);
     }
 
     /**
@@ -134,10 +139,8 @@ public class BamReadTrimmerTest {
 
         File md5File = new File("testdata/6210_8_trimmed.bam.md5");
         md5File.deleteOnExit();
-        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
-        String md5 = md5Stream.readLine();
 
-        assertEquals(md5, "4a133020310a137ff768b83577849287");
+        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(trimmedBamFile, "BamReadTrimmer"), "f9e783ed5b2c670dfc61633b4edf49c7");
 
     }
 

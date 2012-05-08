@@ -40,6 +40,8 @@ public class LocsFileReader extends PositionFileReader {
      * Constructor
      *
      * @param locsFileName locs file name
+     * @throws FileNotFoundException
+     * @throws IOException  
      */
     public LocsFileReader(String locsFileName) throws FileNotFoundException, IOException {
 

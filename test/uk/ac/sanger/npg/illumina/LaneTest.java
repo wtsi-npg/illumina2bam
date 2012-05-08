@@ -57,21 +57,29 @@ public class LaneTest {
     }
 
     @BeforeClass
-    public static void setUpClass() throws Exception {        
+    public static void setUpClass() throws Exception {
+        
+        System.out.println("Create a lane");
         lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+        
+        System.out.println("tearDownClass");
         lane = null;
     }
     @Test (expected = RuntimeException.class)
     public void bothConfigfileNotAvailable(){
-       Lane failedLane = new Lane(intensityDir + "_not", baseCallDir + "_not", null, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+       
+        System.out.println("Failed to create a lane with non-exist intensity and basecall directories");
+        Lane failedLane = new Lane(intensityDir + "_not", baseCallDir + "_not", null, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
     }
     
     @Test
     public void readBaseCallProgramOK(){
+        
+        System.out.println("readBaseCallProgramRecord");
         SAMProgramRecord baseCallProgram = lane.readBaseCallProgramRecord();
         assertEquals( baseCallProgram.getId(), "basecalling");
         assertEquals( baseCallProgram.getProgramName(), "RTA");
@@ -81,6 +89,8 @@ public class LaneTest {
 
     @Test
     public void readTileListOK(){
+        
+        System.out.println("readTileList");
         int [] expectedTileList = {
             1101,1102,1103,1104,1105,1106,1107,1108,
             1201,1202,1203,1204,1205,1206,1207,1208,
@@ -93,6 +103,7 @@ public class LaneTest {
     @Test
     public void reduceTileListOK(){
 
+        System.out.println("reduceTileList");
         int [] givenTileList = {
             1101,1102,1103,1104,1105,1106,1107,1108,
             1201,1202,1203,1204,1205,1206,1207,1208,
@@ -110,6 +121,7 @@ public class LaneTest {
     @Test (expected = RuntimeException.class)
     public void reduceTileListFirstTileException(){
 
+        System.out.println("Fail to reduceTileList");
         int [] givenTileList = {
             1101,1102,1103,1104,1105,1106,1107,1108,
             1201,1202,1203,1204,1205,1206,1207,1208,
@@ -124,6 +136,7 @@ public class LaneTest {
     @Test (expected = RuntimeException.class)
     public void reduceTileListTileLimitException(){
 
+        System.out.println("Fail to reduceTileList again");
         int [] givenTileList = {
             1101,1102,1103,1104,1105,1106,1107,1108,
             1201,1202,1203,1204,1205,1206,1207,1208,
@@ -137,11 +150,15 @@ public class LaneTest {
 
     @Test
     public void readRunfolderOK(){
+        
+        System.out.println("readRunfoder");
         assertEquals(lane.readRunfoder(), "110323_HS13_06000_B_B039WABXX");
     }
  
     @Test
     public void readRunDateOK(){
+        
+        System.out.println("readRunDate");
         Date runDate = lane.readRunDate();
         long expected = 1300838400000L;
         assertEquals(runDate.getTime(), expected);
@@ -149,11 +166,15 @@ public class LaneTest {
     
     @Test
     public void readInstrumentAndRunIDOK(){
+        
+        System.out.println("readInstrumentAndRunID");
         assertEquals(lane.readInstrumentAndRunID(), "HS13_6000");
     }
 
     @Test
     public void reaCycleRangeByReadOK(){
+        
+        System.out.println("readCycleRangeByRead");
         int[][] expected = {
             {1,2},
             {51,52}
@@ -163,11 +184,15 @@ public class LaneTest {
 
     @Test
     public void reaBarCodeIndexCyclesNotOK(){
+        
+        System.out.println("readBarCodeIndexCycles");
         assertNull(lane.readBarCodeIndexCycles());
     }
 
     @Test
     public void checkCycleRangeByReadOK() throws Exception{
+        
+        System.out.println("checkCycleRangeByRead");
         HashMap<String, int[]> cycleRangeByRead = lane.checkCycleRangeByRead();
         int [] read1CycleRange = {1, 2};
         assertArrayEquals(cycleRangeByRead.get("read1"), read1CycleRange);
@@ -177,6 +202,8 @@ public class LaneTest {
 
     @Test
     public void checkCycleRangeByReadFromRunInfoOK() throws Exception{
+        
+        System.out.println("getCycleRangeByReadFromRunInfoFile");
         HashMap<String, int[]> cycleRangeByRead = lane.getCycleRangeByReadFromRunInfoFile();
         assertNull(cycleRangeByRead);
     }
@@ -250,6 +277,7 @@ public class LaneTest {
     @Test
     public void readInstrumentProgramOK(){
 
+        System.out.println("readInstrumentProgramRecord");
         SAMProgramRecord instrumentProgram = lane.readInstrumentProgramRecord();
         assertEquals( instrumentProgram.getId(), "SCS");
         assertEquals( instrumentProgram.getProgramName(), "RTA");
@@ -260,6 +288,7 @@ public class LaneTest {
     @Test
     public void readConfigsOK() throws Exception{
         
+        System.out.println("readConfigs");
         assertTrue(lane.readConfigs());
     }
 

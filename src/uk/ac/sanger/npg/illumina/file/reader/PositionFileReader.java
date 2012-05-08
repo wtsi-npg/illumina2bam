@@ -22,7 +22,7 @@ package uk.ac.sanger.npg.illumina.file.reader;
 import java.io.FileNotFoundException;
 
 /**
- * This class try to open a Illumina position file including clocs, locs or pos file into a data input stream
+ * This class tries to open a Illumina position file including clocs, locs or pos file into a data input stream
  * 
  * @author gq1@sanger.ac.uk
  */
@@ -31,7 +31,7 @@ public abstract class PositionFileReader extends IlluminaFileReader {
     protected int currentTotalClusters;
 
     /**
-     * 
+     *
      * @param fileName
      * @throws FileNotFoundException 
      */
@@ -50,14 +50,26 @@ public abstract class PositionFileReader extends IlluminaFileReader {
         return currentTotalClusters;
     }
     
+    /**
+     * position class
+     */
     public static class Position {
         public String x;
         public String y;
         
+        /**
+         * 
+         * @param x
+         * @param y
+         */
         public Position(String x, String y){
             this.x = x;
             this.y = y;
         }
+        /**
+         * 
+         * @return an array of position
+         */
         public String [] toArray() {
             String [] array = {x, y};
             return array;

@@ -146,6 +146,11 @@ public class SCLFileReader extends IlluminaFileReader {
         return totalClusters;
     }
 
+    /**
+     * 
+     * @param args
+     * @throws Exception
+     */
     public static void main(String args[]) throws Exception {
 
         String sclFileName = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C1.1/s_1_1101.scl";

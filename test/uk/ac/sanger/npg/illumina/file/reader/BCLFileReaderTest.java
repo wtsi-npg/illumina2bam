@@ -34,17 +34,19 @@ public class BCLFileReaderTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        System.out.println("Crate an bcl file reader");
         bclFileReader = new BCLFileReader(testBCLFile);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+        System.out.println("Close the bcl file reader");
         bclFileReader.close();
     }
 
     @Test
     public void checkBCLHeaderOK() {
-
+        System.out.println("Read bcl header");
         assertEquals(bclFileReader.getTotalClusters(), 2609912);
         assertEquals(bclFileReader.getCurrentCluster(), 0);
         assertTrue(bclFileReader.hasNext());
@@ -52,7 +54,7 @@ public class BCLFileReaderTest {
 
     @Test
     public void checkNextFirstClusterOK() {
-
+        System.out.println("check first cluster");
         byte [] cluster = bclFileReader.next();
         assertEquals((char) cluster[0], 'N');
         assertEquals((char) (cluster[1]+ 64), 64);
@@ -62,7 +64,7 @@ public class BCLFileReaderTest {
 
     @Test
     public void checkNextMiddleClusterOK() {
-
+        System.out.println("Read the some more clusters and check the 307th one");
         for (int i = 0; i < 305; i++) {
             bclFileReader.next();
         }
@@ -76,7 +78,8 @@ public class BCLFileReaderTest {
 
     @Test
     public void checkNextLastClusterOK() {
-
+        System.out.println("Read cluster until last one");
+        
         byte[] cluster = null;
 
         while (bclFileReader.hasNext()) {
@@ -92,6 +95,7 @@ public class BCLFileReaderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void checkCorruptedFileReading() throws Exception{
+        System.out.println("Read a corrupted bcl file ");
         //total cluster in header is correct but the cluster in the scecond half are corrupted
         String testBCLFileCorrupt = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/BaseCalls/L003/C59.1/s_3_1101.bcl";
         BCLFileReader bclFileReaderCorrupt = new BCLFileReader(testBCLFileCorrupt);
@@ -103,7 +107,8 @@ public class BCLFileReaderTest {
     }
 
     @Test
-    public void checkCorruptedFileReadingWringHeader() throws Exception{
+    public void checkCorruptedFileReadingWrongHeader() throws Exception{
+        System.out.println("Read a corrupted bcl file the header with wrong infromation");
         //total cluster in header is wrong
         String testBCLFileCorrupt = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/BaseCalls/L003/C59.1/s_3_1105.bcl";
         BCLFileReader bclFileReaderCorrupt = new BCLFileReader(testBCLFileCorrupt);

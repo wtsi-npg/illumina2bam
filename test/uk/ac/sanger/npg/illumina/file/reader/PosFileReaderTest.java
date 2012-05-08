@@ -32,23 +32,23 @@ import org.junit.Test;
 public class PosFileReaderTest {
 
     private static PosFileReader posFileReader = null;
-
-    public PosFileReaderTest() {
-    }
     
     @BeforeClass
     public static void setUpClass() throws Exception {
+        System.out.println("Create a pos file reader");
         posFileReader = new PosFileReader("testdata/110519_IL33_06284/Data/Intensities/s_8_0112_pos.txt");
         assertNotNull(posFileReader);
     }
     
     @AfterClass
     public static void tearDownClass() throws Exception {
+        System.out.println("Close the pos fiile reader");
         posFileReader.close();
     }
     
     @Test (expected= FileNotFoundException.class)
-    public void testConstructorNotOK() throws FileNotFoundException{        
+    public void testConstructorNotOK() throws FileNotFoundException{
+        System.out.println("The given pos file is not available");
         PosFileReader posFileReader1 = new PosFileReader("testdata/110519_IL33_06284/Data/Intensities/s_8_0112_pos_not_exist.txt");
     }
     @Test

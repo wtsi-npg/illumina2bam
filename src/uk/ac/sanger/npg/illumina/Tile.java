@@ -77,12 +77,15 @@ public class Tile {
     /**
      * 
      * @param intensityDir intensities directory
+     * @param baseCallDir 
      * @param id instrument with run id, which will be used for read name
      * @param laneNumber the run laneNumber number
      * @param tileNumber this tile number
      * @param cycleRangeByRead cycle range for each read, the hash key could be read1, read2 or readIndex
      * @param secondCall include second base call or not
      * @param pfFilter include PF filtered reads or not
+     * @param barcodeSeqTagName
+     * @param barcodeQualTagName  
      */
     public Tile(String intensityDir,
             String baseCallDir,
@@ -535,6 +538,7 @@ public class Tile {
      * @param baseQuals
      * @param secondBases
      * @param baseQualsIndex
+     * @param baseQualsIndex2 
      * @param filter
      * @param paired
      * @param firstRead

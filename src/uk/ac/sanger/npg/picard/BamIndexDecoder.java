@@ -275,6 +275,10 @@ public class BamIndexDecoder extends PicardCommandLine {
         return record;
     }
     
+    /**
+     * 
+     * @param header
+     */
     public void generateOutputFile(SAMFileHeader header) {
         
         List<IndexDecoder.NamedBarcode> barcodeList = indexDecoder.getNamedBarcodes(); 
@@ -358,6 +362,9 @@ public class BamIndexDecoder extends PicardCommandLine {
 
     }
     
+    /**
+     * close output files
+     */
     public void closeOutputList(){
         if( this.outputList != null ){
             for(SAMFileWriter writer: this.outputList.values()){
@@ -395,6 +402,12 @@ public class BamIndexDecoder extends PicardCommandLine {
         return messages.toArray(new String[messages.size()]);
     }
     
+    /**
+     * 
+     * @param barcodeRead
+     * @param barcodeQual
+     * @return new bar code read string with low quality bases converted to N
+     */
     public String checkBarcodeQuality(String barcodeRead, String barcodeQual){
 
         if(barcodeQual == null){
@@ -419,6 +432,10 @@ public class BamIndexDecoder extends PicardCommandLine {
         return newBarcodeRead.toString();
     }
 
+    /**
+     * 
+     * @param argv
+     */
     public static void main(final String[] argv) {
         System.exit(new BamIndexDecoder().instanceMain(argv));
     }

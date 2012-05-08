@@ -24,7 +24,8 @@ import net.sf.picard.util.Log;
 
 
 /**
- * This class try to open a Illumina file into a data input stream, base class for all file reader classes
+ * This class tries to open a Illumina file into a data input stream. 
+ * It is a base class for all file reader classes.
  * 
  * @author gq1@sanger.ac.uk
  */
@@ -37,8 +38,8 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
 
     /**
      *
-     * @param fileName bcl, clocs, locs, pos and filter etc illumina file name
-     * @throws Exception
+     * @param fileName bcl, scl, clocs, locs, pos and filter etc Illumina file name
+     * @throws FileNotFoundException 
      */
     public IlluminaFileReader(String fileName) throws FileNotFoundException {
 
@@ -104,7 +105,7 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
     }
 
     /**
-     * read four bytes from input stream and convert to unsigned integer
+     * read four bytes from its input stream and convert to unsigned integer
      * @return an unsigned integer
      * @throws IOException
      */
@@ -113,7 +114,7 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
     }
 
     /**
-     * read four bytes from input stream and convert to unsigned integer
+     * read four bytes from an input stream and convert to unsigned integer
      * @param inputStream
      * @return an unsigned integer
      * @throws IOException
