@@ -21,7 +21,7 @@ It will create a bam file for an entire lane.
 It puts an indexing read quality and sequence in tags (we're suggesting the use of) "QT" and "BC" e.g. QT:Z:HHHHHHHH   BC:Z:ATCACGTT, on the first read record.
 User can overwrite them from command line.
 
-It does no deplexing at the moment.
+You can pipe the output bam to BamIndexDecoder to deplex.
 
 It puts what preceding Illumina code has run e.g. RTA, in PG headers.
 
@@ -33,19 +33,19 @@ We expect read qualities to differ from those produced via default bcl2qseq as w
 
 There's also an option to record the second basecall from SCL files.
 
-Config XML files under Intensities and BaseCalls directory are used to get tile list, cycle ranges per read and other meta data.
+RunInfo or runParamaters under runfolder or Config XML files under Intensities and BaseCalls directory are used to get tile list, cycle ranges per read and other meta data.
 
-CLOCS and filter files are also needed. If Clocs file missing, it will try to use pos file instead.
+CLOCS and filter files are also needed. If Clocs file missing, it will try to use locs or pos file instead.
 
 All reads are supposed in one read group, by default, which id is 1. Sample and library name can be passed from command line, otherwise use unknown.
 
 EXAMPLE TO RUN:
 
-java -jar "illumina2bam.jar" INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities LANE=1 OUTPUT=testdata/6000_1.bam  VALIDATION_STRINGENCY=STRICT CREATE_INDEX=false CREATE_MD5_FILE=true FIRST_TILE=1101 TILE_LIMIT=1  COMPRESSION_LEVEL=1
+java -jar "Illumina2bam.jar" INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities LANE=1 OUTPUT=testdata/6000_1.bam  VALIDATION_STRINGENCY=STRICT CREATE_INDEX=false CREATE_MD5_FILE=true FIRST_TILE=1101 TILE_LIMIT=1  COMPRESSION_LEVEL=1
 
 HELP:
 
-java -jar "illumina2bam.jar" -h
+java -jar "Illumina2bam.jar" -h
 
 USAGE: Illumina2bam [options]
 
