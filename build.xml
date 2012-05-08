@@ -135,7 +135,7 @@
 
             <!-- Generate links to each command -->
             <echo file="${dist.commandline.html.dir}/command-line-sidebar.html" append="true"
-                  message="&lt;li>&lt;a href=&quot;index.html#@{title}&quot;>@{title}&lt;/a>${line.separator}"/>
+                  message="&lt;li>&lt;a href=&quot;#@{title}&quot;>@{title}&lt;/a>${line.separator}"/>
 
             <!-- include usage for each command -->
             <echo  file="${dist.commandline.html.dir}/command-line-usage.html" append="true"
