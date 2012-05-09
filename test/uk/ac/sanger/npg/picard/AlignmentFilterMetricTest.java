@@ -1,0 +1,118 @@
+/*
+ * Copyright (C) 2011 GRL
+ *
+ * This library is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ */
+
+package uk.ac.sanger.npg.picard;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import net.sf.samtools.SAMFileHeader;
+import net.sf.samtools.SAMRecord;
+import net.sf.samtools.SAMSequenceDictionary;
+import net.sf.samtools.SAMSequenceRecord;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import uk.ac.sanger.npg.bam.util.CheckMd5;
+
+/**
+ *
+ * @author gq1@sanger.ac.uk
+ */
+public class AlignmentFilterMetricTest {
+    
+    public AlignmentFilterMetricTest() {
+    }
+
+    /**
+     * Test of checkNextReadsForChimera method, of class AlignmentFilterMetric.
+     */
+    @Test
+    public void testCheckNextReadsForChimera() throws IOException {
+        System.out.println("checkNextReadsForChimera");
+        
+        SAMFileHeader header = new SAMFileHeader();
+        SAMRecord record1 = new SAMRecord(header);
+        record1.setReadUnmappedFlag(true);
+        
+        SAMRecord record2 = new SAMRecord(header);
+        record2.setReadUnmappedFlag(false);
+        
+        List<SAMRecord> recordList = new ArrayList<SAMRecord>();
+        List<SAMRecord> pairedRecordList = new ArrayList<SAMRecord>();
+        
+        recordList.add(record1);
+        recordList.add(record2);
+        
+        pairedRecordList.add(record2);
+        pairedRecordList.add(record1);
+
+        AlignmentFilterMetric instance = new AlignmentFilterMetric(2);      
+        instance.checkNextReadsForChimera(recordList, pairedRecordList);
+        
+        int[][] chiremeraReadsCount = instance.getChimericReadsCount();
+        assertEquals(chiremeraReadsCount[1][0], 1);
+        
+        int [] expect = {0, 1, 0};        
+        assertArrayEquals( instance.getReadsCountByAlignedNumForward(),expect );      
+        assertArrayEquals( instance.getReadsCountByAlignedNumReverse(),expect );
+
+        File metricsJson = File.createTempFile("alignmentFilterMetrics", ".json", new File("testdata"));
+        System.out.println("Output metrics: " + metricsJson.getPath());
+        instance.output(metricsJson);
+        assertEquals(CheckMd5.getFileMd5(metricsJson), "03f5ab18f5b35dd1a20edc6a8cae04c0");
+        metricsJson.deleteOnExit();
+    }
+    
+    /**
+     * Test of checkNextReadsForChimera method, of class AlignmentFilterMetric.
+     */
+    @Test
+    public void testSetsMethods() throws IOException {    
+     
+        AlignmentFilterMetric instance = new AlignmentFilterMetric(2);
+        
+        instance.setTotalReads(100);
+        
+        int [] readsCountPerRef = {10, 50};        
+        instance.setReadsCountPerRef(readsCountPerRef);
+        
+        instance.setReadsCountUnaligned(40);
+        
+        ArrayList<AlignmentFilterMetric.SQ> ref1 = new ArrayList<AlignmentFilterMetric.SQ>();
+        ref1.add(new AlignmentFilterMetric.SQ("seq1_1", "as1_1", "sp1_1", 400, "ur1_1")); 
+        instance.addRef(ref1);
+        
+        ArrayList<AlignmentFilterMetric.SQ> ref2 = new ArrayList<AlignmentFilterMetric.SQ>();
+        ref2.add(new AlignmentFilterMetric.SQ("seq2_1", "as2_1", "sp2_1", 500, "ur2_1"));
+        ref2.add(new AlignmentFilterMetric.SQ("seq2_2", "as2_2", null, 600, null));
+        instance.addRef(ref2);
+        
+        SAMSequenceDictionary sequenceDictionary = new SAMSequenceDictionary();
+        SAMSequenceRecord ref3_1 = new SAMSequenceRecord("seq3_1", 700);
+        sequenceDictionary.addSequence(ref3_1);
+        instance.addRef(sequenceDictionary);
+       
+        File metricsJson = File.createTempFile("alignmentFilterMetricsSets", ".json", new File("testdata"));
+        System.out.println("Output metrics: " + metricsJson.getPath());
+        instance.output(metricsJson);
+        assertEquals(CheckMd5.getFileMd5(metricsJson), "6f5d34e12b65aa1d5871caa25a62b05f");
+        metricsJson.deleteOnExit();
+    }
+}

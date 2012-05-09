@@ -1,6 +1,6 @@
 Here is a collection of tools to generate or process BAM/SAM files using Picard Java API.
 
-It includes illumina2bam, BamReadTrimmer and BamMerger currently.
+It currently includes Illumina2bam, BamIndexDecoder, BamReadTrimmer, BamMerger, BamTagStripper, BamQualityQuantisation, ChangeBamHeader, SplitBamByReadGroup and AlignmentFilter etc.
 
 It is a NetBeans Java project. You should be able to open it from NetBeans directly.
 
@@ -8,9 +8,11 @@ To test: ant test.
 
 To generate jar files: ant jar.
 
+You can find more information from http://gq1.github.com/illumina2bam/.
+
 ---------------------------------------------------
 
-illumina2bam
+Illumina2bam
 
 This tool converts Illumina BCL files directly to bam files using Picard JAVA API.
 
@@ -19,7 +21,7 @@ It will create a bam file for an entire lane.
 It puts an indexing read quality and sequence in tags (we're suggesting the use of) "QT" and "BC" e.g. QT:Z:HHHHHHHH   BC:Z:ATCACGTT, on the first read record.
 User can overwrite them from command line.
 
-It does no deplexing at the moment.
+You can pipe the output bam to BamIndexDecoder to deplex.
 
 It puts what preceding Illumina code has run e.g. RTA, in PG headers.
 
@@ -31,19 +33,19 @@ We expect read qualities to differ from those produced via default bcl2qseq as w
 
 There's also an option to record the second basecall from SCL files.
 
-Config XML files under Intensities and BaseCalls directory are used to get tile list, cycle ranges per read and other meta data.
+RunInfo or runParamaters under runfolder or Config XML files under Intensities and BaseCalls directory are used to get tile list, cycle ranges per read and other meta data.
 
-CLOCS and filter files are also needed. If Clocs file missing, it will try to use pos file instead.
+CLOCS and filter files are also needed. If Clocs file missing, it will try to use locs or pos file instead.
 
 All reads are supposed in one read group, by default, which id is 1. Sample and library name can be passed from command line, otherwise use unknown.
 
 EXAMPLE TO RUN:
 
-java -jar "illumina2bam.jar" INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities LANE=1 OUTPUT=testdata/6000_1.bam  VALIDATION_STRINGENCY=STRICT CREATE_INDEX=false CREATE_MD5_FILE=true FIRST_TILE=1101 TILE_LIMIT=1  COMPRESSION_LEVEL=1
+java -jar "Illumina2bam.jar" INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities LANE=1 OUTPUT=testdata/6000_1.bam  VALIDATION_STRINGENCY=STRICT CREATE_INDEX=false CREATE_MD5_FILE=true FIRST_TILE=1101 TILE_LIMIT=1  COMPRESSION_LEVEL=1
 
 HELP:
 
-java -jar "illumina2bam.jar" -h
+java -jar "Illumina2bam.jar" -h
 
 USAGE: Illumina2bam [options]
 
@@ -58,9 +60,15 @@ Options:
 -H                            Displays options specific to this tool AND options common to all Picard command line 
                               tools.
 
+--version                     Displays program version.
+
+RUN_FOLDER=File
+R=File                        Illumina runfolder directory including runParameters xml file under it, upwards two 
+                              levels from Intensities directory if not given.  Default value: null. 
+
 INTENSITY_DIR=File
-I=File                        Illumina intensities directory including config xml file, and clocs files under lane 
-                              directory.  Required. 
+I=File                        Illumina intensities directory including config xml file, and clocs, locs or pos files 
+                              under lane directory.  Required. 
 
 BASECALLS_DIR=File
 B=File                        Illumina basecalls directory including config xml file, and filter files, bcl, maybe scl 
@@ -99,7 +107,7 @@ PLATFORM_UNIT=String
 PU=String                     The platform unit, using runfolder name plus lane number if not given.  Default value: 
                               null. 
 
-RUN_START_DATE=Date           The start date of the run, read from config file if not given.  Default value: null. 
+RUN_START_DATE=Iso8601Date    The start date of the run, read from config file if not given.  Default value: null. 
 
 SEQUENCING_CENTER=String
 SC=String                     Sequence center name, default SC for Sanger Center.  Default value: SC. This option can 
@@ -111,7 +119,21 @@ PLATFORM=String               The name of the sequencing technology that produce
 FIRST_TILE=Integer            If set, this is the first tile to be processed (for debugging).  Note that tiles are not 
                               processed in numerical order.  Default value: null. 
 
-TILE_LIMIT=Integer            If set, process no more than this many tiles (for debugging).  Default value: null.
+TILE_LIMIT=Integer            If set, process no more than this many tiles (for debugging).  Default value: null. 
+
+BARCODE_SEQUENCE_TAG_NAME=String
+BC_SEQ=String                 Tag name for barcode sequence.  Default value: BC. This option can be set to 'null' to 
+                              clear the default value. 
+
+BARCODE_QUALITY_TAG_NAME=String
+BC_QUAL=String                Tag name for barcode quality.  Default value: QT. This option can be set to 'null' to 
+                              clear the default value. 
+
+SECOND_BARCODE_SEQUENCE_TAG_NAME=String
+SEC_BC_SEQ=String             Tag name for second  barcode sequence.  Default value: null. 
+
+SECOND_BARCODE_QUALITY_TAG_NAME=String
+SEC_BC_QUAL=String            Tag name for second barcode quality.  Default value: null. 
 
 -----------------------------------------------
 
