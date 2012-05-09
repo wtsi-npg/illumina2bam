@@ -18,7 +18,9 @@
  */
 package uk.ac.sanger.npg.picard;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.TimeZone;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;

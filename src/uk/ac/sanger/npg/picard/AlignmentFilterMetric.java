@@ -23,9 +23,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import net.sf.picard.util.Log;
 import net.sf.samtools.SAMRecord;
+import net.sf.samtools.SAMSequenceDictionary;
+import net.sf.samtools.SAMSequenceRecord;
 
 /**
  *
@@ -48,6 +51,8 @@ public class AlignmentFilterMetric {
     private int [] readsCountByAlignedNumForward;
     private int [] readsCountByAlignedNumReverse;
     
+    private ArrayList<ArrayList<SQ>> refList;
+    
     /**
      * 
      * @param numberAlignments
@@ -59,6 +64,8 @@ public class AlignmentFilterMetric {
         chimericReadsCount            = new int[numberAlignments][numberAlignments];
         readsCountByAlignedNumForward = new int[numberAlignments+1];
         readsCountByAlignedNumReverse = new int[numberAlignments+1];
+        
+        refList = new ArrayList<ArrayList<SQ>>(numberAlignments);
         
     }
     
@@ -147,9 +154,13 @@ public class AlignmentFilterMetric {
         
         log.info("Total Reads: " + this.getTotalReads());
         log.info("Unaligned Reads: " + this.getReadsCountUnaligned());
-        
-        for(int c: this.getReadsCountPerRef()){
-            log.info("Reads count per Ref: " + c);
+
+        if (this.readsCountPerRef != null) {
+            for (int c : this.getReadsCountPerRef()) {
+                log.info("Reads Count per Ref: " + c);
+            }
+        }else{
+            log.info("Reads Count per Ref Information is not available ");
         }
         
         
@@ -281,5 +292,142 @@ public class AlignmentFilterMetric {
      */
     public void setNumberAlignments(int numberAlignments) {
         this.numberAlignments = numberAlignments;
+    }
+    
+    public void addRef(SAMSequenceDictionary sequenceDictionary){
+        
+        ArrayList<SQ> refSQList = new ArrayList<SQ>();
+        for(SAMSequenceRecord samSequenceRecord : sequenceDictionary.getSequences()){
+            SQ sq = new SQ(samSequenceRecord);
+            refSQList.add(sq);
+        }
+        this.addRef(refSQList);
+    }
+    
+    /**
+     * 
+     * @param refSQList
+     */
+    public void addRef(ArrayList<SQ> refSQList){
+        this.getRefList().add(refSQList);        
+    }
+
+    /**
+     * @return the refList
+     */
+    public ArrayList<ArrayList<SQ>> getRefList() {
+        return refList;
+    }
+
+    /**
+     * @param refList the refList to set
+     */
+    public void setRefList(ArrayList<ArrayList<SQ>> refList) {
+        this.refList = refList;
+    }
+    
+    /**
+     * SQ record in SAM header
+     */
+    public static class SQ {
+        private String sn;
+        private String as;
+        private String sp;
+        private int ln;
+        private String ur;
+
+        /**
+         * 
+         * @param sn
+         * @param as
+         * @param sp
+         * @param ln
+         * @param ur
+         * @param m5
+         */
+        public SQ(String sn, String as, String sp, int ln, String ur){
+            this.sn = sn;
+            this.as = as;
+            this.sp = sp;
+            this.ln = ln;
+            this.ur = ur;
+        }
+        
+        public SQ(SAMSequenceRecord samSequenceRecord){
+            this.sn = samSequenceRecord.getSequenceName();
+            this.as = samSequenceRecord.getAssembly();
+            this.sp = samSequenceRecord.getSpecies();
+            this.ln = samSequenceRecord.getSequenceLength();
+        }
+
+        /**
+         * @return the sn
+         */
+        public String getSn() {
+            return sn;
+        }
+
+        /**
+         * @param sn the sn to set
+         */
+        public void setSn(String sn) {
+            this.sn = sn;
+        }
+
+        /**
+         * @return the as
+         */
+        public String getAs() {
+            return as;
+        }
+
+        /**
+         * @param as the as to set
+         */
+        public void setAs(String as) {
+            this.as = as;
+        }
+
+        /**
+         * @return the sp
+         */
+        public String getSp() {
+            return sp;
+        }
+
+        /**
+         * @param sp the sp to set
+         */
+        public void setSp(String sp) {
+            this.sp = sp;
+        }
+
+        /**
+         * @return the ln
+         */
+        public int getLn() {
+            return ln;
+        }
+
+        /**
+         * @param ln the ln to set
+         */
+        public void setLn(int ln) {
+            this.ln = ln;
+        }
+
+        /**
+         * @return the ur
+         */
+        public String getUr() {
+            return ur;
+        }
+
+        /**
+         * @param ur the ur to set
+         */
+        public void setUr(String ur) {
+            this.ur = ur;
+        }
     }
 }

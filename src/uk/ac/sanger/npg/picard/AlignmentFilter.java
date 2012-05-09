@@ -105,12 +105,20 @@ public class AlignmentFilter extends PicardCommandLine {
              inputReaderList.add(reader);
         }
 
+        int numInput = this.INPUT_ALIGNMENT.size();        
+        AlignmentFilterMetric metrics = new AlignmentFilterMetric(numInput);
 
         log.info("Open output files with headers");
         final List<SAMFileWriter> outputWriterList  = new ArrayList<SAMFileWriter>();
         int outputCount = 0;
+        
         for(File outFile : OUTPUT_ALIGNMENT){
-           final SAMFileHeader outputHeader = inputReaderList.get(outputCount).getFileHeader().clone();
+           
+           SAMFileHeader header = inputReaderList.get(outputCount).getFileHeader();
+           SAMSequenceDictionary sequenceDictionary = header.getSequenceDictionary();
+           metrics.addRef(sequenceDictionary);
+
+           final SAMFileHeader outputHeader = header.clone();           
            outputHeader.setSortOrder(SAMFileHeader.SortOrder.unsorted);
            this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
            final SAMFileWriter out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader,  true, outFile);
@@ -133,9 +141,6 @@ public class AlignmentFilter extends PicardCommandLine {
             SAMRecordIterator iterator = reader.iterator();
             inputReaderIteratorList.add(iterator);
         }
-
-        int numInput = this.INPUT_ALIGNMENT.size();        
-        AlignmentFilterMetric metrics = new AlignmentFilterMetric(numInput);
  
         int totalReads = 0;
         int readsCountUnaligned = 0;

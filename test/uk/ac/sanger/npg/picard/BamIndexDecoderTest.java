@@ -18,9 +18,7 @@
 
 package uk.ac.sanger.npg.picard;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.TimeZone;
 import net.sf.samtools.SAMFileReader;

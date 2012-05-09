@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.TimeZone;
 import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFileReader;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import uk.ac.sanger.npg.bam.util.CheckMd5;

@@ -19,13 +19,17 @@
 
 package uk.ac.sanger.npg.picard;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMRecord;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import net.sf.samtools.SAMSequenceDictionary;
+import net.sf.samtools.SAMSequenceRecord;
+import static org.junit.Assert.*;
 import org.junit.Test;
+import uk.ac.sanger.npg.bam.util.CheckMd5;
 
 /**
  *
@@ -40,7 +44,7 @@ public class AlignmentFilterMetricTest {
      * Test of checkNextReadsForChimera method, of class AlignmentFilterMetric.
      */
     @Test
-    public void testCheckNextReadsForChimera() {
+    public void testCheckNextReadsForChimera() throws IOException {
         System.out.println("checkNextReadsForChimera");
         
         SAMFileHeader header = new SAMFileHeader();
@@ -58,18 +62,57 @@ public class AlignmentFilterMetricTest {
         
         pairedRecordList.add(record2);
         pairedRecordList.add(record1);
-        
-        int[][] chiremeraReadsCount = new int[2][2];
-        
-        AlignmentFilterMetric instance = new AlignmentFilterMetric(2);
-        instance.setChimericReadsCount(chiremeraReadsCount);
-        
+
+        AlignmentFilterMetric instance = new AlignmentFilterMetric(2);      
         instance.checkNextReadsForChimera(recordList, pairedRecordList);
         
+        int[][] chiremeraReadsCount = instance.getChimericReadsCount();
         assertEquals(chiremeraReadsCount[1][0], 1);
         
-        int [] expectForward = {0, 1, 0};        
-        assertArrayEquals( instance.getReadsCountByAlignedNumForward(),expectForward ) ;      
-        assertArrayEquals( instance.getReadsCountByAlignedNumReverse(),expectForward ) ;
+        int [] expect = {0, 1, 0};        
+        assertArrayEquals( instance.getReadsCountByAlignedNumForward(),expect );      
+        assertArrayEquals( instance.getReadsCountByAlignedNumReverse(),expect );
+
+        File metricsJson = File.createTempFile("alignmentFilterMetrics", ".json", new File("testdata"));
+        System.out.println("Output metrics: " + metricsJson.getPath());
+        instance.output(metricsJson);
+        assertEquals(CheckMd5.getFileMd5(metricsJson), "03f5ab18f5b35dd1a20edc6a8cae04c0");
+        metricsJson.deleteOnExit();
+    }
+    
+    /**
+     * Test of checkNextReadsForChimera method, of class AlignmentFilterMetric.
+     */
+    @Test
+    public void testSetsMethods() throws IOException {    
+     
+        AlignmentFilterMetric instance = new AlignmentFilterMetric(2);
+        
+        instance.setTotalReads(100);
+        
+        int [] readsCountPerRef = {10, 50};        
+        instance.setReadsCountPerRef(readsCountPerRef);
+        
+        instance.setReadsCountUnaligned(40);
+        
+        ArrayList<AlignmentFilterMetric.SQ> ref1 = new ArrayList<AlignmentFilterMetric.SQ>();
+        ref1.add(new AlignmentFilterMetric.SQ("seq1_1", "as1_1", "sp1_1", 400, "ur1_1")); 
+        instance.addRef(ref1);
+        
+        ArrayList<AlignmentFilterMetric.SQ> ref2 = new ArrayList<AlignmentFilterMetric.SQ>();
+        ref2.add(new AlignmentFilterMetric.SQ("seq2_1", "as2_1", "sp2_1", 500, "ur2_1"));
+        ref2.add(new AlignmentFilterMetric.SQ("seq2_2", "as2_2", null, 600, null));
+        instance.addRef(ref2);
+        
+        SAMSequenceDictionary sequenceDictionary = new SAMSequenceDictionary();
+        SAMSequenceRecord ref3_1 = new SAMSequenceRecord("seq3_1", 700);
+        sequenceDictionary.addSequence(ref3_1);
+        instance.addRef(sequenceDictionary);
+       
+        File metricsJson = File.createTempFile("alignmentFilterMetricsSets", ".json", new File("testdata"));
+        System.out.println("Output metrics: " + metricsJson.getPath());
+        instance.output(metricsJson);
+        assertEquals(CheckMd5.getFileMd5(metricsJson), "6f5d34e12b65aa1d5871caa25a62b05f");
+        metricsJson.deleteOnExit();
     }
 }

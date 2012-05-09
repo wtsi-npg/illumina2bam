@@ -20,6 +20,8 @@
 package uk.ac.sanger.npg.bam.util;
 
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.samtools.*;
@@ -33,6 +35,7 @@ public class CheckMd5 {
 
     /**
      *
+     * @param inputFile 
      * @param programIdToRemoveVersion
      * @return md5 value
      */
@@ -73,6 +76,12 @@ public class CheckMd5 {
         return md5AfterRemovePgVersion;
     }
 
+    /**
+     * 
+     * @param input
+     * @param outputFile
+     * @param programIdToRemoveVersion
+     */
     public static void removeVersionNumberFromBamHeader(File input, File outputFile, String programIdToRemoveVersion) {
 
         Logger.getLogger(CheckMd5.class.getName()).log(Level.INFO, "Input file for check md5: {0}", input.getPath());
@@ -96,6 +105,48 @@ public class CheckMd5 {
         out.close();
         in.close();
     }
+    
+    /**
+     * 
+     * @param file
+     * @return
+     */
+    public static String getFileMd5(File file){
+        
+        String result = "";
+        
+        try {
+            MessageDigest complete = MessageDigest.getInstance("MD5");
+            
+            InputStream fis =  new FileInputStream(file);
+            
+            int numRead;
+            byte[] buffer = new byte[1024];
+
+            do {
+                numRead = fis.read(buffer);
+                if (numRead > 0) {
+                    complete.update(buffer, 0, numRead);
+                }
+            } while (numRead != -1);
+
+            fis.close();
+            
+            byte [] b = complete.digest();
+
+            for (int i=0; i < b.length; i++) {
+                result += Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );
+            }
+            
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(CheckMd5.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CheckMd5.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return result;
+
+    }
 
     /**
      *
@@ -103,6 +154,9 @@ public class CheckMd5 {
      */
     public static void main(String[] args) {
         File input = new File("testdata/bam/986_1.sam");
-        System.out.println(CheckMd5.getBamMd5AfterRemovePGVersion(input, "BamMerger"));
+        //ad163f4cb85d689f0d66076c32ed1743
+        System.out.println(CheckMd5.getBamMd5AfterRemovePGVersion(input, "BamMerger"));        
+        //ba5eeeb8aed0e6b87f9f56b110e8b36b
+        System.out.println(CheckMd5.getFileMd5(input));     
     }
 }
