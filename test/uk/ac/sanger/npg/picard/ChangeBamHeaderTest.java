@@ -26,7 +26,7 @@ import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileReader;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import uk.ac.sanger.npg.bam.util.CheckBamMd5;
+import uk.ac.sanger.npg.bam.util.CheckMd5;
 
 /**
  * This is the test class for ChangeBamHeader
@@ -99,6 +99,6 @@ public class ChangeBamHeaderTest {
         File md5File = new File("testdata/6210_8_header_changed.bam.md5");
         md5File.deleteOnExit();
 
-        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(newBamFile, "ChangeBamHeader"), "09d32a078c13b96acb079f1daa33afdb");
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(newBamFile, "ChangeBamHeader"), "09d32a078c13b96acb079f1daa33afdb");
     }
 }

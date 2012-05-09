@@ -12,7 +12,7 @@ import net.sf.samtools.SAMFileReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import uk.ac.sanger.npg.bam.util.CheckBamMd5;
+import uk.ac.sanger.npg.bam.util.CheckMd5;
 
 /**
  *
@@ -54,7 +54,7 @@ public class SplitBamByReadGroupTest {
 
         File md5File1 = new File("testdata/6551_8_split#1.sam.md5");
         md5File1.deleteOnExit();
-        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(splitFile1, "SplitBamByReadGroup"), "90610abeff353dcd0c0eb80544148580");
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(splitFile1, "SplitBamByReadGroup"), "90610abeff353dcd0c0eb80544148580");
         
         File splitFile9 = new File("testdata/6551_8_split#9.sam");
         splitFile9.deleteOnExit();
@@ -62,7 +62,7 @@ public class SplitBamByReadGroupTest {
 
         File md5File9 = new File("testdata/6551_8_split#9.sam.md5");
         md5File9.deleteOnExit();
-        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(splitFile9, "SplitBamByReadGroup"), "28a7c1c509a66a9261190eea586a23f8");
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(splitFile9, "SplitBamByReadGroup"), "28a7c1c509a66a9261190eea586a23f8");
 
     
     }

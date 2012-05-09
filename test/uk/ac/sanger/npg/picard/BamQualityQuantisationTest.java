@@ -28,7 +28,7 @@ import net.sf.samtools.SAMUtils;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import uk.ac.sanger.npg.bam.util.CheckBamMd5;
+import uk.ac.sanger.npg.bam.util.CheckMd5;
 /**
  * This is the test class for BamQualityQuantisation
  * 
@@ -95,7 +95,7 @@ public class BamQualityQuantisationTest {
         File md5File = new File("testdata/6210_8_squashed.bam.md5");
         md5File.deleteOnExit();
         
-        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(squashedBamFile, "BamQualityQuantisation"), "2afc6143cd5acf58d2b11bbf814bcf23");
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(squashedBamFile, "BamQualityQuantisation"), "2afc6143cd5acf58d2b11bbf814bcf23");
     }
  
 }

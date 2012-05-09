@@ -27,7 +27,7 @@ import net.sf.samtools.SAMProgramRecord;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import uk.ac.sanger.npg.bam.util.CheckBamMd5;
+import uk.ac.sanger.npg.bam.util.CheckMd5;
 
 /**
  *
@@ -95,6 +95,6 @@ public class Illumina2bamTest {
     
     @Test 
     public void checkOutputMd5(){
-        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(tempBamFile, "Illumina2bam"), "62749a4c4cd90e192cd7b8765108d6f8");
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(tempBamFile, "Illumina2bam"), "62749a4c4cd90e192cd7b8765108d6f8");
     }
 }

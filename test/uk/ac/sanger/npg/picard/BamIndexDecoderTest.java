@@ -26,7 +26,7 @@ import java.util.TimeZone;
 import net.sf.samtools.SAMFileReader;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import uk.ac.sanger.npg.bam.util.CheckBamMd5;
+import uk.ac.sanger.npg.bam.util.CheckMd5;
 
 /**
  *
@@ -84,7 +84,7 @@ public class BamIndexDecoderTest {
         File outputMetrics = new File(outputName + ".metrics");
         File outputMd5 = new File(outputName + ".sam.md5");
 
-        assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"), "e88bcf9899f021825eaacf4d7d5bc91f");
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"), "e88bcf9899f021825eaacf4d7d5bc91f");
         
         outputFile.delete();
         outputMetrics.delete();
@@ -134,7 +134,7 @@ public class BamIndexDecoderTest {
             outputFile.deleteOnExit();
             File outputMd5 = new File(outputName + "/6383_8#" + i + ".bam.md5");
             outputMd5.deleteOnExit();
-            assertEquals(CheckBamMd5.getMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"), md5s[i]);
+            assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"), md5s[i]);
         }
         
         outputDir.deleteOnExit();

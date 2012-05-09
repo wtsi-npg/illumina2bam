@@ -28,7 +28,7 @@ import net.sf.samtools.*;
  *
  * @author gq1@sanger.ac.uk
  */
-public class CheckBamMd5 {
+public class CheckMd5 {
         
 
     /**
@@ -36,7 +36,7 @@ public class CheckBamMd5 {
      * @param programIdToRemoveVersion
      * @return md5 value
      */
-    public static String getMd5AfterRemovePGVersion(File inputFile, String programIdToRemoveVersion) {
+    public static String getBamMd5AfterRemovePGVersion(File inputFile, String programIdToRemoveVersion) {
         
         SAMFileWriterFactory.setDefaultCreateMd5File(true);
 
@@ -44,9 +44,9 @@ public class CheckBamMd5 {
         try {
             outputFile = File.createTempFile("removeVersion", ".bam");
             outputFile.deleteOnExit();
-            Logger.getLogger(CheckBamMd5.class.getName()).log(Level.INFO, "Output after removing PG version: {0}", outputFile.getPath());
+            Logger.getLogger(CheckMd5.class.getName()).log(Level.INFO, "Output after removing PG version: {0}", outputFile.getPath());
         } catch (IOException ex) {
-            Logger.getLogger(CheckBamMd5.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CheckMd5.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         removeVersionNumberFromBamHeader(inputFile, outputFile, programIdToRemoveVersion);
@@ -60,14 +60,14 @@ public class CheckBamMd5 {
             md5Stream = new BufferedReader(new FileReader(md5File));
             md5AfterRemovePgVersion = md5Stream.readLine();
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(CheckBamMd5.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CheckMd5.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(CheckBamMd5.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CheckMd5.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 md5Stream.close();
             } catch (IOException ex) {
-                Logger.getLogger(CheckBamMd5.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CheckMd5.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return md5AfterRemovePgVersion;
@@ -75,7 +75,7 @@ public class CheckBamMd5 {
 
     public static void removeVersionNumberFromBamHeader(File input, File outputFile, String programIdToRemoveVersion) {
 
-        Logger.getLogger(CheckBamMd5.class.getName()).log(Level.INFO, "Input file for check md5: {0}", input.getPath());
+        Logger.getLogger(CheckMd5.class.getName()).log(Level.INFO, "Input file for check md5: {0}", input.getPath());
 
         final SAMFileReader in = new SAMFileReader(input);
 
@@ -103,6 +103,6 @@ public class CheckBamMd5 {
      */
     public static void main(String[] args) {
         File input = new File("testdata/bam/986_1.sam");
-        System.out.println(CheckBamMd5.getMd5AfterRemovePGVersion(input, "BamMerger"));
+        System.out.println(CheckMd5.getBamMd5AfterRemovePGVersion(input, "BamMerger"));
     }
 }
