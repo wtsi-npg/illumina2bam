@@ -543,6 +543,8 @@ is divided into following sections:
                     <fileset dir="${build.classes.dir}"/>
                     <manifest>
                         <attribute name="Class-Path" value="${jar.classpath}"/>
+                         <attribute name="Implementation-Version" value="${illumina2bam.version}"/>
+                         <attribute name="Implementation-Vendor" value="${application.vendor}"/>
                         <customize/>
                     </manifest>
                 </copylibs>
@@ -712,9 +714,9 @@ is divided into following sections:
     </target>
     <target depends="init,-init-macrodef-copylibs,compile,-pre-pre-jar,-pre-jar,-do-jar-with-libraries-create-manifest,-do-jar-with-libraries-copy-manifest,-do-jar-with-libraries-set-main,-do-jar-with-libraries-set-splashscreen" if="do.mkdist" name="-do-jar-with-libraries-pack">
         <j2seproject3:copylibs manifest="${tmp.manifest.file}"/>
-        <echo level="info">To run this application from the command line without Ant, try:</echo>
+        <!-- <echo level="info">To run this application from the command line without Ant, try:</echo> -->
         <property location="${dist.jar}" name="dist.jar.resolved"/>
-        <echo level="info">java -jar "${dist.jar.resolved}"</echo>
+        <!-- <echo level="info">java -jar "${dist.jar.resolved}"</echo> -->
     </target>
     <target depends="-do-jar-with-libraries-pack" if="do.archive" name="-do-jar-with-libraries-delete-manifest">
         <delete>
@@ -726,7 +728,7 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="init,compile,-pre-jar,-do-jar-with-manifest,-do-jar-without-manifest,-do-jar-with-mainclass,-do-jar-with-libraries,bamMerger-jar,bamReadTrimmer-jar,bamIndexDecoder-jar,splitBamByReadGoup-jar,alignmentFilter-jar,changeBamHeader-jar,bamTagStripper-jar,bamQualityQuantisation-jar,-post-jar" description="Build JAR." name="jar"/>
+    <target depends="init,compile,-pre-jar,-do-jar-with-manifest,-do-jar-without-manifest,-do-jar-with-mainclass,-do-jar-with-libraries,-post-jar" description="Build JAR." name="jar"/>
     <!--
                 =================
                 EXECUTION SECTION
@@ -1063,93 +1065,4 @@ is divided into following sections:
             </propertyset>
         </ant>
     </target>
-    
-    <target name="bamMerger-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds BamMerger jar for command line"> 
-       <jar destfile="${dist.dir}/BamMerger.jar" compress="no">
-          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
-    	   <manifest>
-    	      <attribute name="Implementation-Title" value="BamMerger"/>
-              <attribute name="Main-Class" value="illumina.BamMerger"/>
-              <attribute name="Class-Path" value="${jar.classpath}"/>
-           </manifest>
-       </jar>
-    </target>
-    
-    <target name="bamReadTrimmer-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds BamReadTrimmer jar for command line"> 
-       <jar destfile="${dist.dir}/BamReadTrimmer.jar" compress="no">
-          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
-    	   <manifest>
-    	      <attribute name="Implementation-Title" value="BamReadTrimmer"/>
-              <attribute name="Main-Class" value="illumina.BamReadTrimmer"/> 
-              <attribute name="Class-Path" value="${jar.classpath}"/> 
-           </manifest>
-       </jar>
-    </target>
-    
-    <target name="bamIndexDecoder-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds BamIndexDecoder jar for command line"> 
-       <jar destfile="${dist.dir}/BamIndexDecoder.jar" compress="no">
-          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
-    	   <manifest>
-    	      <attribute name="Implementation-Title" value="BamIndexDecoder"/>
-              <attribute name="Main-Class" value="illumina.BamIndexDecoder"/> 
-              <attribute name="Class-Path" value="${jar.classpath}"/> 
-           </manifest>
-       </jar>
-    </target>
-   
-     <target name="splitBamByReadGoup-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds SplitBamByReadGroup jar for command line"> 
-       <jar destfile="${dist.dir}/SplitBamByReadGroup.jar" compress="no">
-          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
-    	   <manifest>
-    	      <attribute name="Implementation-Title" value="SplitBamByReadGroup"/>
-              <attribute name="Main-Class" value="illumina.SplitBamByReadGroup"/>
-              <attribute name="Class-Path" value="${jar.classpath}"/>
-           </manifest>
-       </jar>
-    </target>
-
-     <target name="alignmentFilter-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds AlignmentFilter jar for command line"> 
-       <jar destfile="${dist.dir}/AlignmentFilter.jar" compress="no">
-          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
-    	   <manifest>
-    	      <attribute name="Implementation-Title" value="AlignmentFilter"/>
-              <attribute name="Main-Class" value="illumina.AlignmentFilter"/>
-              <attribute name="Class-Path" value="${jar.classpath}"/>
-           </manifest>
-       </jar>
-    </target>
-
-     <target name="changeBamHeader-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds ChangeBamHeader jar for command line"> 
-       <jar destfile="${dist.dir}/ChangeBamHeader.jar" compress="no">
-          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
-    	   <manifest>
-    	      <attribute name="Implementation-Title" value="ChangeBamHeader"/>
-              <attribute name="Main-Class" value="illumina.ChangeBamHeader"/>
-              <attribute name="Class-Path" value="${jar.classpath}"/>
-           </manifest>
-       </jar>
-    </target>
-
-     <target name="bamTagStripper-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds BamTagStripper jar for command line"> 
-       <jar destfile="${dist.dir}/BamTagStripper.jar" compress="no">
-          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
-    	   <manifest>
-    	      <attribute name="Implementation-Title" value="BamTagStripper"/>
-              <attribute name="Main-Class" value="illumina.BamTagStripper"/>
-              <attribute name="Class-Path" value="${jar.classpath}"/>
-           </manifest>
-       </jar>
-    </target>
-
-     <target name="bamQualityQuantisation-jar" depends="init,compile,-pre-pre-jar,-do-jar-with-libraries" description="Builds BamQualityQuantisation jar for command line"> 
-       <jar destfile="${dist.dir}/BamQualityQuantisation.jar" compress="no">
-          <fileset dir="${build.classes.dir}" includes ="**/*.*"/>
-    	   <manifest>
-    	      <attribute name="Implementation-Title" value="BamQualityQuantisation"/>
-              <attribute name="Main-Class" value="illumina.BamQualityQuantisation"/>
-              <attribute name="Class-Path" value="${jar.classpath}"/>
-           </manifest>
-       </jar>
-    </target>
- 
 </project>

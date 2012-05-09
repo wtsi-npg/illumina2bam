@@ -1,3 +1,10 @@
+release-1.00
+ - reorganise java class files with prefix uk.ac.sanger.npg in the package names.
+ - rewrite ant build file, add version number in the jar files and generate command options for each tool with java doc.
+ - remove version number dependency in tests.
+ - Picard updated from 1.67 to 1.68.
+ - AlignmentFilter: record reference SQ list in the metrics file.
+
 release-0.04
  - BamMerger allows extra reads in unmapped bam file and an option to add them to merged bam file, and merge flag information as well.
  - read locs files if clocs file not available.
