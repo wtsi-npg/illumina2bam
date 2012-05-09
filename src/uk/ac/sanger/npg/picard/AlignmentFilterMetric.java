@@ -294,6 +294,10 @@ public class AlignmentFilterMetric {
         this.numberAlignments = numberAlignments;
     }
     
+    /**
+     * 
+     * @param sequenceDictionary
+     */
     public void addRef(SAMSequenceDictionary sequenceDictionary){
         
         ArrayList<SQ> refSQList = new ArrayList<SQ>();
@@ -343,7 +347,6 @@ public class AlignmentFilterMetric {
          * @param sp
          * @param ln
          * @param ur
-         * @param m5
          */
         public SQ(String sn, String as, String sp, int ln, String ur){
             this.sn = sn;
@@ -353,11 +356,16 @@ public class AlignmentFilterMetric {
             this.ur = ur;
         }
         
+        /**
+         * 
+         * @param samSequenceRecord
+         */
         public SQ(SAMSequenceRecord samSequenceRecord){
             this.sn = samSequenceRecord.getSequenceName();
             this.as = samSequenceRecord.getAssembly();
             this.sp = samSequenceRecord.getSpecies();
             this.ln = samSequenceRecord.getSequenceLength();
+            this.ur = samSequenceRecord.getAttribute("UR");
         }
 
         /**
