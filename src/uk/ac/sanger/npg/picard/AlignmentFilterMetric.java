@@ -38,6 +38,12 @@ public class AlignmentFilterMetric {
     
     private final Log log = Log.getInstance(AlignmentFilterMetric.class);
     
+    private String programName;
+    
+    private String programCommand;
+    
+    private String programVersion;
+    
     private int numberAlignments;
 
     private int totalReads;
@@ -328,6 +334,48 @@ public class AlignmentFilterMetric {
      */
     public void setRefList(ArrayList<ArrayList<SQ>> refList) {
         this.refList = refList;
+    }
+
+    /**
+     * @return the programName
+     */
+    public String getProgramName() {
+        return programName;
+    }
+
+    /**
+     * @param programName the programName to set
+     */
+    public void setProgramName(String programName) {
+        this.programName = programName;
+    }
+
+    /**
+     * @return the programCommand
+     */
+    public String getProgramCommand() {
+        return programCommand;
+    }
+
+    /**
+     * @param programCommand the programCommand to set
+     */
+    public void setProgramCommand(String programCommand) {
+        this.programCommand = programCommand;
+    }
+
+    /**
+     * @return the programVersion
+     */
+    public String getProgramVersion() {
+        return programVersion;
+    }
+
+    /**
+     * @param programVersion the programVersion to set
+     */
+    public void setProgramVersion(String programVersion) {
+        this.programVersion = programVersion;
     }
     
     /**

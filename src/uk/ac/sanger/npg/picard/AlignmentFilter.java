@@ -107,6 +107,9 @@ public class AlignmentFilter extends PicardCommandLine {
 
         int numInput = this.INPUT_ALIGNMENT.size();        
         AlignmentFilterMetric metrics = new AlignmentFilterMetric(numInput);
+        metrics.setProgramName(programName);
+        metrics.setProgramCommand(this.getCommandLine());
+        metrics.setProgramVersion(this.getProgramVersion());
 
         log.info("Open output files with headers");
         final List<SAMFileWriter> outputWriterList  = new ArrayList<SAMFileWriter>();
