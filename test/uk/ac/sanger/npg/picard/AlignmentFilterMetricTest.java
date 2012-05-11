@@ -76,7 +76,7 @@ public class AlignmentFilterMetricTest {
         File metricsJson = File.createTempFile("alignmentFilterMetrics", ".json", new File("testdata"));
         System.out.println("Output metrics: " + metricsJson.getPath());
         instance.output(metricsJson);
-        assertEquals(CheckMd5.getFileMd5(metricsJson), "03f5ab18f5b35dd1a20edc6a8cae04c0");
+        assertEquals(CheckMd5.getFileMd5(metricsJson), "c0c744ac2e560ec515c33222fbe7603d");
         metricsJson.deleteOnExit();
     }
     
@@ -87,6 +87,10 @@ public class AlignmentFilterMetricTest {
     public void testSetsMethods() throws IOException {    
      
         AlignmentFilterMetric instance = new AlignmentFilterMetric(2);
+        
+        instance.setProgramName("AlignmentFilter");
+        instance.setProgramVersion("1.00");
+        instance.setProgramCommand("test command");
         
         instance.setTotalReads(100);
         
@@ -112,7 +116,7 @@ public class AlignmentFilterMetricTest {
         File metricsJson = File.createTempFile("alignmentFilterMetricsSets", ".json", new File("testdata"));
         System.out.println("Output metrics: " + metricsJson.getPath());
         instance.output(metricsJson);
-        assertEquals(CheckMd5.getFileMd5(metricsJson), "6f5d34e12b65aa1d5871caa25a62b05f");
+        assertEquals(CheckMd5.getFileMd5(metricsJson), "27c570d2fd8fbc098b7c219b3883e4be");
         metricsJson.deleteOnExit();
     }
 }

@@ -1,3 +1,6 @@
+release-1.01
+- add program information in AlignmentFilter metrics file
+
 release-1.00
  - reorganise java class files with prefix uk.ac.sanger.npg in the package names.
  - rewrite ant build file, add version number in the jar files and generate command options for each tool with java doc.
