@@ -1,3 +1,7 @@
+release-1.02
+ - remove dist for github
+ - new tool BamAdapterFinder
+ - add bcel jar file in lib
 release-1.01
 - add program information in AlignmentFilter metrics file
 
