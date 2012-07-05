@@ -72,9 +72,9 @@
 
     -->
     
-    <target name="-post-jar" depends="-package-commands, -package-jars"/>
-    
-   <target name="-package-jars" depends="-package-commands" description="pack all jar files for release">
+   <target name="-post-jar" depends="-package-commands, -package-jars"/>
+   <!--  description="pack all jar files for release" -->
+   <target name="-package-jars" depends="-package-commands">
         <zip zipfile="${dist.dir}/Illumina2bam-tools-${illumina2bam.version}.zip">
             <zipfileset dir="${dist.dir}" includes="*.jar" prefix="Illumina2bam-tools-${illumina2bam.version}"/>
             <zipfileset dir="${dist.dir}/lib" prefix="Illumina2bam-tools-${illumina2bam.version}/lib"/>
