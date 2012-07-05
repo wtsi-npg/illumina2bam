@@ -31,10 +31,11 @@ import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.SequenceUtil;
 
 /**
- * Class to read matching forward/reverse BAM records and identify short inserts
- * by looking for overlap between forward read and reverse-complemented reverse
- * read. Note the starting position of the overlap with a new tag in the output
- * BAM file.
+ * Class to read matching forward/reverse BAM records and identify
+ * short inserts by looking for overlap between forward read and
+ * reverse-complemented reverse read. Note the offset of the overlap
+ * with new tags in the output BAM file. The records for a given read
+ * pair are expected to be consecutive in the BAM file.
  *
  * @author Tom Skelly
  */
@@ -51,8 +52,10 @@ public class BamAdapterFinder extends PicardCommandLine {
     public File INPUT;
     @Option(shortName = StandardOptionDefinitions.OUTPUT_SHORT_NAME, doc = "The output file after trimming.")
     public File OUTPUT;
-    @Option(shortName = "XS", doc = "Tag to be used for adapter start position.", optional = true)
-    public String ADAPTER_START_TAG = "xs";
+    @Option(shortName = "XS", doc = "Tag to be used for adapter length.", optional = true)
+    public String ADAPTER_LENGTH_TAG = "xs";
+    @Option(shortName = "XM", doc = "Tag to be used for adapter match check (boolean).", optional = true)
+    public String ADAPTER_MATCH_TAG = "xm";
     @Option(shortName = "MO", doc = "Minimum read overlap to look for.", optional = true)
     public int MIN_OVERLAP = 32;
     @Option(shortName = "PM", doc = "Maximum number of mismatches allowed in overlap.", optional = true)
@@ -61,7 +64,7 @@ public class BamAdapterFinder extends PicardCommandLine {
     public int ADAPTER_MATCH = 12;
 
     private static final int NONE_FOUND = -1;     // "no match found" return from matchSAMRecords
-    private static final int ARRAY_SIZE = 10000;
+    private static final int ARRAY_SIZE = 10000;  // size of histogram array, much larger than needed
 
     @Override
     protected int doWork() {
@@ -84,7 +87,7 @@ public class BamAdapterFinder extends PicardCommandLine {
         long[] overlaps = new long[ARRAY_SIZE];    // indexed by offset, sized to be far larger
         long[] adapters = new long[ARRAY_SIZE];
 
-        boolean first = true;
+        boolean first = true;                      // first/second read flip-flop
         SAMRecord record_1 = null;
 
         this.log.info("Reading records in pairs");
@@ -92,30 +95,30 @@ public class BamAdapterFinder extends PicardCommandLine {
 
             if (first) {
                 ++totPairs;
-                record_1 = record;
+                record_1 = record;                 // save to process with read 2
                 first = false;
             } else {
                 
                 int offset = matchSAMRecords(record_1, record);
                 if (offset != NONE_FOUND) {
 
-                    ++overlaps[offset];
+                    ++overlaps[offset];            // histogram of overlaps
 
-                    if (checkAdapter(record_1, record, offset)) {
-                        record_1.setAttribute(ADAPTER_START_TAG, offset);
-                        record.setAttribute(ADAPTER_START_TAG, offset);
-                        ++adapters[offset];
-                    } else {
-                        record_1.setAttribute("xy", offset);
-                        record.setAttribute("xy", offset);
+                    record_1.setAttribute(ADAPTER_LENGTH_TAG, offset);      // add tag to both reads
+                    record.setAttribute(ADAPTER_LENGTH_TAG, offset);
+
+                    if (checkAdapter(record_1, record, offset)) {           // if the adapters match
+                        ++adapters[offset];                                 // histogram of matches
+                        record_1.setAttribute(ADAPTER_MATCH_TAG, 1);        // another tag, this one boolean
+                        record.setAttribute(ADAPTER_MATCH_TAG, 1);
                     }
 
                 }
 
-                out.addAlignment(record_1);
+                out.addAlignment(record_1);        // write out both reads
                 out.addAlignment(record);
 
-                first = true;
+                first = true;                      // expect next record to be read 1
 
             }
 
@@ -123,7 +126,7 @@ public class BamAdapterFinder extends PicardCommandLine {
 
         out.close();
 
-        if (totPairs == 0) {                            // avoids zero-divide later on
+        if (totPairs == 0) {                       // avoids zero-divide later on
             this.log.info("ERROR: input file was empty.");
         } else {
         
@@ -132,7 +135,7 @@ public class BamAdapterFinder extends PicardCommandLine {
             int totOverlaps = 0;
             int totAdapters = 0;
 
-            for (int ix=0; ix<ARRAY_SIZE; ++ix) {
+            for (int ix=0; ix<ARRAY_SIZE; ++ix) {       // write histogram info to the log
                 if (overlaps[ix] > 0) {                 // overlaps==0 implies adapters==0
                     this.log.info(String.format("%3d  %7d  %7d", ix, overlaps[ix], adapters[ix]));
                     totOverlaps += overlaps[ix];
@@ -155,14 +158,22 @@ public class BamAdapterFinder extends PicardCommandLine {
 
     public int matchSAMRecords(final SAMRecord record_1, final SAMRecord record_2) {
 
-        /* Read paired-end reads from a SAM file. Find cases where there is an
-           overlap of at least N bases between read 1 and the reverse-
-           complement of read 2.  This indicates that a short insert was
-           completely sequenced in both directions, and sequencing then
-           continued into the adapter -- like so (bottom line is r.c.read 2):
+        /* Given a matching pair of reads, find cases where there is
+           an overlap of at least N bases between read 1 and the
+           reverse-complement of read 2. This indicates that a short
+           insert was completely sequenced in both directions, and
+           sequencing then continued into the adapter -- like so
+           (bottom line is r.c.read 2):
 
+                                                                            offset=10
+                                                                            |
+                                                                            V
            TTAATGTCTTATGATGTTGTGTGCCTGCTGGCATTTGTTAAACAAAATCATTGATTAACAATCATAGATCGGAAG
  CTTCCGATCTTTAATGTCTTATGATGTTGTGTGCCTGCTGGCATTTGTTAAACAAAATCATTGATTAACAATCAT
+
+           Note that the returned offset is equivalent to the length
+           of the adapter sequence. I.e., it's counted backwards from
+           the end of the read.
 
         */
 
@@ -269,21 +280,15 @@ public class BamAdapterFinder extends PicardCommandLine {
     }
 
     /**
-     * example: INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_trimmed.bam
-     * FIRST_POSITION_TO_TRIM=1 TRIM_LENGTH=3 CREATE_MD5_FILE=true
-     * ONLY_FORWARD_READ=true SAVE_TRIM=true TRIM_BASE_TAG=rs
-     * TRIM_QUALITY_TAG=qs VERBOSITY=INFO QUIET=false
+     * example: INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_findadapters.bam
+     * ADAPTER_LENGTH_TAG=ms ADAPTER_MATCH_TAG=xm MIN_OVERLAP=32 PCT_MISMATCHES=10.0
+     * ADAPTER_MATCH=12
      * VALIDATION_STRINGENCY=SILENT
-     *
-     * INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_trimmed.bam
-     * FIRST_POSITION_TO_TRIM=1 TRIM_LENGTH=3 TMP_DIR=testdata
-     * CREATE_MD5_FILE=true ONLY_FORWARD_READ=true SAVE_TRIM=true
-     * TRIM_BASE_TAG=rs TRIM_QUALITY_TAG=qs VALIDATION_STRINGENCY=SILENT
      *
      * @param args
      */
     public static void main(final String[] args) {
-
         System.exit(new BamAdapterFinder().instanceMain(args));
     }
+
 }
