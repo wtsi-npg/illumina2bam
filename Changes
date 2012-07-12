@@ -1,3 +1,6 @@
+release-1.03
+ - read both tile list and range
+
 release-1.02
  - remove dist for github
  - new tool BamAdapterFinder
