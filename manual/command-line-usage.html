@@ -2,7 +2,7 @@
 <h3>Illumina2bam</h3>
 <p>USAGE: Illumina2bam [options]
 <p>
-<p>Convert Illumina BCL to BAM or SAM file. Version: 1.02
+<p>Convert Illumina BCL to BAM or SAM file. Version: 1.03
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -34,7 +34,7 @@
 <h3>BamQualityQuantisation</h3>
 <p>USAGE: BamQualityQuantisation [options]
 <p>
-<p>Quantise the original Illumina canned qualities into reduced resolution scores using bins 1->9=6,10->19=15,20->24=22,25->29=27,30->34=33,35->39=37,40->59=41. Version: 1.02
+<p>Quantise the original Illumina canned qualities into reduced resolution scores using bins 1->9=6,10->19=15,20->24=22,25->29=27,30->34=33,35->39=37,40->59=41. Version: 1.03
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -48,7 +48,7 @@
 <h3>BamTagStripper</h3>
 <p>USAGE: BamTagStripper [options]
 <p>
-<p>Strip a list of tags in bam/sam record. By default, any tags containing lowercase letters will be stripped and other tags will be kept. A list of tags can be given to keep or strip. Version: 1.02
+<p>Strip a list of tags in bam/sam record. By default, any tags containing lowercase letters will be stripped and other tags will be kept. A list of tags can be given to keep or strip. Version: 1.03
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -63,7 +63,7 @@
 <h3>ChangeBamHeader</h3>
 <p>USAGE: ChangeBamHeader [options]
 <p>
-<p>Add extra PGs into bam header, or change SM, LB or DS tag in RG line in header and this only works with one read group in the input bam. . Version: 1.02
+<p>Add extra PGs into bam header, or change SM, LB or DS tag in RG line in header and this only works with one read group in the input bam. . Version: 1.03
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -80,7 +80,7 @@
 <h3>AlignmentFilter</h3>
 <p>USAGE: AlignmentFilter [options]
 <p>
-<p>Give a list of SAM/BAM files with the same set of records and in the same order but aligned with different references, split reads into different files according to alignments. You have option to put unaligned reads into one of output files or a separate file. Version: 1.02
+<p>Give a list of SAM/BAM files with the same set of records and in the same order but aligned with different references, split reads into different files according to alignments. You have option to put unaligned reads into one of output files or a separate file. Version: 1.03
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -95,7 +95,7 @@
 <h3>SplitBamByReadGroup</h3>
 <p>USAGE: SplitBamByReadGroup [options]
 <p>
-<p>Split a BAM file into multiple BAM files based on ReadGroup. Headers are a copy of the original file, removing @RGs where IDs match with the other ReadGroup IDs. Version: 1.02
+<p>Split a BAM file into multiple BAM files based on ReadGroup. Headers are a copy of the original file, removing @RGs where IDs match with the other ReadGroup IDs. Version: 1.03
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -109,7 +109,7 @@
 <h3>BamIndexDecoder</h3>
 <p>USAGE: BamIndexDecoder [options]
 <p>
-<p>A command-line tool to decode multiplexed bam file. Version: 1.02
+<p>A command-line tool to decode multiplexed bam file. Version: 1.03
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -135,13 +135,14 @@
 <h3>BamAdapterFinder</h3>
 <p>USAGE: BamAdapterFinder [options]
 <p>
-<p>Find short inserts by finding overlapping forward/reverse reads. Note position with a tag.. Version: 1.02
+<p>Find short inserts by finding overlapping forward/reverse reads. Note position with a tag.. Version: 1.03
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
 <tr><td>INPUT=File</td><td>The input SAM or BAM file to trim.  Required. </td></tr>
 <tr><td>OUTPUT=File</td><td>The output file after trimming.  Required. </td></tr>
-<tr><td>ADAPTER_START_TAG=String</td><td>Tag to be used for adapter start position.  Default value: xs. This option can be set to 'null' to clear the default value. </td></tr>
+<tr><td>ADAPTER_LENGTH_TAG=String</td><td>Tag to be used for adapter length.  Default value: xs. This option can be set to 'null' to clear the default value. </td></tr>
+<tr><td>ADAPTER_MATCH_TAG=String</td><td>Tag to be used for adapter match check (boolean).  Default value: xm. This option can be set to 'null' to clear the default value. </td></tr>
 <tr><td>MIN_OVERLAP=Integer</td><td>Minimum read overlap to look for.  Default value: 32. This option can be set to 'null' to clear the default value. </td></tr>
 <tr><td>PCT_MISMATCHES=Double</td><td>Maximum number of mismatches allowed in overlap.  Default value: 10.0. This option can be set to 'null' to clear the default value. </td></tr>
 <tr><td>ADAPTER_MATCH=Integer</td><td>Number of adapter bases that need to match.  Default value: 12. This option can be set to 'null' to clear the default value. </td></tr>
@@ -152,7 +153,7 @@
 <h3>BamReadTrimmer</h3>
 <p>USAGE: BamReadTrimmer [options]
 <p>
-<p>Strip part of a read in fixed positionos, optionally place this and its quality in BAM tags. Version: 1.02
+<p>Strip part of a read in fixed positionos, optionally place this and its quality in BAM tags. Version: 1.03
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -172,7 +173,7 @@
 <h3>BamMerger</h3>
 <p>USAGE: BamMerger [options]
 <p>
-<p>A command-line tool to merge BAM/SAM alignment info in the first input file with the data in an unmapped BAM file, producing a third BAM file that has alignment data and all the additional data from the unmapped BAM. Version: 1.02
+<p>A command-line tool to merge BAM/SAM alignment info in the first input file with the data in an unmapped BAM file, producing a third BAM file that has alignment data and all the additional data from the unmapped BAM. Version: 1.03
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
