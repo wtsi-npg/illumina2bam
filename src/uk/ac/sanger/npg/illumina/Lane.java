@@ -383,10 +383,10 @@ public class Lane {
         log.info("Reading run config from RunInfo, runParameters, BaseCalls or Intensities files");
         
         //read tile list
-        this.tileList = this.readTileList();
-        if(tileList == null || tileList.length == 0){
-            this.tileList = this.readTileRange();
-        }
+        int [] tileListByList = this.readTileList();
+        int [] tileListByRange = this.readTileRange();
+        this.tileList = this.mergeTileList(tileListByList, tileListByRange);
+
         if(tileList == null){
             throw new RuntimeException("Problems to read tile list from config file:" + this.baseCallsConfig);
         }else{
@@ -435,6 +435,32 @@ public class Lane {
         }
         
         this.mergeIndexReads();
+    }
+    private int [] mergeTileList(int [] tileListByList, int [] tileListByRange){
+        
+        if( tileListByList == null && tileListByRange != null ){
+            
+            return tileListByRange;
+        }else if( tileListByList != null && tileListByRange == null ){
+            
+            return tileListByList;
+        }else if( tileListByList != null && tileListByRange != null ){
+            
+            int[] mergedList = new int[ tileListByList.length + tileListByRange.length ];
+            int count = 0;
+            for(int t: tileListByList){
+                mergedList[count] = t;
+                count++;
+            }
+            for(int t: tileListByRange){
+                mergedList[count] = t;
+                count++;
+            }
+            Arrays.sort(mergedList);
+            return mergedList;
+        }
+
+        return null;
     }
     
     /**
