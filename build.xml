@@ -71,6 +71,25 @@
     nbproject/build-impl.xml file. 
 
     -->
+
+   <target name="-pre-init" depends="git.revision" />
+   <!-- Work out version from latest git tag -->
+   <!-- altered from http://stackoverflow.com/questions/2974106/how-to-lookup-the-latest-git-commit-hash-from-an-ant-build-script -->
+   <available file=".git" type="dir" property="git.present"/>
+   <target name="git.revision" description="Store git revision in ${repository.version}" if="git.present">
+    <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+        <arg value="describe"/>
+        <arg value="--always"/>
+        <arg value="--dirty"/>
+    </exec>
+    <condition property="repository.version" value="${git.revision}" else="unknown">
+        <and>
+            <isset property="git.revision"/>
+            <length string="${git.revision}" trim="yes" length="0" when="greater"/>
+        </and>
+    </condition>
+   </target>
+
     
    <target name="-post-jar" depends="-package-commands, -package-jars"/>
    <!--  description="pack all jar files for release" -->
