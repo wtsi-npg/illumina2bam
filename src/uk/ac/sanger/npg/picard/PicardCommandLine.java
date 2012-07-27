@@ -32,7 +32,7 @@ import net.sf.samtools.SAMProgramRecord;
  */
 public abstract class PicardCommandLine extends CommandLineProgram {
     
-    public static final String version = "";
+    public static final String version = "1.03";
     
     /**
      * Generate Program Record for this program itself
