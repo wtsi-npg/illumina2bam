@@ -47,7 +47,12 @@ public abstract class PicardCommandLine extends CommandLineProgram {
         
         programRecord.setProgramName(programName);
         programRecord.setCommandLine(this.getCommandLine());
-        programRecord.setProgramVersion(this.getProgramVersion());
+        // use ImplementationVersion from manifest by preference, fall back to class's version 
+        String programVersion = this.getCommandLineParser().getVersion();
+        if(programVersion == null || programVersion.length() == 0){
+            programVersion = this.getProgramVersion();
+        }
+        programRecord.setProgramVersion(programVersion);
         programRecord.setAttribute("DS", programDS);
    
         return programRecord;
