@@ -100,10 +100,6 @@ public class Illumina2bamTest {
         assertEquals(result.getProgramName(), "Illumina2bam");
         assertEquals(result.getProgramVersion(), illumina2bam.getProgramVersion());
         assertEquals(result.getAttribute("DS"), "Convert Illumina BCL to BAM or SAM file");
-    }
-    
-    @Test 
-    public void checkOutputMd5(){
         assertEquals("62749a4c4cd90e192cd7b8765108d6f8", CheckMd5.getBamMd5AfterRemovePGVersion(tempBamFile, "Illumina2bam"));
     }
 
@@ -151,11 +147,6 @@ public class Illumina2bamTest {
         assertEquals(result.getProgramName(), "Illumina2bam");
         assertEquals(result.getProgramVersion(), illumina2bam.getProgramVersion());
         assertEquals(result.getAttribute("DS"), "Convert Illumina BCL to BAM or SAM file");
-    }
-    
-    @Test 
-    public void checkCycleRangeOutputMd5(){
-        System.out.println("expected &&&: " +  CheckMd5.getBamMd5AfterRemovePGVersion(tempBamFile, "Illumina2bam"));
         assertEquals("eee452bde37d9564a51045f2f92c3570",CheckMd5.getBamMd5AfterRemovePGVersion(tempBamFileCycleRange, "Illumina2bam"));
     }
 }
