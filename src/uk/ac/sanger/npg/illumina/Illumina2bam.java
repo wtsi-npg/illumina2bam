@@ -112,16 +112,14 @@ public class Illumina2bam extends PicardCommandLine {
     public String SECOND_BARCODE_QUALITY_TAG_NAME;  
 
     @Option(shortName="FIRST", doc="If set, this is the first cycle to be processed (for unusual multiprimed runs)",
-			optional = true)
+                        optional = true)
     public Integer FIRST_CYCLE;
-	
+        
     @Option(shortName="FINAL", doc="If set, this is the final cycle to be processed (for unusual multiprimed runs)",
-			optional = true)
+                        optional = true)
     public Integer FINAL_CYCLE;
-	
+        
     //TODO: add command option to skip adding ci tag
-    
-    //TODO: add command option to overwrite cycle range per read   
     
 
     @Override
@@ -146,7 +144,7 @@ public class Illumina2bam extends PicardCommandLine {
                 log.warn("Runfolder not given and can not be set from intensity directory: " + ex.toString());
             }
         }        
-	String runfolderPath = null;
+        String runfolderPath = null;
         if( this.RUN_FOLDER != null ){
            IoUtil.assertDirectoryIsReadable(this.RUN_FOLDER);
            runfolderPath = this.RUN_FOLDER.getAbsolutePath();
@@ -163,8 +161,8 @@ public class Illumina2bam extends PicardCommandLine {
                 this.BARCODE_QUALITY_TAG_NAME);
 
         
-		if ( (this.SECOND_BARCODE_QUALITY_TAG_NAME != null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME == null)
-            || (this.SECOND_BARCODE_QUALITY_TAG_NAME == null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME != null) )
+        if ( (this.SECOND_BARCODE_QUALITY_TAG_NAME != null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME == null)
+          || (this.SECOND_BARCODE_QUALITY_TAG_NAME == null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME != null) )
         {
             
             log.warn("Both SECOND_BARCODE_SEQUENCE_TAG_NAME and SECOND_BARCODE_QUALITY_TAG_NAME need to be given togeter or both missing");
@@ -173,22 +171,22 @@ public class Illumina2bam extends PicardCommandLine {
             lane.setSecondBarcodeSeqTagName(this.SECOND_BARCODE_SEQUENCE_TAG_NAME);
             lane.setSecondBarcodeQualTagName(this.SECOND_BARCODE_QUALITY_TAG_NAME);
         }
-		
-	if (this.FIRST_CYCLE != null && this.FINAL_CYCLE != null) {
-	    if (this.FIRST_CYCLE < this.FINAL_CYCLE){
-		log.info("Setting cycleRangeByRead to " + this.FIRST_CYCLE + "-" + this.FINAL_CYCLE);
-		int[] cycleRangeIndex = {this.FIRST_CYCLE, this.FINAL_CYCLE};
-		HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(1);
-		cycleRangeByRead.put("read1", cycleRangeIndex);
-		lane.setCycleRangeByRead(cycleRangeByRead);
-	    } else {
-		log.error("FIRST_CYCLE must be less than FINAL_CYCLE");
-		return 2;
-	    }
-	} else if (this.FIRST_CYCLE != null || this.FINAL_CYCLE != null) {
-	    log.error("Both FIRST_CYCLE and FINAL_CYCLE must be given together or not at all");
-	    return 2;
-	}
+                
+        if (this.FIRST_CYCLE != null && this.FINAL_CYCLE != null) {
+            if (this.FIRST_CYCLE < this.FINAL_CYCLE){
+                log.info("Setting cycleRangeByRead to " + this.FIRST_CYCLE + "-" + this.FINAL_CYCLE);
+                int[] cycleRangeIndex = {this.FIRST_CYCLE, this.FINAL_CYCLE};
+                HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(1);
+                cycleRangeByRead.put("read1", cycleRangeIndex);
+                lane.setCycleRangeByRead(cycleRangeByRead);
+            } else {
+                log.error("FIRST_CYCLE must be less than FINAL_CYCLE");
+                return 2;
+            }
+        } else if (this.FIRST_CYCLE != null || this.FINAL_CYCLE != null) {
+            log.error("Both FIRST_CYCLE and FINAL_CYCLE must be given together or not at all");
+            return 2;
+        }
 
         try {
             log.info("Reading config xml files");

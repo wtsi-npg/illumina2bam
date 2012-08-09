@@ -53,7 +53,7 @@ public class Illumina2bamTest {
         md5File = new File(tempBamFile.getPath() + ".md5");
         md5File.deleteOnExit();
         tempBamFileCycleRange = new File("testdata/test_6000_1_50-51.sam");
-	tempBamFileCycleRange.deleteOnExit();
+        tempBamFileCycleRange.deleteOnExit();
         md5FileCycleRange = new File(tempBamFileCycleRange.getPath() + ".md5");
         md5FileCycleRange.deleteOnExit();
     }
@@ -89,8 +89,8 @@ public class Illumina2bamTest {
                 + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
                 + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
                 + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
-		+ " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
-		illumina2bam.getCommandLine()
+                + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
+                illumina2bam.getCommandLine()
                );
      
         System.out.println("getThisProgramRecord");
@@ -116,7 +116,7 @@ public class Illumina2bamTest {
         System.out.println("processing specific cycle range");
         String[] args = {"INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities",
             "LANE=1",
-	    "OUTPUT=" + tempBamFileCycleRange.getPath(),
+            "OUTPUT=" + tempBamFileCycleRange.getPath(),
             "VALIDATION_STRINGENCY=STRICT",
             "CREATE_MD5_FILE=true",
             "FIRST_TILE=1101",
@@ -141,7 +141,7 @@ public class Illumina2bamTest {
                 + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
                 + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
                 + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
-		+ " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
+                + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
                 illumina2bamCycleRange.getCommandLine()
                );
         System.out.println("getThisProgramRecord");
