@@ -412,7 +412,7 @@ public class Lane {
         }
         
         //try different file for cycle and read information
-        if(this.runInfoDoc != null){
+        if(this.cycleRangeByRead == null && this.runInfoDoc != null){
             
             log.info("Check cycle range per read from RunInfo file");
             this.cycleRangeByRead = this.getCycleRangeByReadFromRunInfoFile();
