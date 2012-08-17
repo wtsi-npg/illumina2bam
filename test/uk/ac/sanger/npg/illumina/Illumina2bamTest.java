@@ -36,9 +36,12 @@ import uk.ac.sanger.npg.bam.util.CheckMd5;
 public class Illumina2bamTest {
     
     public static Illumina2bam illumina2bam = null;
-    public static Illumina2bam illumina2bamCycleRange = null;
     public static File tempBamFile = null;
     public static File md5File = null;
+    public static Illumina2bam illumina2bamNoFirstTile = null;
+    public static File tempBamFileNoFirstTile = null;
+    public static File md5FileNoFirstTile = null;
+    public static Illumina2bam illumina2bamCycleRange = null;
     public static File tempBamFileCycleRange = null;
     public static File md5FileCycleRange = null;
     
@@ -47,11 +50,16 @@ public class Illumina2bamTest {
             
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         illumina2bam =  new Illumina2bam();
-        illumina2bamCycleRange =  new Illumina2bam();
         tempBamFile = new File("testdata/test_6000_1.sam");
         tempBamFile.deleteOnExit();
         md5File = new File(tempBamFile.getPath() + ".md5");
         md5File.deleteOnExit();
+        illumina2bamNoFirstTile =  new Illumina2bam();
+        tempBamFileNoFirstTile = new File("testdata/test_6000_1_nft.sam");
+        tempBamFileNoFirstTile.deleteOnExit();
+        md5FileNoFirstTile = new File(tempBamFileNoFirstTile.getPath() + ".md5");
+        md5FileNoFirstTile.deleteOnExit();
+        illumina2bamCycleRange =  new Illumina2bam();
         tempBamFileCycleRange = new File("testdata/test_6000_1_50-51.sam");
         tempBamFileCycleRange.deleteOnExit();
         md5FileCycleRange = new File(tempBamFileCycleRange.getPath() + ".md5");
@@ -79,7 +87,7 @@ public class Illumina2bamTest {
             "TMP_DIR=testdata/",
             "RUN_START_DATE=2011-03-23T00:00:00+0000"
         };
-        illumina2bam.instanceMain(args);
+        assertEquals(0, illumina2bam.instanceMain(args));
         
         assertEquals("uk.ac.sanger.npg.illumina.Illumina2bam"
                 + " INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities"
@@ -101,6 +109,50 @@ public class Illumina2bamTest {
         assertEquals(result.getProgramVersion(), illumina2bam.getProgramVersion());
         assertEquals(result.getAttribute("DS"), "Convert Illumina BCL to BAM or SAM file");
         assertEquals("62749a4c4cd90e192cd7b8765108d6f8", CheckMd5.getBamMd5AfterRemovePGVersion(tempBamFile, "Illumina2bam"));
+    }
+
+    /**
+     * Test of instanceMain method and program record if no FIRST_TILE specified.
+     */
+    @Test
+    public void noFirstTileTest() { //throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain and this program record command line when no FIRST_TILE specified");
+        String[] args = {"INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities",
+            "TILE_LIMIT=1",
+            "LANE=1",
+            "OUTPUT=" + tempBamFileNoFirstTile.getPath(),
+            "VALIDATION_STRINGENCY=STRICT",
+            "CREATE_MD5_FILE=true",
+            "COMPRESSION_LEVEL=1",
+            "LB=Test library",
+            "SM=Test Sample",
+            "ST=testStudy",
+            "TMP_DIR=testdata/",
+            "RUN_START_DATE=2011-03-23T00:00:00+0000"
+        };
+        assertEquals(0, illumina2bamNoFirstTile.instanceMain(args));
+        
+        assertEquals("uk.ac.sanger.npg.illumina.Illumina2bam"
+                + " INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities"
+                + " LANE=1 OUTPUT=" + tempBamFileNoFirstTile.getPath()
+                + " SAMPLE_ALIAS=Test Sample LIBRARY_NAME=Test library"
+                + " STUDY_NAME=testStudy RUN_START_DATE=2011-03-23T00:00:00+0000 TILE_LIMIT=1"
+                + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
+                + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
+                + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
+                + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
+                illumina2bamNoFirstTile.getCommandLine()
+               );
+     
+        System.out.println("getThisProgramRecord");
+        
+        SAMProgramRecord result = illumina2bamNoFirstTile.getThisProgramRecord("Illumina2bam", "Convert Illumina BCL to BAM or SAM file");
+        assertEquals(result.getId(), "Illumina2bam");
+        assertEquals(result.getProgramName(), "Illumina2bam");
+        assertEquals(result.getProgramVersion(), illumina2bamNoFirstTile.getProgramVersion());
+        assertEquals(result.getAttribute("DS"), "Convert Illumina BCL to BAM or SAM file");
+        assertEquals("62749a4c4cd90e192cd7b8765108d6f8", CheckMd5.getBamMd5AfterRemovePGVersion(tempBamFileNoFirstTile, "Illumina2bam"));
     }
 
     /**
@@ -126,7 +178,7 @@ public class Illumina2bamTest {
             "FINAL_CYCLE=51",
             "RUN_START_DATE=2011-03-23T00:00:00+0000"
         };
-        illumina2bamCycleRange.instanceMain(args);
+        assertEquals(0, illumina2bamCycleRange.instanceMain(args));
         
         assertEquals("uk.ac.sanger.npg.illumina.Illumina2bam"
                 + " INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities"
