@@ -152,7 +152,7 @@ public class Illumina2bamTest {
         assertEquals(result.getProgramName(), "Illumina2bam");
         assertEquals(result.getProgramVersion(), illumina2bamNoFirstTile.getProgramVersion());
         assertEquals(result.getAttribute("DS"), "Convert Illumina BCL to BAM or SAM file");
-        assertEquals("62749a4c4cd90e192cd7b8765108d6f8", CheckMd5.getBamMd5AfterRemovePGVersion(tempBamFileNoFirstTile, "Illumina2bam"));
+        assertEquals("e4623e8ac08fb9194a5f5a1c1eb836a2", CheckMd5.getBamMd5AfterRemovePGVersion(tempBamFileNoFirstTile, "Illumina2bam"));
     }
 
     /**
