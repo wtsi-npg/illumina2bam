@@ -56,7 +56,7 @@ public class Illumina2bamTest {
     }
     
         @BeforeClass
-    public static void setUpClass() throws Exception {            
+    public static void setUpClass() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
 
@@ -64,7 +64,7 @@ public class Illumina2bamTest {
      * Test of instanceMain method and program record.
      */
     @Test
-    public void testMain() throws FileNotFoundException, IOException {
+    public void testMain() {
         
         System.out.println("instanceMain and this program record command line");
         Data testData = new Data("testdata/test_6000_1.sam");
@@ -103,7 +103,7 @@ public class Illumina2bamTest {
      * Test of instanceMain method and program record if no FIRST_TILE specified.
      */
     @Test
-    public void noFirstTileTest() { //throws FileNotFoundException, IOException {
+    public void noFirstTileTest() {
         
         System.out.println("instanceMain and this program record command line when no FIRST_TILE specified");
         Data testData = new Data("testdata/test_6000_1_nft.sam");
@@ -141,7 +141,7 @@ public class Illumina2bamTest {
      * Test for processing specific cycle range.
      */
     @Test
-    public void cycleRangeTest() throws FileNotFoundException, IOException {
+    public void cycleRangeTest() {
         
         System.out.println("processing specific cycle range");
         Data testData = new Data("testdata/test_6000_1_50-51.sam");
