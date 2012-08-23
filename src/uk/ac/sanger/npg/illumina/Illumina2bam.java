@@ -209,8 +209,10 @@ public class Illumina2bam extends PicardCommandLine {
         Date runDateConfig   = lane.getRunDateConfig();        
         lane.setReadGroup(this.generateSamReadGroupRecord(platformUnitConfig, runDateConfig));
 
-        if( this.FIRST_TILE != null ){
-            log.info("Trying to limit the number tiles from " + this.FIRST_TILE);
+        if( this.FIRST_TILE != null || this.TILE_LIMIT != null ){
+            if(this.FIRST_TILE != null){
+                log.info("Trying to limit the number tiles from " + this.FIRST_TILE);
+            }
             if(this.TILE_LIMIT != null){
                 log.info("Only process " + this.TILE_LIMIT + " tiles");
             }
