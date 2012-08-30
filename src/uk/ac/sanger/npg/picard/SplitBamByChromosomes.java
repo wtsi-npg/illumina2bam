@@ -35,26 +35,17 @@ import net.sf.samtools.*;
  */
 
 /*
-  Requirements:
-  * Input chromosome subgroups
-  * Define appropriate output files
-  * Read a BAM file
-  * Identify reads by chromosome and output to files
+  Want to split a BAM file based on chromosome, and output one BAM file for each chromosome subset.
 
-  Want to use RNAME and POS to find chromosome for each alignment record.  RNAME refers to reference sequence name SNAME in header.  If RNAME/SNAME does not exist or is invalid, print a warning and skip to next record (or output record to a "misc/unknown" file?)
+  More precisely:  Define subsets of the @SQ reference sequences in the BAM header.  The RNAME for each alignment record should refer to a member of @SQ.  Output each alignment record to the appropriate file for its subset.
 
-  Write additional @PG headers to record use of this class, and chromosome subsets used for split
+Specify chromosome subsets on the command line.  Members of a subset are separated by commas; subsets are separated by colons.  Example:   1,3,5,7:Y,MT
 
-  How to specify chromosome subsets (as command-line input, and for output filenames)?
+Members of @SQ which are not in any of the subsets defined on the command line will be directed to a "default" output file.
 
-  Command line:  1,3,5,7:Y,MT
+Append a @PG entry to the BAM header to record use of this class, and chromosome subsets used for split.
 
-  my_input.bam -> my_output_Y_MT.bam
-                  my_output_1_3_5_7.bam
-                  my_output_OTHER.bam
-
-  alternatively, just use subset number as filename suffix; exact sequence IDs are in BAM header
-  eg. my_input_subset0.bam, my_input_subset1.bam, ...
+TODO:  Ensure that application can cope with FIFO/stream input and output, as well as file paths.
   
  */
 
@@ -75,7 +66,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
     @Option(shortName="O", doc="Prefix for output sam/bam filenames.")
 	public String OUTPUT_PREFIX;
 
-    @Option(shortName="S", doc="Subsets of @SQ values (eg. chromosomes) in BAM header to split off. Members of a subset are separated by commas; subsets are separated by colons (example: 1,3,5:X,Y). @SQ values not specified in the subset string are placed in a default file.")
+    @Option(shortName="S", doc="Subsets of @SQ values (eg. chromosomes) in BAM header to split away. Members of a subset are separated by commas; subsets are separated by colons (example: 1,3,5:X,Y). @SQ values not specified in the subset string are placed in a default file.")
 	public String SUBSETS;
 
     @Usage(programVersion= version)
@@ -154,7 +145,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	 * Update SAM/BAM file header; add a new @PG program record for this class
 	 */
 	SAMFileHeader header = inputHeader.clone();
-	SAMProgramRecord rec = getThisProgramRecord(programName, programDS);  // see PicardCommandLine
+	SAMProgramRecord rec = getThisProgramRecord(programName, programDS);  // method from PicardCommandLine
 	// now set @RS attribute, indicating the reference subset being used
 	ArrayList<String> refs = new ArrayList<String>();
 	for (String ref: subsetMap.keySet()) {
@@ -192,9 +183,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    if (isBinary) { fileName = fileName + ".bam"; }
 	    else { fileName = fileName + ".sam"; }
             File outputFile = new File(fileName);
-	    //System.out.println("\t"+fileName);
             IoUtil.assertFileIsWritable( outputFile );
-	    // TODO update headerBase to record action of this class & subset membership
 	    SAMFileHeader newHeader = getUpdatedSamHeader(headerBase, subsetMap, i);
 	    SAMFileWriter out = factory.makeSAMOrBAMWriter(newHeader, false, outputFile);
 	    writers.put(i, out);
@@ -211,12 +200,10 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	 */
 	HashMap<String, Integer> subsetMap = new HashMap<String, Integer>();
 	String[] subsets = subsetArg.split(":");
-	Integer i = 1;
+	Integer i = 1; // index 0 is for @SQ values not in subset argument, so counting starts from 1
 	for (String subset : subsets) {
-	    //System.out.println("Subset "+i.toString()+": "+subset);
 	    String[] members = subset.split(",");
 	    for (String member : members) {
-		//System.out.println("\t"+member+"->"+i.toString());
 		boolean error = false;
 		String msg = "";
 		if (member.length() == 0) {
