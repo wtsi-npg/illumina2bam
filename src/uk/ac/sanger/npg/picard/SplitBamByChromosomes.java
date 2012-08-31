@@ -72,11 +72,14 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	public final String USAGE = getStandardUsagePreamble() + programDS + " "; 
 
     @Override protected int doWork() {
+	/*
+	 * 'Main' method inherited from net.sf.picard.cmdline.CommandLineProgram
+	 */
 	log.info("Starting SplitBamByChromosomes");
-	log.info("Parsing subset argument");
 	if (SUBSETS == null) {
 	    SUBSETS = "Y,MT"; // default if not specified on command line
 	}
+	log.info("Parsing subset argument");
 	final HashMap<String, Integer> argSubsets = parseSubsetArg(SUBSETS); 
 
         log.info("Checking input file");
@@ -109,7 +112,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	for (SAMFileWriter writer: writers.values()) {
 	    writer.close();
 	}
-	log.info("Output written to files.");
+	log.info("Output written to files");
 	return 0;
     }
 
@@ -121,9 +124,8 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	 * sequences not specified in command-line argument are mapped to subset 0
 	 */
 	if (seqDict.isEmpty()) { // eg. testdata/bam/6210_8.sam
-	    String msg = "SAM header sequence dictionary is empty!";
-	    log.error(msg); 
-	    throw new RuntimeException(msg);
+	    String msg = "SAM header @SQ dictionary is empty.";
+	    log.warn(msg); 
 	} else {
 	    Integer seqSize = seqDict.size();
 	    log.info(seqSize.toString()+" items found in SAM header @SQ dictionary.");
