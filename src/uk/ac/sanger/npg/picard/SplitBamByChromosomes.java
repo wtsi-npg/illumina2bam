@@ -170,6 +170,9 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	}
 	rec.setAttribute("RS", sb.toString());
 	rec.setAttribute("SA", "SPLIT_ARG "+SUBSETS); // record string used to define split
+	String isDefault = "N";
+	if (index == 0) { isDefault = "Y"; }
+	rec.setAttribute("DF", "IS_DEFAULT:"+isDefault); // is this file the default output?
 	header.addProgramRecord(rec);
 	return header;
     }
