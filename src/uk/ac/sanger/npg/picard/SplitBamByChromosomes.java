@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 GRL
+ * Copyright (C) 2012 GRL
  *
  * This library is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
