@@ -45,7 +45,7 @@ Members of @SQ which are not in any of the subsets defined on the command line w
 
 Append a @PG entry to the BAM header to record use of this class, and chromosome subsets used for split.
 
-TODO:  Ensure that application can cope with FIFO/stream input and output, as well as file paths.
+TODO:  Option of sending output to a FIFO instead of a file?
   
  */
 
@@ -56,17 +56,16 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 
     private final String programName = "SplitBamByChromosomes";
 
-    private final String programDS = "Split a BAM (or SAM) file into multiple BAM files, "+
-	"based on chromosome subsets. "+
-	"Original headers are preserved, with additional @PG entry to record action of "+programName+".";
+    private final String programDS = "Split a BAM (or SAM) file into multiple files, "+
+	"based on chromosome subsets. Original headers are preserved, with additional @PG entry.";
    
     @Option(shortName=StandardOptionDefinitions.INPUT_SHORT_NAME, doc="Input SAM or BAM file")
 	public File INPUT;
     
-    @Option(shortName="O", doc="Prefix for output sam/bam filenames.")
+    @Option(shortName="O", doc="Prefix for output SAM/BAM filenames.")
 	public String OUTPUT_PREFIX;
 
-    @Option(shortName="S", doc="Subsets of @SQ values (eg. chromosomes) in BAM header to split away. Members of a subset are separated by commas; subsets are separated by colons (example: 1,3,5:X,Y). @SQ values not specified in the subset string are placed in a default file.")
+    @Option(shortName="S", doc="Subsets of @SQ values (eg. chromosomes) in BAM header to split away. Members of a subset are separated by commas; subsets are separated by colons (example: 1,3,5:X,Y). @SQ values not specified in the subset string are written to their own file. Default split: Y,MT", optional=true)
 	public String SUBSETS;
 
     @Usage(programVersion= version)
@@ -75,13 +74,16 @@ public class SplitBamByChromosomes extends PicardCommandLine {
     @Override protected int doWork() {
 	log.info("Starting SplitBamByChromosomes");
 	log.info("Parsing subset argument");
-	final HashMap<String, Integer> subsetMapRaw = parseSubsetArg(SUBSETS); 
+	if (SUBSETS == null) {
+	    SUBSETS = "Y,MT"; // default if not specified on command line
+	}
+	final HashMap<String, Integer> argSubsets = parseSubsetArg(SUBSETS); 
 
         log.info("Checking input file");
         IoUtil.assertFileIsReadable(INPUT);
         final SAMFileReader in = new SAMFileReader(INPUT);
         final SAMFileHeader header = in.getFileHeader();
-	final HashMap<String, Integer> subsetMap = createSubsetMap(subsetMapRaw, header.getSequenceDictionary());
+	final HashMap<String, Integer> subsetMap = createSubsetMap(argSubsets, header.getSequenceDictionary());
 
 	log.info("Opening output files");
 	final HashMap<Integer, SAMFileWriter> writers = getWriters(subsetMap, header, OUTPUT_PREFIX, 
@@ -92,6 +94,10 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    String rName = rec.getReferenceName();
 	    Integer index = 0;
 	    if (!(rName.equals("*"))) { index = subsetMap.get(rName); }
+	    if (index == null) {
+		log.warn("Reference name "+rName+" does not appear in header @SQ fields");
+		index = 0;
+	    }
 	    SAMFileWriter out = writers.get(index);
 	    if ( out == null ) {
 		String msg = "SAM output writer not found for subset index "+index.toString();
@@ -161,9 +167,9 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    sb.append(ref);
 	}
 	rec.setAttribute("RS", sb.toString());
+	rec.setAttribute("SA", "SPLIT_ARG "+SUBSETS); // record string used to define split
 	header.addProgramRecord(rec);
 	return header;
-
     }
 
     private HashMap<Integer, SAMFileWriter> getWriters(HashMap<String, Integer> subsetMap, 
@@ -229,5 +235,4 @@ public class SplitBamByChromosomes extends PicardCommandLine {
         System.exit(new SplitBamByChromosomes().instanceMain(args));
     } 
       
-
 }
