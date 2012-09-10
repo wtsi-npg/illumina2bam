@@ -32,18 +32,13 @@ import net.sf.samtools.*;
 
 /**
  * @author ib5@sanger.ac.uk
+ * Class to to split a BAM file based on chromosome, and output one BAM file for each chromosome subset.  More precisely:  Define subsets of the @SQ reference sequences in the BAM header.  The RNAME for each alignment record should refer to a member of @SQ.  Output each alignment record to the appropriate file for its subset.
+ * Specify chromosome subsets on the command line.  Members of a subset are separated by commas; subsets are separated by colons.  Example:   1,3,5,7:Y,MT
+ * Members of @SQ which are not in any of the subsets defined on the command line will be directed to a "default" output file.  Output one file for each subset specified on the command line, *including* empty subsets.
+ * Appends a @PG entry to the BAM header to record use of this class, and chromosome subsets used for split.
  */
 
 /*
-  Want to split a BAM file based on chromosome, and output one BAM file for each chromosome subset.
-
-  More precisely:  Define subsets of the @SQ reference sequences in the BAM header.  The RNAME for each alignment record should refer to a member of @SQ.  Output each alignment record to the appropriate file for its subset.
-
-Specify chromosome subsets on the command line.  Members of a subset are separated by commas; subsets are separated by colons.  Example:   1,3,5,7:Y,MT
-
-Members of @SQ which are not in any of the subsets defined on the command line will be directed to a "default" output file.
-
-Append a @PG entry to the BAM header to record use of this class, and chromosome subsets used for split.
 
 TODO:  Option of sending output to a FIFO instead of a file?
   
@@ -80,13 +75,13 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    SUBSETS = "Y,MT"; // default if not specified on command line
 	}
 	log.info("Parsing subset argument");
-	final HashMap<String, Integer> argSubsets = parseSubsetArg(SUBSETS); 
+	HashMap<String, Integer> subsetMap = parseSubsetArg(SUBSETS); 
 
         log.info("Checking input file");
         IoUtil.assertFileIsReadable(INPUT);
         final SAMFileReader in = new SAMFileReader(INPUT);
         final SAMFileHeader header = in.getFileHeader();
-	final HashMap<String, Integer> subsetMap = createSubsetMap(argSubsets, header.getSequenceDictionary());
+	subsetMap = updateSubsetMap(subsetMap, header.getSequenceDictionary());
 
 	log.info("Opening output files");
 	final HashMap<Integer, SAMFileWriter> writers = getWriters(subsetMap, header, OUTPUT_PREFIX, 
@@ -116,7 +111,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	return 0;
     }
 
-    private HashMap<String, Integer> createSubsetMap(HashMap<String, Integer> subsetMapRaw, 
+    private HashMap<String, Integer> updateSubsetMap(HashMap<String, Integer> subsetMap, 
 						     SAMSequenceDictionary seqDict) throws RuntimeException {
 	/*
 	 * Cross-reference mapping from parseSubsetArg() with @SQ dictionary from SAM header
@@ -130,19 +125,32 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    Integer seqSize = seqDict.size();
 	    log.info(seqSize.toString()+" items found in SAM header @SQ dictionary.");
 	}
-	HashMap<String, Integer> subsetMap = new HashMap<String, Integer>();
+	// check for input subsets which do not correspond to anything in @SQ dictionary; warn if found
+	for (String inputSubset : subsetMap.keySet() ) {
+	    Boolean empty = true;
+	    for (SAMSequenceRecord rec : seqDict.getSequences()) {
+		if (rec.getSequenceName().equals(inputSubset)) {
+		    empty = false;
+		    break;
+		}
+	    }
+	    if (empty) {
+		String msg = "Subset "+inputSubset+" from input argument does not match any item in @SQ dictionary."; 
+		log.warn(msg);
+	    }
+	}
+	// check items in @SQ dictionary; if any do not have subsets, assign to (default) subset 0
 	Boolean empty = true;
 	for (SAMSequenceRecord rec : seqDict.getSequences()) {
 	    String name = rec.getSequenceName();
-	    if (subsetMapRaw.containsKey(name)) {
-		subsetMap.put(name, subsetMapRaw.get(name));
-		empty = false;
-	    } else {
+	    if (!(subsetMap.containsKey(name))) {
 		subsetMap.put(name, 0);
+	    } else {
+		empty = false;
 	    }
 	}
 	if (empty) {
-	    log.warn("No valid subsets supplied for @SQ values; output to default file only.");
+	    log.warn("No valid subsets supplied for @SQ values; all sequences will be output to default file.");
 	}
 	return subsetMap;
     }
