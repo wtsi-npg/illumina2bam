@@ -113,6 +113,7 @@
          <package-and-document-command title="BamAdapterFinder"  main-class="uk.ac.sanger.npg.picard.BamAdapterFinder"/>
          <package-and-document-command title="BamReadTrimmer"  main-class="uk.ac.sanger.npg.picard.BamReadTrimmer"/>
          <package-and-document-command title="BamMerger"  main-class="uk.ac.sanger.npg.picard.BamMerger"/>
+	 <package-and-document-command title="SplitBamByChromosomes"  main-class="uk.ac.sanger.npg.picard.SplitBamByChromosomes"/>
     </target>
 
     <!-- ************************************************************************************** -->
