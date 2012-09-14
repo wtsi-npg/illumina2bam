@@ -29,7 +29,7 @@ import uk.ac.sanger.npg.bam.util.CheckMd5;
 
 /*
   Test class for SplitBamByChromosomes
- */
+*/
 
 /**
  *
@@ -48,7 +48,7 @@ public class SplitBamByChromosomesTest {
     }
 
     @Test
-    public void testMain() throws IOException {
+        public void testMain() throws IOException {
         System.out.println("SplitBamByChromosomes instanceMain");
         
         String[] args = {
@@ -80,8 +80,8 @@ public class SplitBamByChromosomesTest {
     }
 
     public static void main(String[] args) throws IOException {
-	SplitBamByChromosomesTest test = new SplitBamByChromosomesTest();
-	test.testMain();
+        SplitBamByChromosomesTest test = new SplitBamByChromosomesTest();
+        test.testMain();
     }
 
 }

@@ -46,7 +46,6 @@ import net.sf.samtools.*;
 TODO:  Option of sending output to a FIFO instead of a file?
  */
 
-
 public class SplitBamByChromosomes extends PicardCommandLine {
 
     private final Log log = Log.getInstance(SplitBamByChromosomes.class);
@@ -63,7 +62,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
     public File INPUT;
     
     @Option(shortName="O", doc="Prefix for output SAM/BAM filenames.")
-    public String OUTPUT_PREFIX;
+        public String OUTPUT_PREFIX;
 
     @Option(shortName="S", doc="@SQ reference sequence values (eg. "+
             "chromosomes) in BAM header to split away. Option may be used "+
@@ -72,8 +71,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
     public ArrayList<String> SUBSET;
 
     @Usage(programVersion= version)
-    public final String USAGE = getStandardUsagePreamble() + programDS + " "; 
-
+	    public final String USAGE = getStandardUsagePreamble()+programDS + " "; 
 	private final int EXCLUDED_INDEX = 0;
 	private final int TARGET_INDEX = 1;
 	private final int[] OUTPUT_INDICES = {EXCLUDED_INDEX, TARGET_INDEX};
