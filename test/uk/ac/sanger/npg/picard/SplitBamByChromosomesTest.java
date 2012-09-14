@@ -40,6 +40,7 @@ import uk.ac.sanger.npg.bam.util.CheckMd5;
 public class SplitBamByChromosomesTest {
 
     SplitBamByChromosomes splitter = new SplitBamByChromosomes();
+	String NAME =  "SplitBamByChromosomes";
 
     public SplitBamByChromosomesTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
@@ -51,30 +52,31 @@ public class SplitBamByChromosomesTest {
         System.out.println("SplitBamByChromosomes instanceMain");
         
         String[] args = {
-	    "I=testdata/bam/986_1_human.sam",
-            "O=testdata/986_1_human_split_by_chromosome",
-	    "S=1,2:5",
+	        "I=testdata/bam/986_1_human.sam",
+	        "O=testdata/986_1_human_split_by_chromosome",
+	        "S=1", "S=2",
             "TMP_DIR=testdata/",
             "VALIDATION_STRINGENCY=SILENT"
         };
 
         splitter.instanceMain(args);
-	System.out.println(splitter.getCommandLine());
-	String[] splitPaths = { "testdata/986_1_human_split_by_chromosome_000.sam", 
-				"testdata/986_1_human_split_by_chromosome_001.sam", 
-				"testdata/986_1_human_split_by_chromosome_002.sam" };
-	String[] md5Expected = { "c32641667d464fa50457ff29cb5e0c15",
-				 "25dfcd9f58accd05a9eab4a8270a6eca",
-				 "14235534b5c6eddb4a11285228e0a57a"};
+        System.out.println(splitter.getCommandLine());
+        String[] splitPaths = {
+	        "testdata/986_1_human_split_by_chromosome_000.sam", 
+	        "testdata/986_1_human_split_by_chromosome_001.sam" };
+        String[] md5Expected = { 
+	        "56c4baf53a113485ebe53c070d8aba5c",
+	        "3fbbd3ab513e5a9ab3f00606821768ec"};
 
-	for (int i=0; i<3; i++) {
-	    File splitFile = new File(splitPaths[i]);
-	    splitFile.deleteOnExit();
-	    assertTrue(splitFile.exists());
-	    String md5 = CheckMd5.getBamMd5AfterRemovePGVersion(splitFile, "SplitBamByChromosomes");
-	    System.out.println(splitPaths[i]+"\t"+md5);
-	    assertEquals(md5, md5Expected[i]);
-	}
+        for (int i=0; i<2; i++) {
+	        File splitFile = new File(splitPaths[i]);
+	        splitFile.deleteOnExit();
+	        assertTrue(splitFile.exists());
+	        String md5 = 
+		        CheckMd5.getBamMd5AfterRemovePGVersion(splitFile, NAME);
+	        System.out.println(splitPaths[i]+"\t"+md5);
+	        assertEquals(md5, md5Expected[i]);
+        }
     }
 
     public static void main(String[] args) throws IOException {
