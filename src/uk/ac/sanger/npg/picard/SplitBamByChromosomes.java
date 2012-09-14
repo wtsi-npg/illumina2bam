@@ -165,7 +165,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 		    new HashMap<Integer, SAMFileWriter>();
 	    SAMFileWriterFactory factory = new SAMFileWriterFactory();
 	    for (Integer i: OUTPUT_INDICES) {
-		    String fileName = namePrefix+"_"+String.format("%02d", i);
+		    String fileName = namePrefix+"_"+String.format("%03d", i);
 		    if (isBinary) { fileName = fileName + ".bam"; }
 		    else { fileName = fileName + ".sam"; }
 		    File outputFile = new File(fileName);
