@@ -62,12 +62,11 @@ public class SplitBamByChromosomesTest {
         splitter.instanceMain(args);
         System.out.println(splitter.getCommandLine());
         String[] splitPaths = {
-	        "testdata/986_1_human_split_by_chromosome_000.sam", 
-	        "testdata/986_1_human_split_by_chromosome_001.sam" };
+	        "testdata/986_1_human_split_by_chromosome_excluded.sam", 
+	        "testdata/986_1_human_split_by_chromosome_target.sam" };
         String[] md5Expected = { 
 	        "56c4baf53a113485ebe53c070d8aba5c",
 	        "3fbbd3ab513e5a9ab3f00606821768ec"};
-
         for (int i=0; i<2; i++) {
 	        File splitFile = new File(splitPaths[i]);
 	        splitFile.deleteOnExit();
