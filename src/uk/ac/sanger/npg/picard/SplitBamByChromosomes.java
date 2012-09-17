@@ -74,7 +74,6 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    public final String USAGE = getStandardUsagePreamble()+programDS + " "; 
 	private final int EXCLUDED_INDEX = 0;
 	private final int TARGET_INDEX = 1;
-	private final int[] OUTPUT_INDICES = {EXCLUDED_INDEX, TARGET_INDEX};
 
     @Override protected int doWork() {
 	    /*
@@ -162,8 +161,14 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    HashMap<Integer, SAMFileWriter> writers = 
 		    new HashMap<Integer, SAMFileWriter>();
 	    SAMFileWriterFactory factory = new SAMFileWriterFactory();
-	    for (Integer i: OUTPUT_INDICES) {
-		    String fileName = namePrefix+"_"+String.format("%03d", i);
+	    int[] outputIndices = {EXCLUDED_INDEX, TARGET_INDEX};
+	    for (Integer i: outputIndices) {
+		    String fileName = new String();
+		    if (i == EXCLUDED_INDEX) {
+			    fileName = namePrefix+"_excluded";
+		    } else if (i == TARGET_INDEX) {
+			    fileName = namePrefix+"_target";
+		    } 
 		    if (isBinary) { fileName = fileName + ".bam"; }
 		    else { fileName = fileName + ".sam"; }
 		    File outputFile = new File(fileName);
