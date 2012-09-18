@@ -53,25 +53,32 @@ public class SplitBamByChromosomes extends PicardCommandLine {
     private final String programName = "SplitBamByChromosomes";
 
     private final String programDS = "Split a BAM (or SAM) file into two "+
-	    "files; one for records matching given chromosome subsets, and one "+
-	    "for all other records. Original headers are preserved, with "+
-	    "additional @PG entry.";
+	    "files; one for records matching given chromosome subsets (target),"+
+	    " and one for all other records (excluded). Original headers are "+
+	    "preserved, with additional @PG entry.";
    
     @Option(shortName=StandardOptionDefinitions.INPUT_SHORT_NAME, 
             doc="Input SAM or BAM file")
     public File INPUT;
     
-    @Option(shortName="O", doc="Prefix for output SAM/BAM filenames.")
-        public String OUTPUT_PREFIX;
-
     @Option(shortName="S", doc="@SQ reference sequence values (eg. "+
-            "chromosomes) in BAM header to split away. Option may be used "+
+            "chromosomes) in BAM header to target. Option may be used "+
             "multiple times to select multiple chromosomes. Default subset: "+
             "Y, MT.", optional=true)
     public ArrayList<String> SUBSET;
 
+    @Option(shortName="T", doc="Output SAM/BAM path for target sequences.")
+	    public String TARGET_PATH;
+
+    @Option(shortName="X", doc="Output SAM/BAM path for excluded sequences.")
+	    public String EXCLUDED_PATH;
+
+	@Option(shortName="U", doc="Exclude read groups in which all reads are unaligned. (Groups with at least one read aligned to the target, and others unaligned, will be written to the target file.)", optional=true)
+		public boolean EXCLUDE_UNALIGNED = false;
+
     @Usage(programVersion= version)
 	    public final String USAGE = getStandardUsagePreamble()+programDS + " "; 
+
 	private final int EXCLUDED_INDEX = 0;
 	private final int TARGET_INDEX = 1;
 
@@ -93,8 +100,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
         final SAMFileHeader header = in.getFileHeader();
         checkSequenceDictionary(header.getSequenceDictionary());
         log.info("Opening output files");
-        final HashMap<Integer, SAMFileWriter> writers = 
-	        getWriters(header, OUTPUT_PREFIX, in.isBinary());
+        final HashMap<Integer, SAMFileWriter> writers = getWriters(header);
         log.info("Writing output split by @SQ subset");
         readWriteRecords(in, writers);
         for (SAMFileWriter writer : writers.values()) {
@@ -131,28 +137,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 		}
 	}
 
-    private SAMFileHeader 
-	    getUpdatedSamHeader(SAMFileHeader inputHeader, Integer index) {
-	    /*
-	     * Update SAM/BAM file header; add a new @PG program record
-	     */
-	    SAMFileHeader header = inputHeader.clone();
-	    SAMProgramRecord rec = getThisProgramRecord(programName, programDS);
-	    // getThisProgramRecord() is from PicardCommandLine
-	    String isTarget = "IS_TARGET:";
-	    if (index.equals(TARGET_INDEX)) {
-		    isTarget = isTarget+"Y";
-	    } else {
-		    isTarget = isTarget+"N";
-	    }
-	    rec.setAttribute("IT", isTarget);
-	    header.addProgramRecord(rec);
-	    return header;
-    }
-
-    private HashMap<Integer, SAMFileWriter>
-	    getWriters(SAMFileHeader headerBase, String namePrefix,
-	               boolean isBinary) {
+    private HashMap<Integer, SAMFileWriter> getWriters(SAMFileHeader header) {
 	    /* 
 	     * Get map from subset indices to SAMFileWriter objects, for output
 	     * Updates SAM/BAM headers
@@ -161,22 +146,26 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    HashMap<Integer, SAMFileWriter> writers = 
 		    new HashMap<Integer, SAMFileWriter>();
 	    SAMFileWriterFactory factory = new SAMFileWriterFactory();
-	    int[] outputIndices = {EXCLUDED_INDEX, TARGET_INDEX};
-	    for (Integer i: outputIndices) {
-		    String fileName = new String();
-		    if (i == EXCLUDED_INDEX) {
-			    fileName = namePrefix+"_excluded";
-		    } else if (i == TARGET_INDEX) {
-			    fileName = namePrefix+"_target";
-		    } 
-		    if (isBinary) { fileName = fileName + ".bam"; }
-		    else { fileName = fileName + ".sam"; }
-		    File outputFile = new File(fileName);
-            IoUtil.assertFileIsWritable( outputFile );
-            SAMFileHeader newHeader = getUpdatedSamHeader(headerBase, i);
-            SAMFileWriter out = 
-	            factory.makeSAMOrBAMWriter(newHeader, false, outputFile);
-            writers.put(i, out);
+	    String[] paths = {EXCLUDED_PATH, TARGET_PATH};
+	    int[] indices = {EXCLUDED_INDEX, TARGET_INDEX};
+	    for (int i=0; i<2; i++) {
+		    // generate updated SAM/BAM header
+		    SAMFileHeader newHeader = header.clone();
+		    SAMProgramRecord rec = getThisProgramRecord(programName, programDS);
+		    String outputType;
+		    if (indices[i] == TARGET_INDEX) {
+			    outputType = "TARGET";
+		    } else {
+			    outputType = "EXCLUDED";
+		    }
+		    rec.setAttribute("OT", outputType);
+		    newHeader.addProgramRecord(rec);
+		    // create output writer with new header and appropriate path
+		    File outputFile = new File(paths[i]);
+		    IoUtil.assertFileIsWritable(outputFile);
+		    SAMFileWriter out = 
+			    factory.makeSAMOrBAMWriter(newHeader, false, outputFile);
+		    writers.put(indices[i], out);
 	    }
 	    return writers;
     }
@@ -187,42 +176,52 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 		   assume paired reads are adjacent and have same QNAME/read_name
 		 */
 		String lastq = null;
-		ArrayList<SAMRecord> readGroup = new ArrayList<SAMRecord>();
+		ArrayList<SAMRecord> groupOfReads = new ArrayList<SAMRecord>();
 		for (SAMRecord rec: in){
 			String qname = rec.getReadName();
 			if (!(qname.equals(lastq)) && (lastq != null)) {
 				// start of new read group; write previous group to file
-				writeGroup(readGroup, writers);
-				readGroup.clear();
+				writeGroup(groupOfReads, writers);
+				groupOfReads.clear();
 			}
-			readGroup.add(rec);
+			groupOfReads.add(rec);
 			lastq = qname;
 		}
-		writeGroup(readGroup, writers); // write final read group
+		writeGroup(groupOfReads, writers); // write final read group
 	}
 
-	private void writeGroup(ArrayList<SAMRecord> readGroup,
+	private void writeGroup(ArrayList<SAMRecord> groupOfReads,
 	                        HashMap<Integer, SAMFileWriter> writers) {
 		/*
 		 * Write a group of reads from SAM/BAM file
 		 * Reads have same query name, but may align to different chromosomes
-		 * If *any* alignment is *not* in SUBSET, write group to default file
-		 * EXCEPTION: Unaligned reads paired with SUBSET reads go to SUBSET file
-		 * Excluded file corresponds to "unconsented data"
+		 * If any read aligns to a chromosome not in subset, entire group is 
+		 * written to excluded file
+		 *
+		 * Unaligned reads go into target file, unless EXCLUDE_UNALIGNED==true
+		 *
 		 * Underlying principles:
 		 * 1. Paired reads go to the same file, AND
 		 * 2. Reads which align to "unconsented" references go to excluded file
 		 */
 		int destination = TARGET_INDEX;
-		for (SAMRecord rec: readGroup) {
+		boolean unaligned = true;
+		for (SAMRecord rec: groupOfReads) {
 			// first pass -- find destination index for all reads
 			String rname = rec.getReferenceName();
-			if (!(SUBSET.contains(rname)) && !(rname.equals("*"))) {
+			if (!rname.equals("*")) {
+				if (!(SUBSET.contains(rname))) {
+					destination = EXCLUDED_INDEX;
+					break;
+				} else {
+					unaligned = false;
+				}
+			}
+			if (destination==TARGET_INDEX && unaligned && EXCLUDE_UNALIGNED) {
 				destination = EXCLUDED_INDEX;
-				break;
 			}
 		}
-		for (SAMRecord rec: readGroup) {
+		for (SAMRecord rec: groupOfReads) {
 			// second pass -- write all reads to appropriate file
 			writers.get(destination).addAlignment(rec);
 		}

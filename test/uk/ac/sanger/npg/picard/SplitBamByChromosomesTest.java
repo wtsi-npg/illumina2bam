@@ -51,22 +51,22 @@ public class SplitBamByChromosomesTest {
         public void testMain() throws IOException {
         System.out.println("SplitBamByChromosomes instanceMain");
         
+        String[] splitPaths = {
+	        "testdata/986_1_human_split_by_chromosome_excluded.sam", 
+	        "testdata/986_1_human_split_by_chromosome_target.sam" };
         String[] args = {
 	        "I=testdata/bam/986_1_human.sam",
-	        "O=testdata/986_1_human_split_by_chromosome",
+	        "X="+splitPaths[0],
+	        "T="+splitPaths[1],
 	        "S=1", "S=2",
             "TMP_DIR=testdata/",
             "VALIDATION_STRINGENCY=SILENT"
         };
-
         splitter.instanceMain(args);
         System.out.println(splitter.getCommandLine());
-        String[] splitPaths = {
-	        "testdata/986_1_human_split_by_chromosome_excluded.sam", 
-	        "testdata/986_1_human_split_by_chromosome_target.sam" };
         String[] md5Expected = { 
-	        "56c4baf53a113485ebe53c070d8aba5c",
-	        "3fbbd3ab513e5a9ab3f00606821768ec"};
+	        "facc67ce5a13a8145c99a9f2f3c736d0",
+	        "0c85bde03b174929af87b5045f246498"};
         for (int i=0; i<2; i++) {
 	        File splitFile = new File(splitPaths[i]);
 	        splitFile.deleteOnExit();
