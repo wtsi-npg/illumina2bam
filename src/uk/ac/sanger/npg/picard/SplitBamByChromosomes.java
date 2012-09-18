@@ -205,21 +205,20 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 		 * 2. Reads which align to "unconsented" references go to excluded file
 		 */
 		int destination = TARGET_INDEX;
-		boolean unaligned = true;
+		boolean unaligned = true; // are all reads unaligned?
 		for (SAMRecord rec: groupOfReads) {
-			// first pass -- find destination index for all reads
-			String rname = rec.getReferenceName();
-			if (!rname.equals("*")) {
-				if (!(SUBSET.contains(rname))) {
+			// first pass -- check for reads not in SUBSET
+			if (!(rec.getReadUnmappedFlag())) {
+				if (!(SUBSET.contains(rec.getReferenceName()))) {
 					destination = EXCLUDED_INDEX;
 					break;
 				} else {
 					unaligned = false;
 				}
 			}
-			if (destination==TARGET_INDEX && unaligned && EXCLUDE_UNALIGNED) {
-				destination = EXCLUDED_INDEX;
-			}
+		}
+		if (unaligned && EXCLUDE_UNALIGNED && destination==TARGET_INDEX) {
+			destination = EXCLUDED_INDEX;
 		}
 		for (SAMRecord rec: groupOfReads) {
 			// second pass -- write all reads to appropriate file
