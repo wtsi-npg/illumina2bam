@@ -34,11 +34,11 @@
 
     Example of inserting an obfuscator after compilation could look like this:
 
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
+	<target name="-post-compile">
+	    <obfuscate>
+		<fileset dir="${build.classes.dir}"/>
+	    </obfuscate>
+	</target>
 
     For list of available properties check the imported 
     nbproject/build-impl.xml file. 
@@ -47,23 +47,23 @@
     Another way to customize the build is by overriding existing main targets.
     The targets of interest are: 
 
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar-with-manifest:    JAR building (if you are using a manifest)
+      -init-macrodef-javac:	defines macro for javac compilation
+      -init-macrodef-junit:	defines macro for junit execution
+      -init-macrodef-debug:	defines macro for class debugging
+      -init-macrodef-java:	defines macro for class execution
+      -do-jar-with-manifest:	JAR building (if you are using a manifest)
       -do-jar-without-manifest: JAR building (if you are not using a manifest)
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
+      run:			execution of project 
+      -javadoc-build:		Javadoc generation
+      test-report:		JUnit report generation
 
     An example of overriding the target for project execution could look like this:
 
-        <target name="run" depends="illumina2bam-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
+	<target name="run" depends="illumina2bam-impl.jar">
+	    <exec dir="bin" executable="launcher.exe">
+		<arg file="${dist.jar}"/>
+	    </exec>
+	</target>
 
     Notice that the overridden target depends on the jar target and not only on 
     the compile target as the regular run target does. Again, for a list of available 
@@ -71,27 +71,49 @@
     nbproject/build-impl.xml file. 
 
     -->
+
+   <target name="-pre-init" depends="-git.revision" />
+   <!-- <target name="-post-init" depends="git.revision" /> -->
+   <!-- Work out version from latest git tag -->
+   <!-- altered from http://stackoverflow.com/questions/2974106/how-to-lookup-the-latest-git-commit-hash-from-an-ant-build-script -->
+   <available file=".git" type="dir" property="git.present"/>
+   <target name="-git.revision" description="Store git revision in ${repository.version}" if="git.present">
+    <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+	<arg value="describe"/>
+	<arg value="--always"/>
+	<arg value="--dirty"/>
+    </exec>
+    <!-- value in nbproject/project.properties will override illumina2bam.version if not set below -->
+    <condition property="illumina2bam.version" value="${git.revision}" >
+	<and>
+	    <isset property="git.revision"/>
+	    <length string="${git.revision}" trim="yes" length="0" when="greater"/>
+	</and>
+    </condition>
+   </target>
+
     
    <target name="-post-jar" depends="-package-commands, -package-jars"/>
-   <!--  description="pack all jar files for release" -->
+   <!--	 description="pack all jar files for release" -->
    <target name="-package-jars" depends="-package-commands">
-        <zip zipfile="${dist.dir}/Illumina2bam-tools-${illumina2bam.version}.zip">
-            <zipfileset dir="${dist.dir}" includes="*.jar" prefix="Illumina2bam-tools-${illumina2bam.version}"/>
-            <zipfileset dir="${dist.dir}/lib" prefix="Illumina2bam-tools-${illumina2bam.version}/lib"/>
-        </zip>
+	<zip zipfile="${dist.dir}/Illumina2bam-tools-${illumina2bam.version}.zip">
+	    <zipfileset dir="${dist.dir}" includes="*.jar" prefix="Illumina2bam-tools-${illumina2bam.version}"/>
+	    <zipfileset dir="${dist.dir}/lib" prefix="Illumina2bam-tools-${illumina2bam.version}/lib"/>
+	</zip>
     </target>
     
     <target name="-package-commands" depends="-document-standard-options">
-         <package-and-document-command title="Illumina2bam"  main-class="uk.ac.sanger.npg.illumina.Illumina2bam"/>
-         <package-and-document-command title="BamQualityQuantisation"  main-class="uk.ac.sanger.npg.picard.BamQualityQuantisation"/>
-         <package-and-document-command title="BamTagStripper"  main-class="uk.ac.sanger.npg.picard.BamTagStripper"/>
-         <package-and-document-command title="ChangeBamHeader"  main-class="uk.ac.sanger.npg.picard.ChangeBamHeader"/>
-         <package-and-document-command title="AlignmentFilter"  main-class="uk.ac.sanger.npg.picard.AlignmentFilter"/>
-         <package-and-document-command title="SplitBamByReadGroup"  main-class="uk.ac.sanger.npg.picard.SplitBamByReadGroup"/>
-         <package-and-document-command title="BamIndexDecoder"  main-class="uk.ac.sanger.npg.picard.BamIndexDecoder"/>
-         <package-and-document-command title="BamAdapterFinder"  main-class="uk.ac.sanger.npg.picard.BamAdapterFinder"/>
-         <package-and-document-command title="BamReadTrimmer"  main-class="uk.ac.sanger.npg.picard.BamReadTrimmer"/>
-         <package-and-document-command title="BamMerger"  main-class="uk.ac.sanger.npg.picard.BamMerger"/>
+	 <package-and-document-command title="Illumina2bam"  main-class="uk.ac.sanger.npg.illumina.Illumina2bam"/>
+	 <package-and-document-command title="BamQualityQuantisation"  main-class="uk.ac.sanger.npg.picard.BamQualityQuantisation"/>
+	 <package-and-document-command title="BamTagStripper"  main-class="uk.ac.sanger.npg.picard.BamTagStripper"/>
+	 <package-and-document-command title="ChangeBamHeader"	main-class="uk.ac.sanger.npg.picard.ChangeBamHeader"/>
+	 <package-and-document-command title="AlignmentFilter"	main-class="uk.ac.sanger.npg.picard.AlignmentFilter"/>
+	 <package-and-document-command title="SplitBamByReadGroup"  main-class="uk.ac.sanger.npg.picard.SplitBamByReadGroup"/>
+	 <package-and-document-command title="BamIndexDecoder"	main-class="uk.ac.sanger.npg.picard.BamIndexDecoder"/>
+	 <package-and-document-command title="BamAdapterFinder"	 main-class="uk.ac.sanger.npg.picard.BamAdapterFinder"/>
+	 <package-and-document-command title="BamReadTrimmer"  main-class="uk.ac.sanger.npg.picard.BamReadTrimmer"/>
+	 <package-and-document-command title="BamMerger"  main-class="uk.ac.sanger.npg.picard.BamMerger"/>
+         <package-and-document-command title="SplitBamByChromosomes"  main-class="uk.ac.sanger.npg.picard.SplitBamByChromosomes"/>
     </target>
 
     <!-- ************************************************************************************** -->

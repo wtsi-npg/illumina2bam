@@ -412,7 +412,7 @@ public class Lane {
         }
         
         //try different file for cycle and read information
-        if(this.runInfoDoc != null){
+        if(this.cycleRangeByRead == null && this.runInfoDoc != null){
             
             log.info("Check cycle range per read from RunInfo file");
             this.cycleRangeByRead = this.getCycleRangeByReadFromRunInfoFile();
@@ -985,10 +985,10 @@ public class Lane {
      */
     public void reduceTileList(Integer firstTile, Integer tileLimit){
 
-        ArrayList<Integer> reducedTileList = new ArrayList<Integer>();
+        List<Integer> reducedTileList = new ArrayList<Integer>();
 
         for (int tileNumber : this.tileList){
-            if( tileNumber >= firstTile.intValue() ){
+            if( firstTile == null || tileNumber >= firstTile.intValue() ){
                 reducedTileList.add(tileNumber);
             }
         }
@@ -997,17 +997,16 @@ public class Lane {
             throw new RuntimeException("The Given first tile number " + firstTile + " was not found.");
         }
 
-        List<Integer> limitedTileList = reducedTileList;
         if(tileLimit != null && tileLimit > 0){
             if(tileLimit > reducedTileList.size()){
                 throw new RuntimeException("The Given first tile limit " + tileLimit + " was too big.");
             }
-            limitedTileList = reducedTileList.subList(0, tileLimit.intValue());
+            reducedTileList = reducedTileList.subList(0, tileLimit.intValue());
         }
 
-        int [] newTileList = new int[limitedTileList.size()];
+        int [] newTileList = new int[reducedTileList.size()];
         int i = 0;
-        for(Integer tileNumber : limitedTileList){
+        for(Integer tileNumber : reducedTileList){
             newTileList[i] = tileNumber.intValue();
             i++;
         }

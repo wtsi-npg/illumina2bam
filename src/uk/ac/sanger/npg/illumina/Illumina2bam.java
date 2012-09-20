@@ -21,6 +21,7 @@ package uk.ac.sanger.npg.illumina;
 
 import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.Usage;
 import net.sf.picard.io.IoUtil;
@@ -110,9 +111,15 @@ public class Illumina2bam extends PicardCommandLine {
     @Option(shortName="SEC_BC_QUAL", doc="Tag name for second barcode quality.", optional=true)
     public String SECOND_BARCODE_QUALITY_TAG_NAME;  
 
+    @Option(shortName="FIRST", doc="If set, this is the first cycle to be processed (for unusual multiprimed runs)",
+                        optional = true)
+    public Integer FIRST_CYCLE;
+        
+    @Option(shortName="FINAL", doc="If set, this is the final cycle to be processed (for unusual multiprimed runs)",
+                        optional = true)
+    public Integer FINAL_CYCLE;
+        
     //TODO: add command option to skip adding ci tag
-    
-    //TODO: add command option to overwrite cycle range per read   
     
 
     @Override
@@ -152,10 +159,10 @@ public class Illumina2bam extends PicardCommandLine {
                 this.OUTPUT,
                 this.BARCODE_SEQUENCE_TAG_NAME,
                 this.BARCODE_QUALITY_TAG_NAME);
+
         
-               
         if ( (this.SECOND_BARCODE_QUALITY_TAG_NAME != null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME == null)
-            || (this.SECOND_BARCODE_QUALITY_TAG_NAME == null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME != null) )
+          || (this.SECOND_BARCODE_QUALITY_TAG_NAME == null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME != null) )
         {
             
             log.warn("Both SECOND_BARCODE_SEQUENCE_TAG_NAME and SECOND_BARCODE_QUALITY_TAG_NAME need to be given togeter or both missing");
@@ -163,6 +170,22 @@ public class Illumina2bam extends PicardCommandLine {
             
             lane.setSecondBarcodeSeqTagName(this.SECOND_BARCODE_SEQUENCE_TAG_NAME);
             lane.setSecondBarcodeQualTagName(this.SECOND_BARCODE_QUALITY_TAG_NAME);
+        }
+                
+        if (this.FIRST_CYCLE != null && this.FINAL_CYCLE != null) {
+            if (this.FIRST_CYCLE < this.FINAL_CYCLE){
+                log.info("Setting cycleRangeByRead to " + this.FIRST_CYCLE + "-" + this.FINAL_CYCLE);
+                int[] cycleRangeIndex = {this.FIRST_CYCLE, this.FINAL_CYCLE};
+                HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(1);
+                cycleRangeByRead.put("read1", cycleRangeIndex);
+                lane.setCycleRangeByRead(cycleRangeByRead);
+            } else {
+                log.error("FIRST_CYCLE must be less than FINAL_CYCLE");
+                return 2;
+            }
+        } else if (this.FIRST_CYCLE != null || this.FINAL_CYCLE != null) {
+            log.error("Both FIRST_CYCLE and FINAL_CYCLE must be given together or not at all");
+            return 2;
         }
 
         try {
@@ -175,8 +198,8 @@ public class Illumina2bam extends PicardCommandLine {
         
         log.info("Generating illumina2bam program record");
         lane.setIllumina2bamProgram(this.getThisProgramRecord(this.programName, this.programDS));
-        
-        
+
+
         log.info("Generating read group record");
         String runfolderConfig = lane.getRunfolderConfig();
         String platformUnitConfig = null;
@@ -186,8 +209,10 @@ public class Illumina2bam extends PicardCommandLine {
         Date runDateConfig   = lane.getRunDateConfig();        
         lane.setReadGroup(this.generateSamReadGroupRecord(platformUnitConfig, runDateConfig));
 
-        if( this.FIRST_TILE != null ){
-            log.info("Trying to limit the number tiles from " + this.FIRST_TILE);
+        if( this.FIRST_TILE != null || this.TILE_LIMIT != null ){
+            if(this.FIRST_TILE != null){
+                log.info("Trying to limit the number tiles from " + this.FIRST_TILE);
+            }
             if(this.TILE_LIMIT != null){
                 log.info("Only process " + this.TILE_LIMIT + " tiles");
             }
