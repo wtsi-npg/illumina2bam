@@ -1,3 +1,6 @@
+release-1.06
+- corrects errors in git tagging with 1.04 and 1.05
+
 release-1.04
 - new tool SplitBamByChromosomes
 - Can split BAM output into "target" and "excluded" files based on chromosomes to which reads align. Chromosomes defined as entries in SQ list from BAM header.
