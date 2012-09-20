@@ -32,7 +32,7 @@ import net.sf.samtools.SAMProgramRecord;
  */
 public abstract class PicardCommandLine extends CommandLineProgram {
     
-    public static final String version = "1.03";
+    public static final String version = "1.04";
     
     /**
      * Generate Program Record for this program itself
@@ -47,7 +47,12 @@ public abstract class PicardCommandLine extends CommandLineProgram {
         
         programRecord.setProgramName(programName);
         programRecord.setCommandLine(this.getCommandLine());
-        programRecord.setProgramVersion(this.getProgramVersion());
+        // use ImplementationVersion from manifest by preference, fall back to class's version 
+        String programVersion = this.getCommandLineParser().getVersion();
+        if(programVersion == null || programVersion.length() == 0){
+            programVersion = this.getProgramVersion();
+        }
+        programRecord.setProgramVersion(programVersion);
         programRecord.setAttribute("DS", programDS);
    
         return programRecord;
