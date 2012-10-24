@@ -54,22 +54,36 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
      * @throws Exception
      */
     private void openInputFile(String fileName) throws FileNotFoundException, IOException {
+        /*
+          fileName is not necessarily a complete path.
+          If fileName ends with .gz, assume it is the path to a gzipped file.
+          Otherwise, input path may or may not be gzipped and have .gz suffix.
+         */
         if (fileName == null) {
             throw new IllegalArgumentException("File name must be given.");
         } else {
+            boolean gzip = false;
             File file = new File(fileName);
+            if (fileName.endsWith(".gz")) {
+                gzip = true;
+            } else if (!file.exists()) { 
+                // uncompressed file not found, try with .gz suffix
+                gzip = true;
+                file = new File(fileName+".gz");
+            }
+            // check validity of File object and open relevant input stream
             if (!file.exists()) {
-                throw new FileNotFoundException("File does not exist: " 
+                throw new FileNotFoundException("Input does not exist: " 
                                                 + fileName);
             } else if (file.isDirectory()) {
                 throw new IllegalArgumentException("File name is a directory: " 
                                                    + fileName);
             } else if (!file.canRead()) {
-                throw new FileNotFoundException("File cannot be read: " 
+                throw new FileNotFoundException("Input cannot be read: " 
                                                 + fileName);
             } else {
                 InputStream inputBase;
-                if (fileName.endsWith(".gz")) {
+                if (gzip) {
                     // constructor may throw IOException
                     inputBase = new GZIPInputStream(new FileInputStream(file));
                 } else {
