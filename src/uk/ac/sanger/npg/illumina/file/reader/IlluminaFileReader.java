@@ -20,6 +20,7 @@ package uk.ac.sanger.npg.illumina.file.reader;
 
 import java.io.*;
 import java.util.Iterator;
+import java.util.zip.GZIPInputStream;
 import net.sf.picard.util.Log;
 
 
@@ -39,9 +40,9 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
     /**
      *
      * @param fileName bcl, scl, clocs, locs, pos and filter etc Illumina file name
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException, IOException
      */
-    public IlluminaFileReader(String fileName) throws FileNotFoundException {
+    public IlluminaFileReader(String fileName) throws FileNotFoundException, IOException {
 
         this.fileName = fileName;
         this.openInputFile(fileName);
@@ -52,24 +53,30 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
      * @param fileName
      * @throws Exception
      */
-    private void openInputFile(String fileName) throws FileNotFoundException {
-
+    private void openInputFile(String fileName) throws FileNotFoundException, IOException {
         if (fileName == null) {
             throw new IllegalArgumentException("File name must be given.");
         } else {
             File file = new File(fileName);
             if (!file.exists()) {
-                throw new FileNotFoundException("File does not exist: " + fileName);
+                throw new FileNotFoundException("File does not exist: " 
+                                                + fileName);
             } else if (file.isDirectory()) {
-                throw new IllegalArgumentException("File name is a directory: " + fileName);
+                throw new IllegalArgumentException("File name is a directory: " 
+                                                   + fileName);
             } else if (!file.canRead()) {
-                throw new FileNotFoundException("File cannot be read: " + fileName);
+                throw new FileNotFoundException("File cannot be read: " 
+                                                + fileName);
             } else {
-                this.inputStream = new DataInputStream(
-                        new BufferedInputStream(
-                          new FileInputStream(file)
-                        )
-                );
+                InputStream inputBase;
+                if (fileName.endsWith(".gz")) {
+                    // constructor may throw IOException
+                    inputBase = new GZIPInputStream(new FileInputStream(file));
+                } else {
+                    inputBase = new FileInputStream(file);
+                }
+                this.inputStream = 
+                    new DataInputStream(new BufferedInputStream(inputBase));
             }
         }
     }

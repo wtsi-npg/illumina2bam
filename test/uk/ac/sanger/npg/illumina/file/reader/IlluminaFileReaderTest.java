@@ -32,11 +32,21 @@ public class IlluminaFileReaderTest {
 
     private String testBCLDir = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C1.1/";
     private String testBCLFile = "s_1_1101.bcl";
+    private String testBCLFileGzip = "s_1_1101_compressed.bcl.gz";
 
     @Test
     public void testConstructorAndReadFourBytes() throws Exception {
-        System.out.println("readFourBytes");
+        System.out.println("readFourBytes from uncompressed file");
         IlluminaFileReader fileReader = new IlluminaFileReader(testBCLDir + testBCLFile);
+        assertEquals(fileReader.readFourBytes(), 2609912);
+        fileReader.close();
+    }
+
+    @Test
+    public void testConstructorAndReadFourBytesGzip() throws Exception {
+        System.out.println("readFourBytes from .gz file");
+        IlluminaFileReader fileReader = 
+            new IlluminaFileReader(testBCLDir + testBCLFileGzip);
         assertEquals(fileReader.readFourBytes(), 2609912);
         fileReader.close();
     }
