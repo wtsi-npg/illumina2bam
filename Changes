@@ -1,3 +1,6 @@
+release-1.05
+- adapted IlluminaFileReader to read either normal or gzip compressed files
+
 release-1.04
 - new tool SplitBamByChromosomes
 - Can split BAM output into "target" and "excluded" files based on chromosomes to which reads align. Chromosomes defined as entries in SQ list from BAM header.
@@ -9,6 +12,7 @@ release-1.02
  - remove dist for github
  - new tool BamAdapterFinder
  - add bcel jar file in lib
+
 release-1.01
 - add program information in AlignmentFilter metrics file
 
