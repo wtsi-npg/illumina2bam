@@ -633,6 +633,10 @@ public class Tile {
      * @return BCL or SCL base call file name 
      */
     public String getBaseCallFileName(int cycle, boolean firstCall) {
+        /*
+          Find a 'root' name for basecall file; not necessarily a complete path
+          IlluminaFileReader checks whether the path has a .gz extension
+         */
         String cycleDir = this.baseCallDir
                 + File.separator
                 + this.laneSubDir
