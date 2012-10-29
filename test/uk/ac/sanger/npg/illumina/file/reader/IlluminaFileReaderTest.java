@@ -31,12 +31,31 @@ import org.junit.Test;
 public class IlluminaFileReaderTest {
 
     private String testBCLDir = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C1.1/";
-    private String testBCLFile = "s_1_1101.bcl";
+    private String testBCLFile = "s_1_1101.bcl.gz";
+    private String testBCLFileNoSuffix = "s_1_1101.bcl";
+    private String testBCLFileUncompressed = "s_1_1101_uncompressed.bcl";
 
     @Test
     public void testConstructorAndReadFourBytes() throws Exception {
-        System.out.println("readFourBytes");
+        System.out.println("readFourBytes from gzip compressed BCL file");
         IlluminaFileReader fileReader = new IlluminaFileReader(testBCLDir + testBCLFile);
+        assertEquals(fileReader.readFourBytes(), 2609912);
+        fileReader.close();
+    }
+
+    @Test
+    public void testConstructorAndReadFourBytesNoSuffix() throws Exception {
+        System.out.println("readFourBytes from gzipped BCL, no .gz suffix in argument");
+        IlluminaFileReader fileReader = new IlluminaFileReader(testBCLDir + testBCLFileNoSuffix);
+        assertEquals(fileReader.readFourBytes(), 2609912);
+        fileReader.close();
+    }
+
+    @Test
+    public void testConstructorAndReadFourBytesUncompressed() throws Exception {
+        System.out.println("readFourBytes from uncompressed BCL file");
+        IlluminaFileReader fileReader = 
+            new IlluminaFileReader(testBCLDir + testBCLFileUncompressed);
         assertEquals(fileReader.readFourBytes(), 2609912);
         fileReader.close();
     }
