@@ -20,6 +20,7 @@
 package uk.ac.sanger.npg.illumina.file.reader;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -47,7 +48,7 @@ public class PosFileReaderTest {
     }
     
     @Test (expected= FileNotFoundException.class)
-    public void testConstructorNotOK() throws FileNotFoundException{
+        public void testConstructorNotOK() throws FileNotFoundException, IOException{
         System.out.println("The given pos file is not available");
         PosFileReader posFileReader1 = new PosFileReader("testdata/110519_IL33_06284/Data/Intensities/s_8_0112_pos_not_exist.txt");
     }

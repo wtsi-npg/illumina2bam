@@ -1,3 +1,6 @@
+release-1.08
+- corrects compile errors which went undetected in 1.07
+
 release-1.07
 - adapted IlluminaFileReader to read either normal or gzip compressed files
 

@@ -18,8 +18,8 @@
  */
 package uk.ac.sanger.npg.illumina.file.reader;
 
-
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * This class tries to open a Illumina position file including clocs, locs or pos file into a data input stream
@@ -33,10 +33,9 @@ public abstract class PositionFileReader extends IlluminaFileReader {
     /**
      *
      * @param fileName
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException, IOException 
      */
-    public PositionFileReader(String fileName) throws FileNotFoundException {
-
+    public PositionFileReader(String fileName) throws FileNotFoundException, IOException {
         super(fileName);
     }
     
