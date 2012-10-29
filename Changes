@@ -1,5 +1,8 @@
-release-1.05
+release-1.07
 - adapted IlluminaFileReader to read either normal or gzip compressed files
+
+release-1.06
+- corrects errors in git tagging with 1.04 and 1.05
 
 release-1.04
 - new tool SplitBamByChromosomes
