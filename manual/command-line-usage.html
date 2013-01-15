@@ -2,7 +2,7 @@
 <h3>Illumina2bam</h3>
 <p>USAGE: Illumina2bam [options]
 <p>
-<p>Convert Illumina BCL to BAM or SAM file. Version: 1.08
+<p>Convert Illumina BCL to BAM or SAM file. Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -27,8 +27,10 @@
 <tr><td>BARCODE_QUALITY_TAG_NAME=String</td><td>Tag name for barcode quality.  Default value: QT. This option can be set to 'null' to clear the default value. </td></tr>
 <tr><td>SECOND_BARCODE_SEQUENCE_TAG_NAME=String</td><td>Tag name for second  barcode sequence.  Default value: null. </td></tr>
 <tr><td>SECOND_BARCODE_QUALITY_TAG_NAME=String</td><td>Tag name for second barcode quality.  Default value: null. </td></tr>
-<tr><td>FIRST_CYCLE=Integer</td><td>If set, this is the first cycle to be processed (for unusual multiprimed runs)  Default value: null. </td></tr>
-<tr><td>FINAL_CYCLE=Integer</td><td>If set, this is the final cycle to be processed (for unusual multiprimed runs)  Default value: null. </td></tr>
+<tr><td>FIRST_CYCLE=Integer</td><td>First cycle for each standard (non-index) read.  Can be specified multiple times, for runs with multiple reads.  If this option is used, both a first and last cycle must be specified for all reads (including index reads).  This option may be specified 0 or more times. </td></tr>
+<tr><td>FINAL_CYCLE=Integer</td><td>Final cycle for each read.  See FIRST.  This option may be specified 0 or more times. </td></tr>
+<tr><td>FIRST_INDEX_CYCLE=Integer</td><td>First cycle for each index read.  See FIRST.  This option may be specified 0 or more times. </td></tr>
+<tr><td>FINAL_INDEX_CYCLE=Integer</td><td>Final cycle for each index read.  See FIRST.  This option may be specified 0 or more times. </td></tr>
 </table>
 <br/>
 
@@ -36,7 +38,7 @@
 <h3>BamQualityQuantisation</h3>
 <p>USAGE: BamQualityQuantisation [options]
 <p>
-<p>Quantise the original Illumina canned qualities into reduced resolution scores using bins 1->9=6,10->19=15,20->24=22,25->29=27,30->34=33,35->39=37,40->59=41. Version: 1.08
+<p>Quantise the original Illumina canned qualities into reduced resolution scores using bins 1->9=6,10->19=15,20->24=22,25->29=27,30->34=33,35->39=37,40->59=41. Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -50,7 +52,7 @@
 <h3>BamTagStripper</h3>
 <p>USAGE: BamTagStripper [options]
 <p>
-<p>Strip a list of tags in bam/sam record. By default, any tags containing lowercase letters will be stripped and other tags will be kept. A list of tags can be given to keep or strip. Version: 1.08
+<p>Strip a list of tags in bam/sam record. By default, any tags containing lowercase letters will be stripped and other tags will be kept. A list of tags can be given to keep or strip. Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -65,7 +67,7 @@
 <h3>ChangeBamHeader</h3>
 <p>USAGE: ChangeBamHeader [options]
 <p>
-<p>Add extra PGs into bam header, or change SM, LB or DS tag in RG line in header and this only works with one read group in the input bam. . Version: 1.08
+<p>Add extra PGs into bam header, or change SM, LB or DS tag in RG line in header and this only works with one read group in the input bam. . Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -82,7 +84,7 @@
 <h3>AlignmentFilter</h3>
 <p>USAGE: AlignmentFilter [options]
 <p>
-<p>Give a list of SAM/BAM files with the same set of records and in the same order but aligned with different references, split reads into different files according to alignments. You have option to put unaligned reads into one of output files or a separate file. Version: 1.08
+<p>Give a list of SAM/BAM files with the same set of records and in the same order but aligned with different references, split reads into different files according to alignments. You have option to put unaligned reads into one of output files or a separate file. Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -97,7 +99,7 @@
 <h3>SplitBamByReadGroup</h3>
 <p>USAGE: SplitBamByReadGroup [options]
 <p>
-<p>Split a BAM file into multiple BAM files based on ReadGroup. Headers are a copy of the original file, removing @RGs where IDs match with the other ReadGroup IDs. Version: 1.08
+<p>Split a BAM file into multiple BAM files based on ReadGroup. Headers are a copy of the original file, removing @RGs where IDs match with the other ReadGroup IDs. Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -111,7 +113,7 @@
 <h3>BamIndexDecoder</h3>
 <p>USAGE: BamIndexDecoder [options]
 <p>
-<p>A command-line tool to decode multiplexed bam file. Version: 1.08
+<p>A command-line tool to decode multiplexed bam file. Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -137,7 +139,7 @@
 <h3>BamAdapterFinder</h3>
 <p>USAGE: BamAdapterFinder [options]
 <p>
-<p>Find short inserts by finding overlapping forward/reverse reads. Note position with a tag.. Version: 1.08
+<p>Find short inserts by finding overlapping forward/reverse reads. Note position with a tag.. Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -155,7 +157,7 @@
 <h3>BamReadTrimmer</h3>
 <p>USAGE: BamReadTrimmer [options]
 <p>
-<p>Strip part of a read in fixed positionos, optionally place this and its quality in BAM tags. Version: 1.08
+<p>Strip part of a read in fixed positionos, optionally place this and its quality in BAM tags. Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -175,7 +177,7 @@
 <h3>BamMerger</h3>
 <p>USAGE: BamMerger [options]
 <p>
-<p>A command-line tool to merge BAM/SAM alignment info in the first input file with the data in an unmapped BAM file, producing a third BAM file that has alignment data and all the additional data from the unmapped BAM. Version: 1.08
+<p>A command-line tool to merge BAM/SAM alignment info in the first input file with the data in an unmapped BAM file, producing a third BAM file that has alignment data and all the additional data from the unmapped BAM. Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -193,7 +195,7 @@
 <h3>SplitBamByChromosomes</h3>
 <p>USAGE: SplitBamByChromosomes [options]
 <p>
-<p>Split a BAM (or SAM) file into two files; one for records matching given chromosome subsets (target), and one for all other records (excluded). Original headers are preserved, with additional @PG entry. Version: 1.08
+<p>Split a BAM (or SAM) file into two files; one for records matching given chromosome subsets (target), and one for all other records (excluded). Original headers are preserved, with additional @PG entry. Version: 1.09
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
