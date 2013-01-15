@@ -82,7 +82,7 @@ public class Illumina2bamTest {
             "TMP_DIR=testdata/",
             "RUN_START_DATE=2011-03-23T00:00:00+0000"
         };
-        
+
         testData.commonAsserts(args);
         assertEquals("uk.ac.sanger.npg.illumina.Illumina2bam"
                 + " INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities"
@@ -122,6 +122,8 @@ public class Illumina2bamTest {
         };
 
         testData.commonAsserts(args);
+             
+
         assertEquals("uk.ac.sanger.npg.illumina.Illumina2bam"
                 + " INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities"
                 + " LANE=1 OUTPUT=" + testData.tempBamFile.getPath()
@@ -168,14 +170,14 @@ public class Illumina2bamTest {
                 + " LANE=1 OUTPUT=" + testData.tempBamFile.getPath()
                 + " SAMPLE_ALIAS=TestSample LIBRARY_NAME=TestLibrary"
                 + " STUDY_NAME=TestStudy RUN_START_DATE=2011-03-23T00:00:00+0000 FIRST_TILE=1101 TILE_LIMIT=1"
-                + " FIRST_CYCLE=50 FINAL_CYCLE=51"
+                + " FIRST_CYCLE=[50] FINAL_CYCLE=[51]"
                 + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
                 + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
                 + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
                 + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
                 testData.illumina2bam.getCommandLine()
                );
-     
-        assertEquals("eee452bde37d9564a51045f2f92c3570",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+
+        assertEquals("c834e341c2dd4d1037c149eae86af414",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 }
