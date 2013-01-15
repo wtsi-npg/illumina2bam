@@ -1,3 +1,6 @@
+release-1.09
+- allow cycle range by read to be specified on command line
+
 release-1.08
 - corrects compile errors which went undetected in 1.07
 
