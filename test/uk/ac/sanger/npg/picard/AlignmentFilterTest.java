@@ -165,7 +165,7 @@ public class AlignmentFilterTest {
         File md5File = new File("testdata/single_986_1.bam.md5");
         md5File.deleteOnExit();
         
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"), "fill_me_in_1");
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"), "566a490e155bfcec59cc41a8733bf9ab");
        
         File filteredHumanBamFile = new File("testdata/single_986_1_human.bam");
         filteredHumanBamFile.deleteOnExit();
@@ -173,7 +173,7 @@ public class AlignmentFilterTest {
         File humanMd5File = new File("testdata/single_986_1_human.bam.md5");
         humanMd5File.deleteOnExit();
 
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"), "fill_me_in_2");
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"), "cf443faa25bf61cde53d0342857df4a5");
   
         File unalignedBamFile = new File("testdata/single_986_1_unaligned.bam");
         unalignedBamFile.deleteOnExit();
@@ -184,7 +184,7 @@ public class AlignmentFilterTest {
         File metricsFile = new File("testdata/single_986_1_unaligned.bam_alignment_filter_metrics.json");
         metricsFile.deleteOnExit();
 
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"), "fill_me_in_3");
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"), "eab239ff547092f419432218f9856291");
   
     }
 
