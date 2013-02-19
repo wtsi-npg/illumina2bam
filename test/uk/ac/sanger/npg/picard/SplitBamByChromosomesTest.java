@@ -65,8 +65,8 @@ public class SplitBamByChromosomesTest {
         splitter.instanceMain(args);
         System.out.println(splitter.getCommandLine());
         String[] md5Expected = { 
-	        "facc67ce5a13a8145c99a9f2f3c736d0",
-	        "0c85bde03b174929af87b5045f246498"};
+	        "855022c6f03aba938a2e9f21428f1888",
+	        "a13cbeac1459287a4169f72bf5c68b7c"};
         for (int i=0; i<2; i++) {
 	        File splitFile = new File(splitPaths[i]);
 	        splitFile.deleteOnExit();

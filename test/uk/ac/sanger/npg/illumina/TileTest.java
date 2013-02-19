@@ -213,7 +213,7 @@ public class TileTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals("3e256b176c26283991ce0704457f0d3d", md5);        
+        assertEquals("0dbd4158a9d9dea6403daa285945113b", md5);        
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -277,7 +277,7 @@ public class TileTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
 
-        assertEquals("7d72f9d8702d4b4440cc207e3d2f80a3", md5);        
+        assertEquals("9849624a131db28e5cd2af92c1064159", md5);        
     }
     
     @Test
@@ -322,7 +322,7 @@ public class TileTest {
         String md5 = md5Stream.readLine();
         
         System.out.println("Checking bam md5 correct");
-        assertEquals("d5dc58337bb8bb1494344338b5aead91", md5);       
+        assertEquals("2d432d23ac62bd201fae5b79c61fa8e7", md5);       
         
     }
 }
