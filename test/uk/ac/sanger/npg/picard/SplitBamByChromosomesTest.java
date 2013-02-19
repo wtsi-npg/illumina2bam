@@ -74,7 +74,7 @@ public class SplitBamByChromosomesTest {
 	        String md5 = 
 		        CheckMd5.getBamMd5AfterRemovePGVersion(splitFile, NAME);
 	        System.out.println(splitPaths[i]+"\t"+md5);
-	        assertEquals(md5, md5Expected[i]);
+	        assertEquals(md5Expected[i], md5);
         }
     }
 

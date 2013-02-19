@@ -132,7 +132,7 @@ public class BamIndexDecoderTest {
             outputFile.deleteOnExit();
             File outputMd5 = new File(outputName + "/6383_8#" + i + ".bam.md5");
             outputMd5.deleteOnExit();
-            assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"), md5s[i]);
+            assertEquals(md5s[i], CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
         }
         
         outputDir.deleteOnExit();
