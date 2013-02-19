@@ -135,5 +135,57 @@ public class AlignmentFilterTest {
         assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"), "7af865eec6f41718e5f34c5e0759d1fe");
   
     }
+    /**
+     * Test of instanceMain method and program record to separate unmapped reads into one file for single read data.
+     */
+    @Test
+    public void testSingleReadMainUnMappedFile() throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain with unmapped file");
+
+        String[] args = {
+            "IN=testdata/bam/single_986_1.sam",
+            "IN=testdata/bam/single_986_1_human_unmapped_with_ref.sam",
+            "OUT=testdata/single_986_1.bam",
+            "OUT=testdata/single_986_1_human.bam",
+            "OUTPUT_UNALIGNED=testdata/single_986_1_unaligned.bam",
+            "CREATE_MD5_FILE=true",
+            "TMP_DIR=testdata/",
+            "VALIDATION_STRINGENCY=SILENT"
+        };
+
+        filter.instanceMain(args);
+        assertEquals(
+          filter.getCommandLine(),
+          "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/single_986_1.sam, testdata/bam/single_986_1_human_unmapped_with_ref.sam] OUTPUT_ALIGNMENT=[testdata/single_986_1.bam, testdata/single_986_1_human.bam] OUTPUT_UNALIGNED=testdata/single_986_1_unaligned.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        
+        File filteredBamFile = new File("testdata/single_986_1.bam");
+        filteredBamFile.deleteOnExit();
+
+        File md5File = new File("testdata/single_986_1.bam.md5");
+        md5File.deleteOnExit();
+        
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"), "fill_me_in_1");
+       
+        File filteredHumanBamFile = new File("testdata/single_986_1_human.bam");
+        filteredHumanBamFile.deleteOnExit();
+
+        File humanMd5File = new File("testdata/single_986_1_human.bam.md5");
+        humanMd5File.deleteOnExit();
+
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"), "fill_me_in_2");
+  
+        File unalignedBamFile = new File("testdata/single_986_1_unaligned.bam");
+        unalignedBamFile.deleteOnExit();
+
+        File unalignedMd5File = new File("testdata/single_986_1_unaligned.bam.md5");
+        unalignedMd5File.deleteOnExit();
+        
+        File metricsFile = new File("testdata/single_986_1_unaligned.bam_alignment_filter_metrics.json");
+        metricsFile.deleteOnExit();
+
+        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"), "fill_me_in_3");
+  
+    }
 
 }
