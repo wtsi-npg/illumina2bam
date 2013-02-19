@@ -98,6 +98,6 @@ public class ChangeBamHeaderTest {
         File md5File = new File("testdata/6210_8_header_changed.bam.md5");
         md5File.deleteOnExit();
 
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(newBamFile, "ChangeBamHeader"), "09d32a078c13b96acb079f1daa33afdb");
+        assertEquals("09d32a078c13b96acb079f1daa33afdb", CheckMd5.getBamMd5AfterRemovePGVersion(newBamFile, "ChangeBamHeader"));
     }
 }

@@ -140,7 +140,7 @@ public class BamReadTrimmerTest {
         File md5File = new File("testdata/6210_8_trimmed.bam.md5");
         md5File.deleteOnExit();
 
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(trimmedBamFile, "BamReadTrimmer"), "f9e783ed5b2c670dfc61633b4edf49c7");
+        assertEquals("f9e783ed5b2c670dfc61633b4edf49c7", CheckMd5.getBamMd5AfterRemovePGVersion(trimmedBamFile, "BamReadTrimmer"));
 
     }
 

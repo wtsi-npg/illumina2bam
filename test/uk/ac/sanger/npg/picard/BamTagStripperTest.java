@@ -71,7 +71,7 @@ public class BamTagStripperTest {
         File strippedBamFile = new File("testdata/7351_8#8_stripped.bam");
         File md5File = new File("testdata/7351_8#8_stripped.bam.md5");        
         md5File.delete();
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(strippedBamFile, "BamTagStripper"), "9d8e2754e815109d0cc1a235e805451f");
+        assertEquals("9d8e2754e815109d0cc1a235e805451f", CheckMd5.getBamMd5AfterRemovePGVersion(strippedBamFile, "BamTagStripper"));
         strippedBamFile.delete();
     }
     
@@ -104,7 +104,7 @@ public class BamTagStripperTest {
         File strippedBamFile = new File("testdata/7351_8#8_stripped.bam");
         File md5File = new File("testdata/7351_8#8_stripped.bam.md5");        
         md5File.delete();
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(strippedBamFile, "BamTagStripper"), "e745e525e75d6f4a0427e07fcdeec02e");
+        assertEquals("e745e525e75d6f4a0427e07fcdeec02e", CheckMd5.getBamMd5AfterRemovePGVersion(strippedBamFile, "BamTagStripper"));
         strippedBamFile.delete();
     }    
 

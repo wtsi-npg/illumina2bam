@@ -82,7 +82,7 @@ public class BamIndexDecoderTest {
         File outputMetrics = new File(outputName + ".metrics");
         File outputMd5 = new File(outputName + ".sam.md5");
 
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"), "e88bcf9899f021825eaacf4d7d5bc91f");
+        assertEquals("e88bcf9899f021825eaacf4d7d5bc91f", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
         
         outputFile.delete();
         outputMetrics.delete();
