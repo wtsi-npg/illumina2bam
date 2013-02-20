@@ -95,7 +95,7 @@ public class BamQualityQuantisationTest {
         File md5File = new File("testdata/6210_8_squashed.bam.md5");
         md5File.deleteOnExit();
         
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(squashedBamFile, "BamQualityQuantisation"), "2afc6143cd5acf58d2b11bbf814bcf23");
+        assertEquals("323371b5c873f5eb08e6e1484178b30c", CheckMd5.getBamMd5AfterRemovePGVersion(squashedBamFile, "BamQualityQuantisation"));
     }
  
 }
