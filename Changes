@@ -1,3 +1,7 @@
+release-1.10
+- bugfix for single fragment/read templates in AlignmentFilter
+- use Picard 1.84
+
 release-1.09
 - allow cycle range by read to be specified on command line
 
