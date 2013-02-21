@@ -274,7 +274,10 @@ public class AlignmentFilter extends PicardCommandLine {
 
             String readName = record.getReadName();
             boolean pairedFlag = record.getReadPairedFlag();
-            boolean firstReadFlag = record.getFirstOfPairFlag();
+            boolean firstReadFlag = false;
+            if(isPairedRead){
+                firstReadFlag = record.getFirstOfPairFlag();
+            }
 
             if(count == 0){
                 firstReadName = readName;
@@ -290,7 +293,10 @@ public class AlignmentFilter extends PicardCommandLine {
 
 
             boolean unmappedFlag = record.getReadUnmappedFlag();
-            boolean mateUnmappedFlag = record.getMateUnmappedFlag();
+            boolean mateUnmappedFlag =false;
+            if(isPairedRead){
+                mateUnmappedFlag = record.getMateUnmappedFlag();
+            }
 
             boolean aligned = !unmappedFlag;
 
