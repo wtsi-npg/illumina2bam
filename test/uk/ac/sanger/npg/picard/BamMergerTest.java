@@ -77,7 +77,7 @@ public class BamMergerTest {
         File md5File = new File("testdata/6210_8_merged.bam.md5");
         md5File.deleteOnExit();
 
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"), "757a20138b8d499b958a1d3bcb79e0de");
+        assertEquals("1c0d6e37790d29a5e4c7e55e982968dd", CheckMd5.getBamMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"));
     }
 
     /**
@@ -107,7 +107,7 @@ public class BamMergerTest {
         File md5File = new File("testdata/6210_8_merged_extra_reads.bam.md5");
         md5File.deleteOnExit();
         
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"), "c248aeec291ad3802dba315ac6c602b7");
+        assertEquals("26085402890e66aeac5d4e5cc48973a5", CheckMd5.getBamMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"));
     }
     
     /**
@@ -136,6 +136,6 @@ public class BamMergerTest {
         File md5File = new File("testdata/6210_8_merged_extra_reads_no_keep.bam.md5");
         md5File.deleteOnExit();
 
-         assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"), "bd54f5431f95ee597f69fa61e111f614");
+         assertEquals("159060a1842a2e15c6a3e9464d7c7e51", CheckMd5.getBamMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"));
     }
 }
