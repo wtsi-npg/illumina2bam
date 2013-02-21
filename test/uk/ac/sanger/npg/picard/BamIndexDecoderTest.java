@@ -82,7 +82,7 @@ public class BamIndexDecoderTest {
         File outputMetrics = new File(outputName + ".metrics");
         File outputMd5 = new File(outputName + ".sam.md5");
 
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"), "e88bcf9899f021825eaacf4d7d5bc91f");
+        assertEquals("fc7c424229321ae170338242cd9b1390", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
         
         outputFile.delete();
         outputMetrics.delete();
@@ -126,13 +126,13 @@ public class BamIndexDecoderTest {
          
         File outputMetrics = new File(outputName + "/6383_8.metrics");
         outputMetrics.delete();
-        String [] md5s = {"a6c6561b3b110864f5914aaf373bbf4b", "0e4f9481fbdd8a6e8d465c726eab254c", "c1d8143c195c0934bd049ef6dc5b400e"};
+        String [] md5s = {"6eb251fbdc2dc0115048380337ee1c10", "6b0672bdcb44c3a66b7674e45962c234", "8c3c26e50b300360108529ff9c31700c"};
         for (int i=0;i<3;i++){
             File outputFile = new File(outputName + "/6383_8#" + i + ".bam");
             outputFile.deleteOnExit();
             File outputMd5 = new File(outputName + "/6383_8#" + i + ".bam.md5");
             outputMd5.deleteOnExit();
-            assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"), md5s[i]);
+            assertEquals(md5s[i], CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
         }
         
         outputDir.deleteOnExit();

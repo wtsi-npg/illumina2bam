@@ -96,7 +96,7 @@ public class Illumina2bamTest {
                 testData.illumina2bam.getCommandLine()
                );
 
-        assertEquals("62749a4c4cd90e192cd7b8765108d6f8", CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+        assertEquals("df3e5fb306ba0f4fd5dd6d34e1b91df8", CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 
     /**
@@ -136,7 +136,7 @@ public class Illumina2bamTest {
                 testData.illumina2bam.getCommandLine()
                );
         
-        assertEquals("e4623e8ac08fb9194a5f5a1c1eb836a2", CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+        assertEquals("28407938bae10a59b18b562e85f59e26", CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 
     /**
@@ -178,6 +178,6 @@ public class Illumina2bamTest {
                 testData.illumina2bam.getCommandLine()
                );
 
-        assertEquals("c834e341c2dd4d1037c149eae86af414",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+        assertEquals("561a77a0139394691f295ca8dd8044b0",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 }
