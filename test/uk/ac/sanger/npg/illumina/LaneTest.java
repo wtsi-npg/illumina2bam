@@ -313,7 +313,7 @@ public class LaneTest {
         md5File.deleteOnExit();
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
-        assertEquals("8177263b97a2d859d34b6b458300cbe8", md5);
+        assertEquals("121501fc17f92ccc1360ccb7c6bb8762", md5);
     }
 
     @Test
@@ -331,7 +331,7 @@ public class LaneTest {
         md5File.deleteOnExit();
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
-        assertEquals("8177263b97a2d859d34b6b458300cbe8", md5);
+        assertEquals("121501fc17f92ccc1360ccb7c6bb8762", md5);
     }
 
     @Test

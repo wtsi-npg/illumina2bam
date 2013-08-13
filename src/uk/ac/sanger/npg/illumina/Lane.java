@@ -1047,6 +1047,9 @@ public class Lane {
          }
 
          if(this.readGroup != null){
+           if(this.readGroup.getAttribute("PG") == null){
+             this.readGroup.setAttribute("PG", this.instrumentProgram.getId());
+           }
            header.addReadGroup(readGroup);
          }
 
