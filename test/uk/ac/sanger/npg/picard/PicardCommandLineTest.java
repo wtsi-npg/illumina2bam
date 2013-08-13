@@ -74,7 +74,7 @@ public class PicardCommandLineTest {
     public void testMakeUniqueProgramId() {
         System.out.println("makeUniqueProgramId");
         
-        List<SAMProgramRecord> programList = new ArrayList();
+        List<SAMProgramRecord> programList = new ArrayList<SAMProgramRecord>();
         SAMProgramRecord programRecord = new SAMProgramRecord("test");
         programList.add(programRecord);
         

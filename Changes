@@ -1,3 +1,6 @@
+
+- include PG field in new RG header records
+
 release-1.10
 - bugfix for single fragment/read templates in AlignmentFilter
 - use Picard 1.84
