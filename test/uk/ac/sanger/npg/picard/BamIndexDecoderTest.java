@@ -21,7 +21,10 @@ package uk.ac.sanger.npg.picard;
 import java.io.File;
 import java.io.IOException;
 import java.util.TimeZone;
+import java.util.ArrayList;
 import net.sf.samtools.SAMFileReader;
+import net.sf.samtools.SAMProgramRecord;
+import net.sf.samtools.SAMReadGroupRecord;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import uk.ac.sanger.npg.bam.util.CheckMd5;
@@ -82,7 +85,19 @@ public class BamIndexDecoderTest {
         File outputMetrics = new File(outputName + ".metrics");
         File outputMd5 = new File(outputName + ".sam.md5");
 
-        assertEquals("fc7c424229321ae170338242cd9b1390", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
+        SAMFileReader samFileReader = new SAMFileReader(outputFile);
+        ArrayList<SAMProgramRecord> pgrl = new ArrayList<SAMProgramRecord>();
+        for (SAMProgramRecord r: samFileReader.getFileHeader().getProgramRecords()){
+          if(r.getProgramName().equals("BamIndexDecoder")) {pgrl.add(r);}
+        }
+        assertEquals(1, pgrl.size());
+        SAMProgramRecord pgr = pgrl.get(0);
+        for (SAMReadGroupRecord r: samFileReader.getFileHeader().getReadGroups()){
+          assertEquals(pgr.getId(), r.getAttribute("PG"));
+        }
+        samFileReader.close();
+
+        assertEquals("d1c35cdd7e2b180204c545ddfe354fe9", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
         
         outputFile.delete();
         outputMetrics.delete();
@@ -126,7 +141,7 @@ public class BamIndexDecoderTest {
          
         File outputMetrics = new File(outputName + "/6383_8.metrics");
         outputMetrics.delete();
-        String [] md5s = {"6eb251fbdc2dc0115048380337ee1c10", "6b0672bdcb44c3a66b7674e45962c234", "8c3c26e50b300360108529ff9c31700c"};
+        String [] md5s = {"7159436dd98ab2df85ee5a9a4644428e", "cf5272ef745f967b4b9008572961810a", "f254c0d4a2d8c9747ac4099ea30d3993"};
         for (int i=0;i<3;i++){
             File outputFile = new File(outputName + "/6383_8#" + i + ".bam");
             outputFile.deleteOnExit();
