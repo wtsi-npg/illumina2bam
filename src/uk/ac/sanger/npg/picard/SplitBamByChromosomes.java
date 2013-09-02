@@ -76,6 +76,9 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	@Option(shortName="U", doc="Exclude read groups in which all reads are unaligned. (Groups with at least one read aligned to the target, and others unaligned, will be written to the target file.)", optional=true)
 		public boolean EXCLUDE_UNALIGNED = false;
 
+	@Option(shortName="V", doc="Treat the S option as a list to EXCLUDE rather than TARGET, so that chimeric/unmapped read pairs remain excluded.  If S option is not provided, this option is set back to false to allow the default to continue to work)", optional=true)
+		public boolean INVERT_TARGET;
+	
     @Usage(programVersion= version)
 	    public final String USAGE = getStandardUsagePreamble()+programDS + " "; 
 
@@ -90,6 +93,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    if (SUBSET.isEmpty()) { // default if not specified on command line
 		    SUBSET.add("Y");
 		    SUBSET.add("MT"); 
+		    INVERT_TARGET = false;
 	    }
 	    for (String member: SUBSET) {
 		    log.info("Subset contains: "+member);
@@ -205,20 +209,59 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 		 * 2. Reads which align to "unconsented" references go to excluded file
 		 */
 		int destination = TARGET_INDEX;
-		boolean unaligned = true; // are all reads unaligned?
-		for (SAMRecord rec: groupOfReads) {
+		
+		if (INVERT_TARGET){
+			log.warn("Inverting TARGET and DESTINATION logic");
+			boolean first_read_in_subset = false;
+			boolean second_read_in_subset = false;
+			boolean first_read_unmapped = false;
+			boolean second_read_unmapped = false;
+			boolean first = true;
+			for (SAMRecord rec: groupOfReads) {
+					if (SUBSET.contains(rec.getReferenceName())){
+						if (first) {
+							first_read_in_subset = true;
+						} else {
+							second_read_in_subset = true;
+						}
+					} 	
+					first = false;
+			}
+			
+			for (SAMRecord rec: groupOfReads) {
+				if (rec.getReadUnmappedFlag()){
+					if (first) {
+						first_read_unmapped = true;
+					} else {
+						second_read_unmapped = true;
+					}
+				} 	
+				first = false;
+			}
+			if ((first_read_in_subset) || (second_read_in_subset)) {
+				destination = EXCLUDED_INDEX;
+			}
+			if (first_read_unmapped) {
+				destination = EXCLUDED_INDEX;
+			}
+			
+		} else {
+			
+			boolean unaligned = true; // are all reads unaligned?
+			for (SAMRecord rec: groupOfReads) {
 			// first pass -- check for reads not in SUBSET
-			if (!(rec.getReadUnmappedFlag())) {
-				if (!(SUBSET.contains(rec.getReferenceName()))) {
-					destination = EXCLUDED_INDEX;
-					break;
-				} else {
-					unaligned = false;
+				if (!(rec.getReadUnmappedFlag())) {
+					if (!(SUBSET.contains(rec.getReferenceName()))) {
+						destination = EXCLUDED_INDEX;
+						break;
+					} else {
+						unaligned = false;
+					}
 				}
 			}
-		}
-		if (unaligned && EXCLUDE_UNALIGNED && destination==TARGET_INDEX) {
-			destination = EXCLUDED_INDEX;
+			if (unaligned && EXCLUDE_UNALIGNED && destination==TARGET_INDEX) {
+				destination = EXCLUDED_INDEX;
+			}
 		}
 		for (SAMRecord rec: groupOfReads) {
 			// second pass -- write all reads to appropriate file
