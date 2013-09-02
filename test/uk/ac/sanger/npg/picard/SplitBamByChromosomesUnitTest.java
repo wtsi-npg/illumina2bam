@@ -36,6 +36,29 @@ import uk.ac.sanger.npg.bam.util.CheckMd5;
 
 /*
   Test class for SplitBamByChromosomes
+  
+xahuman S=Y,MT
+TARGET = .bam
+EXCLUDED = xahuman.bam
+
+EXCLUDE
+UNALIGN read1 read2 destination
+0		[Y|MT]	[Y|MT]	TARGET
+0		[Y|MT]	20		TARGET
+0		20		[Y|MT]	EXCLUDED  
+0		[Y|MT]	*		TARGET
+0		*		[Y|MT]	TARGET
+0		20		20		EXCLUDED
+0		*		*		TARGET
+
+1		[Y|MT]	[Y|MT]	TARGET
+1		[Y|MT]	20		TARGET
+1		20		[Y|MT]	EXCLUDED  
+1		[Y|MT]	*		EXCLUDED
+1		*		[Y|MT]	EXCLUDED
+1		20		20		EXCLUDED
+1		*		*		EXCLUDED
+
 */
 
 /**
