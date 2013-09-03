@@ -214,9 +214,9 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 		for (SAMRecord rec: groupOfReads) {
 			// first pass -- check for reads not in SUBSET
 			if  (!(rec.getReadUnmappedFlag())) {
-				if (logicalXOR( INVERT_TARGET,
-								(!(SUBSET.contains(rec.getReferenceName()))))
-								){
+				if (( INVERT_TARGET) ^
+					(!(SUBSET.contains(rec.getReferenceName()))))
+				{
 					destination = EXCLUDED_INDEX;
 					break;
 				} else {
@@ -232,10 +232,6 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 			// second pass -- write all reads to appropriate file
 			writers.get(destination).addAlignment(rec);
 		}
-	}
-
-	private boolean logicalXOR(boolean x, boolean y) {
-	    return ( ( x || y ) && ! ( x && y ) );
 	}
 	
     public static void main(final String[] args) {        
