@@ -74,7 +74,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    public String EXCLUDED_PATH;
 
 	@Option(shortName="U", doc="Exclude read groups in which all reads are unaligned. (Groups with at least one read aligned to the target, and others unaligned, will be written to the target file.)", optional=true)
-		public boolean EXCLUDE_UNALIGNED = false;
+		public boolean EXCLUDE_UNALIGNED;
 
 	@Option(shortName="V", doc="Treat the S option as a list to EXCLUDE rather than TARGET, so that chimeric/unmapped read pairs remain excluded.  If S option is not provided, this option is set back to false to allow the default to continue to work)", optional=true)
 		public boolean INVERT_TARGET;
@@ -214,36 +214,28 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 			log.warn("Inverting TARGET and DESTINATION logic");
 			boolean first_read_in_subset = false;
 			boolean second_read_in_subset = false;
-			boolean first_read_unmapped = false;
-			boolean second_read_unmapped = false;
 			boolean first = true;
 			for (SAMRecord rec: groupOfReads) {
 					if (SUBSET.contains(rec.getReferenceName())){
 						if (first) {
+							if (rec.getReadUnmappedFlag()) {
+								destination = EXCLUDED_INDEX;
+							}
 							first_read_in_subset = true;
 						} else {
 							second_read_in_subset = true;
+							if (rec.getMateUnmappedFlag()) {
+								destination = EXCLUDED_INDEX;
+							}
 						}
 					} 	
 					first = false;
 			}
 			
-			for (SAMRecord rec: groupOfReads) {
-				if (rec.getReadUnmappedFlag()){
-					if (first) {
-						first_read_unmapped = true;
-					} else {
-						second_read_unmapped = true;
-					}
-				} 	
-				first = false;
-			}
 			if ((first_read_in_subset) || (second_read_in_subset)) {
 				destination = EXCLUDED_INDEX;
 			}
-			if (first_read_unmapped) {
-				destination = EXCLUDED_INDEX;
-			}
+			
 			
 		} else {
 			
@@ -269,6 +261,10 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 		}
 	}
 
+	public static boolean logicalXOR(boolean x, boolean y) {
+	    return ( ( x || y ) && ! ( x && y ) );
+	}
+	
     public static void main(final String[] args) {        
         System.exit(new SplitBamByChromosomes().instanceMain(args));
     } 
