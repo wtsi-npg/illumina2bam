@@ -77,7 +77,7 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 		public boolean EXCLUDE_UNALIGNED = false;
 
 	@Option(shortName="V", doc="Treat the S option as a list to EXCLUDE rather than TARGET, so that chimeric/unmapped read pairs remain excluded.  If S option is not provided, this option is set back to false to allow the default to continue to work)", optional=true)
-		public boolean INVERT_TARGET;
+		public boolean INVERT_TARGET = false;
 	
     @Usage(programVersion= version)
 	    public final String USAGE = getStandardUsagePreamble()+programDS + " "; 
@@ -93,7 +93,6 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	    if (SUBSET.isEmpty()) { // default if not specified on command line
 		    SUBSET.add("Y");
 		    SUBSET.add("MT"); 
-		    INVERT_TARGET = false;
 	    }
 	    for (String member: SUBSET) {
 		    log.info("Subset contains: "+member);
