@@ -76,6 +76,9 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 	@Option(shortName="U", doc="Exclude read groups in which all reads are unaligned. (Groups with at least one read aligned to the target, and others unaligned, will be written to the target file.)", optional=true)
 		public boolean EXCLUDE_UNALIGNED = false;
 
+	@Option(shortName="V", doc="Treat the S option as a list to EXCLUDE rather than TARGET, so that chimeric/unmapped read pairs remain excluded.  If S option is not provided, this option is set back to false to allow the default to continue to work)", optional=true)
+		public boolean INVERT_TARGET = false;
+	
     @Usage(programVersion= version)
 	    public final String USAGE = getStandardUsagePreamble()+programDS + " "; 
 
@@ -205,11 +208,14 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 		 * 2. Reads which align to "unconsented" references go to excluded file
 		 */
 		int destination = TARGET_INDEX;
+				
 		boolean unaligned = true; // are all reads unaligned?
 		for (SAMRecord rec: groupOfReads) {
 			// first pass -- check for reads not in SUBSET
-			if (!(rec.getReadUnmappedFlag())) {
-				if (!(SUBSET.contains(rec.getReferenceName()))) {
+			if  (!(rec.getReadUnmappedFlag())) {
+				if (( INVERT_TARGET) ^
+					(!(SUBSET.contains(rec.getReferenceName()))))
+				{
 					destination = EXCLUDED_INDEX;
 					break;
 				} else {
@@ -220,12 +226,13 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 		if (unaligned && EXCLUDE_UNALIGNED && destination==TARGET_INDEX) {
 			destination = EXCLUDED_INDEX;
 		}
+		
 		for (SAMRecord rec: groupOfReads) {
 			// second pass -- write all reads to appropriate file
 			writers.get(destination).addAlignment(rec);
 		}
 	}
-
+	
     public static void main(final String[] args) {        
         System.exit(new SplitBamByChromosomes().instanceMain(args));
     } 
