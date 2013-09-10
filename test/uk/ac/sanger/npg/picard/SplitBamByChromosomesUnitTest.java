@@ -164,6 +164,82 @@ public class SplitBamByChromosomesUnitTest {
     1		*		*		EXCLUDED
 
     */
+    
+    @Test
+    public void testxahuman_exclude_unaligned() throws IOException {
+    System.out.println("SplitBamByChromosomes instanceMain: xahuman test case, V=false, U=false");
+    
+    String[] splitPaths = {
+        "testdata/10503_1_human_split_by_chromosome_excluded.sam", 
+        "testdata/10503_1_human_split_by_chromosome_target.sam" };
+    String[] args = {
+        "I=testdata/bam/10503_1_fix_mate.sam",
+        "X="+splitPaths[0],
+        "T="+splitPaths[1],
+        "U=true",
+        "TMP_DIR=testdata/",
+        "VALIDATION_STRINGENCY=SILENT"
+    };
+    splitter.instanceMain(args);
+    System.out.println(splitter.getCommandLine());
+ 
+    
+    String[] expectedReadNamesInExcluded = {
+    		"first_chimeric",		
+    		"twenty_twenty",
+    		"unmapped_other",
+    		"other_unmapped",
+    		"second_chimeric",
+    		"pair_unmapped",
+       		"first_unmapped", 
+    		"second_unmapped"
+    };
+    
+    String[] expectedReadNamesInTarget = {
+    		"MT_MT",
+    		"y_and_y"		
+    };
+    
+    assertEquals(8, expectedReadNamesInExcluded.length);
+    assertEquals(2, expectedReadNamesInTarget.length);
+    Arrays.sort(expectedReadNamesInExcluded);
+    Arrays.sort(expectedReadNamesInTarget);
+    
+    for (int i=0; i<2; i++) {
+    	
+        File splitFile = new File(splitPaths[i]);
+        splitFile.deleteOnExit();
+        assertTrue(splitFile.exists());
+     
+        IoUtil.assertFileIsReadable(splitFile);
+        final SAMFileReader check = new SAMFileReader(splitFile);
+        
+        ArrayList<String> readNamesInFile = new ArrayList<String>();
+        for (SAMRecord rec: check){
+        	String qname = rec.getReadName();
+        
+        	if (!readNamesInFile.contains(qname)){
+        		readNamesInFile.add(qname);
+        		System.out.println("Found qname " + qname + " in file " + i );
+        	}
+        }
+        
+        Collections.sort(readNamesInFile);        
+        Object[] readNames = readNamesInFile.toArray();
+
+        if (i == 0) {
+        	 System.out.println(splitPaths[0]+"\t checking read groups in excluded");
+        	 //assertEquals(8, readNamesInFile.toArray().length);
+             //assertArrayEquals(expectedReadNamesInExcluded, readNames);
+        }
+        else {
+            System.out.println(splitPaths[1]+"\t checking read groups in target");
+            assertEquals(2, readNamesInFile.toArray().length);
+            assertArrayEquals(expectedReadNamesInTarget, readNames);
+        }
+    }
+    
+}
 
     /*
  yhuman S=Y V=true
@@ -272,6 +348,7 @@ UNALIGN read1 read2 destination
         SplitBamByChromosomesUnitTest test = new SplitBamByChromosomesUnitTest();
         
         test.testxahuman();
+        test.testxahuman_exclude_unaligned();
         test.testyhuman();
     }
 
