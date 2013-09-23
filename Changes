@@ -1,5 +1,7 @@
-
+release-1.11
 - include PG field in new RG header records
+- use Picard 1.96 rather than 1.84
+- [Hinxton #354882] separate_y_chromosome_data
 
 release-1.10
 - bugfix for single fragment/read templates in AlignmentFilter
