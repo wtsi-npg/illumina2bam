@@ -2,7 +2,7 @@
 <h3>Illumina2bam</h3>
 <p>USAGE: Illumina2bam [options]
 <p>
-<p>Convert Illumina BCL to BAM or SAM file. Version: 1.09
+<p>Convert Illumina BCL to BAM or SAM file. Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -38,7 +38,7 @@
 <h3>BamQualityQuantisation</h3>
 <p>USAGE: BamQualityQuantisation [options]
 <p>
-<p>Quantise the original Illumina canned qualities into reduced resolution scores using bins 1->9=6,10->19=15,20->24=22,25->29=27,30->34=33,35->39=37,40->59=41. Version: 1.09
+<p>Quantise the original Illumina canned qualities into reduced resolution scores using bins 1->9=6,10->19=15,20->24=22,25->29=27,30->34=33,35->39=37,40->59=41. Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -52,7 +52,7 @@
 <h3>BamTagStripper</h3>
 <p>USAGE: BamTagStripper [options]
 <p>
-<p>Strip a list of tags in bam/sam record. By default, any tags containing lowercase letters will be stripped and other tags will be kept. A list of tags can be given to keep or strip. Version: 1.09
+<p>Strip a list of tags in bam/sam record. By default, any tags containing lowercase letters will be stripped and other tags will be kept. A list of tags can be given to keep or strip. Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -67,7 +67,7 @@
 <h3>ChangeBamHeader</h3>
 <p>USAGE: ChangeBamHeader [options]
 <p>
-<p>Add extra PGs into bam header, or change SM, LB or DS tag in RG line in header and this only works with one read group in the input bam. . Version: 1.09
+<p>Add extra PGs into bam header, or change SM, LB or DS tag in RG line in header and this only works with one read group in the input bam. . Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -84,7 +84,7 @@
 <h3>AlignmentFilter</h3>
 <p>USAGE: AlignmentFilter [options]
 <p>
-<p>Give a list of SAM/BAM files with the same set of records and in the same order but aligned with different references, split reads into different files according to alignments. You have option to put unaligned reads into one of output files or a separate file. Version: 1.09
+<p>Give a list of SAM/BAM files with the same set of records and in the same order but aligned with different references, split reads into different files according to alignments. You have option to put unaligned reads into one of output files or a separate file. Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -99,7 +99,7 @@
 <h3>SplitBamByReadGroup</h3>
 <p>USAGE: SplitBamByReadGroup [options]
 <p>
-<p>Split a BAM file into multiple BAM files based on ReadGroup. Headers are a copy of the original file, removing @RGs where IDs match with the other ReadGroup IDs. Version: 1.09
+<p>Split a BAM file into multiple BAM files based on ReadGroup. Headers are a copy of the original file, removing @RGs where IDs match with the other ReadGroup IDs. Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -113,7 +113,7 @@
 <h3>BamIndexDecoder</h3>
 <p>USAGE: BamIndexDecoder [options]
 <p>
-<p>A command-line tool to decode multiplexed bam file. Version: 1.09
+<p>A command-line tool to decode multiplexed bam file. Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -139,7 +139,7 @@
 <h3>BamAdapterFinder</h3>
 <p>USAGE: BamAdapterFinder [options]
 <p>
-<p>Find short inserts by finding overlapping forward/reverse reads. Note position with a tag.. Version: 1.09
+<p>Find short inserts by finding overlapping forward/reverse reads. Note position with a tag.. Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -157,7 +157,7 @@
 <h3>BamReadTrimmer</h3>
 <p>USAGE: BamReadTrimmer [options]
 <p>
-<p>Strip part of a read in fixed positionos, optionally place this and its quality in BAM tags. Version: 1.09
+<p>Strip part of a read in fixed positionos, optionally place this and its quality in BAM tags. Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -177,7 +177,7 @@
 <h3>BamMerger</h3>
 <p>USAGE: BamMerger [options]
 <p>
-<p>A command-line tool to merge BAM/SAM alignment info in the first input file with the data in an unmapped BAM file, producing a third BAM file that has alignment data and all the additional data from the unmapped BAM. Version: 1.09
+<p>A command-line tool to merge BAM/SAM alignment info in the first input file with the data in an unmapped BAM file, producing a third BAM file that has alignment data and all the additional data from the unmapped BAM. Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -195,7 +195,7 @@
 <h3>SplitBamByChromosomes</h3>
 <p>USAGE: SplitBamByChromosomes [options]
 <p>
-<p>Split a BAM (or SAM) file into two files; one for records matching given chromosome subsets (target), and one for all other records (excluded). Original headers are preserved, with additional @PG entry. Version: 1.09
+<p>Split a BAM (or SAM) file into two files; one for records matching given chromosome subsets (target), and one for all other records (excluded). Original headers are preserved, with additional @PG entry. Version: 1.11
 <p></p>
 <table>
 <tr><th>Option</th><th>Description</th></tr>
@@ -204,6 +204,7 @@
 <tr><td>TARGET_PATH=String</td><td>Output SAM/BAM path for target sequences.  Required. </td></tr>
 <tr><td>EXCLUDED_PATH=String</td><td>Output SAM/BAM path for excluded sequences.  Required. </td></tr>
 <tr><td>EXCLUDE_UNALIGNED=Boolean</td><td>Exclude read groups in which all reads are unaligned. (Groups with at least one read aligned to the target, and others unaligned, will be written to the target file.)  Default value: false. This option can be set to 'null' to clear the default value. Possible values: {true, false} </td></tr>
+<tr><td>INVERT_TARGET=Boolean</td><td>Treat the S option as a list to EXCLUDE rather than TARGET, so that chimeric/unmapped read pairs remain excluded.  If S option is not provided, this option is set back to false to allow the default to continue to work)  Default value: false. This option can be set to 'null' to clear the default value. Possible values: {true, false} </td></tr>
 </table>
 <br/>
 
