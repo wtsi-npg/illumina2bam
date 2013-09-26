@@ -84,13 +84,9 @@ public class ChangeBamHeaderTest {
         assertEquals(changer.getCommandLine(),
                 "uk.ac.sanger.npg.picard.ChangeBamHeader INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_header_changed.bam PG=[ID:samtools_sorting;PN:samtools;VN:0.1.12a (r862);CL:samtools sort] SAMPLE=newSM LIBRARY=newLB DESCRIPTION=newDS TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
                     );
-    }
-    
     /**
      * Test output bam MD5
      */
-    @Test
-    public void testOutputBam() throws FileNotFoundException, IOException {
         System.out.println("checking bam md5");
         File newBamFile = new File("testdata/6210_8_header_changed.bam");
         newBamFile.deleteOnExit();
