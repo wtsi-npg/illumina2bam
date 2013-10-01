@@ -235,7 +235,7 @@ UNALIGN read1 read2 destination
     for (int i=0; i<2; i++) {
     	
         File splitFile = new File(splitPaths[i]);
-        //splitFile.deleteOnExit();
+        splitFile.deleteOnExit();
         assertTrue(splitFile.exists());
      
         IoUtil.assertFileIsReadable(splitFile);
