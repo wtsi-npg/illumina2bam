@@ -22,8 +22,11 @@ package uk.ac.sanger.npg.picard;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.TimeZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import org.junit.Test;
 import uk.ac.sanger.npg.bam.util.CheckMd5;
 
@@ -40,6 +43,7 @@ public class AlignmentFilterTest {
     public AlignmentFilterTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
+    
     /**
      * Test of instanceMain method and program record.
      */
@@ -48,38 +52,60 @@ public class AlignmentFilterTest {
         
         System.out.println("instanceMain");
 
+        File tmpdir= new File("testdata/" + Long.toString(System.nanoTime()));
+        Boolean dir_ok = tmpdir.mkdir();
+        
+        tmpdir.setReadable(true);		// everybody
+        tmpdir.setWritable(true, true); // owner only
+        tmpdir.deleteOnExit();
+        
         String[] args = {
             "IN=testdata/bam/986_1.sam",
             "IN=testdata/bam/986_1_human.sam",
-            "OUT=testdata/986_1.bam",
-            "OUT=testdata/986_1_human.bam",
+            "OUT=" + tmpdir + "/986_1.bam",
+            "OUT=" + tmpdir + "/986_1_human.bam",
             "CREATE_MD5_FILE=true",
-            "TMP_DIR=testdata/",
+            "TMP_DIR=" + tmpdir,
             "VALIDATION_STRINGENCY=SILENT"
         };
 
         filter.instanceMain(args);
         assertEquals(
           filter.getCommandLine(),
-          "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human.sam] OUTPUT_ALIGNMENT=[testdata/986_1.bam, testdata/986_1_human.bam] TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
+          "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human.sam] OUTPUT_ALIGNMENT=[" +
+          tmpdir + "/986_1.bam, " +
+          tmpdir + "/986_1_human.bam] TMP_DIR=[" + 
+          tmpdir + "] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
                     );
+     
         
-        File filteredBamFile = new File("testdata/986_1.bam");
+        File filteredBamFile = new File(tmpdir  + "/986_1.bam");
+        String filteredBamFileStr = CheckMd5.getFileMd5(filteredBamFile);
         filteredBamFile.deleteOnExit();
 
-        File md5File = new File("testdata/986_1.bam.md5");
+        File md5File = new File(tmpdir  + "/986_1.bam.md5");  
         md5File.deleteOnExit();
- 
-        assertEquals("5343d6aee558ad6dfdae93cd324867eb", CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
+        String Md5FileContents = new Scanner( md5File).next();
         
-        File filteredHumanBamFile = new File("testdata/986_1_human.bam");
+        String newMd5 = CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter");
+        
+        assertFalse(filteredBamFileStr.equals(newMd5));
+        assertEquals(Md5FileContents, filteredBamFileStr);
+           
+        File filteredHumanBamFile = new File(tmpdir  + "/986_1_human.bam");
+        String filteredHumanBamFileStr = CheckMd5.getFileMd5(filteredHumanBamFile);
         filteredHumanBamFile.deleteOnExit();
 
-        File humanMd5File = new File("testdata/986_1_human.bam.md5");
-        humanMd5File.deleteOnExit();
-        assertEquals("d35a1b13466640ab7f82d8146286ba14", CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"));
+        String newHumanMd5 = CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter");
         
-        File metricsFile = new File("testdata/986_1_human.bam_alignment_filter_metrics.json");
+        File humanMd5File = new File(tmpdir  + "/986_1_human.bam.md5");  
+        humanMd5File.deleteOnExit();
+        String humanMd5FileContents = new Scanner( humanMd5File).next();
+        
+        assertFalse(filteredHumanBamFileStr.equals(newHumanMd5));
+        assertEquals(humanMd5FileContents, filteredHumanBamFileStr);
+        
+        File metricsFile = new File(tmpdir  + "/986_1_human.bam_alignment_filter_metrics.json");
         metricsFile.deleteOnExit();
 
     }
