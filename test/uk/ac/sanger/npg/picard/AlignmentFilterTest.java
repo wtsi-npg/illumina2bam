@@ -22,10 +22,8 @@ package uk.ac.sanger.npg.picard;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
 import java.util.TimeZone;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 import uk.ac.sanger.npg.bam.util.CheckMd5;
@@ -52,12 +50,7 @@ public class AlignmentFilterTest {
         
         System.out.println("instanceMain");
 
-        File tmpdir= new File("testdata/" + Long.toString(System.nanoTime()));
-        Boolean dir_ok = tmpdir.mkdir();
-        
-        tmpdir.setReadable(true);		// everybody
-        tmpdir.setWritable(true, true); // owner only
-        tmpdir.deleteOnExit();
+        String tmpdir = "testdata/test1";
         
         String[] args = {
             "IN=testdata/bam/986_1.sam",
@@ -77,37 +70,26 @@ public class AlignmentFilterTest {
           tmpdir + "/986_1_human.bam] TMP_DIR=[" + 
           tmpdir + "] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
                     );
-     
         
         File filteredBamFile = new File(tmpdir  + "/986_1.bam");
-        String filteredBamFileStr = CheckMd5.getFileMd5(filteredBamFile);
         filteredBamFile.deleteOnExit();
 
         File md5File = new File(tmpdir  + "/986_1.bam.md5");  
         md5File.deleteOnExit();
-        String Md5FileContents = new Scanner( md5File).next();
         
-        String newMd5 = CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter");
-        
-        assertFalse(filteredBamFileStr.equals(newMd5));
-        assertEquals(Md5FileContents, filteredBamFileStr);
+        assertEquals("f208e0111a850c91228480ae20eab2eb", CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
            
         File filteredHumanBamFile = new File(tmpdir  + "/986_1_human.bam");
-        String filteredHumanBamFileStr = CheckMd5.getFileMd5(filteredHumanBamFile);
         filteredHumanBamFile.deleteOnExit();
-
-        String newHumanMd5 = CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter");
         
         File humanMd5File = new File(tmpdir  + "/986_1_human.bam.md5");  
         humanMd5File.deleteOnExit();
-        String humanMd5FileContents = new Scanner( humanMd5File).next();
         
-        assertFalse(filteredHumanBamFileStr.equals(newHumanMd5));
-        assertEquals(humanMd5FileContents, filteredHumanBamFileStr);
+        assertEquals("12eb49d278ca7030fa4852090f54db7a", CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"));
         
         File metricsFile = new File(tmpdir  + "/986_1_human.bam_alignment_filter_metrics.json");
         metricsFile.deleteOnExit();
-
+  
     }
     /**
      * Test of instanceMain method and program record to separate unmapped reads into one file.
@@ -117,49 +99,51 @@ public class AlignmentFilterTest {
         
         System.out.println("instanceMain with unmapped file");
 
+        String tmpdir = "testdata/test2";
+        
         String[] args = {
             "IN=testdata/bam/986_1.sam",
             "IN=testdata/bam/986_1_human_unmapped_with_ref.sam",
-            "OUT=testdata/986_1.bam",
-            "OUT=testdata/986_1_human.bam",
-            "OUTPUT_UNALIGNED=testdata/986_1_unaligned.bam",
+            "OUT=" + tmpdir + "/986_1.bam",
+            "OUT=" + tmpdir + "/986_1_human.bam",
+            "OUTPUT_UNALIGNED=" + tmpdir + "/986_1_unaligned.bam",
             "CREATE_MD5_FILE=true",
-            "TMP_DIR=testdata/",
+            "TMP_DIR=" + tmpdir + "/",
             "VALIDATION_STRINGENCY=SILENT"
         };
 
         filter.instanceMain(args);
         assertEquals(
           filter.getCommandLine(),
-          "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human_unmapped_with_ref.sam] OUTPUT_ALIGNMENT=[testdata/986_1.bam, testdata/986_1_human.bam] OUTPUT_UNALIGNED=testdata/986_1_unaligned.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+          "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human_unmapped_with_ref.sam] " +
+          "OUTPUT_ALIGNMENT=[" + tmpdir + "/986_1.bam, " +  tmpdir + "/986_1_human.bam] OUTPUT_UNALIGNED=" + tmpdir + "/986_1_unaligned.bam " +
+          "TMP_DIR=[" + tmpdir + "] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
         
-        File filteredBamFile = new File("testdata/986_1.bam");
+        File filteredBamFile = new File(tmpdir + "/986_1.bam");  
         filteredBamFile.deleteOnExit();
 
-        File md5File = new File("testdata/986_1.bam.md5");
+        File md5File = new File(tmpdir  + "/986_1.bam.md5");  
         md5File.deleteOnExit();
         
-        assertEquals("97dd92739317018e81d8ebb996b6d9a6", CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
+        assertEquals("edd7db004ab7c49a488c0f3ed14eb770", CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
        
-        File filteredHumanBamFile = new File("testdata/986_1_human.bam");
+        File filteredHumanBamFile = new File(tmpdir + "/986_1_human.bam");      
         filteredHumanBamFile.deleteOnExit();
 
-        File humanMd5File = new File("testdata/986_1_human.bam.md5");
+        File humanMd5File = new File(tmpdir  + "/986_1_human.bam.md5");  
         humanMd5File.deleteOnExit();
-
-        assertEquals("e2fcf77cff026f141643c580cbc5827d", CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"));
+         
+        assertEquals("edd7db004ab7c49a488c0f3ed14eb770",CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
   
-        File unalignedBamFile = new File("testdata/986_1_unaligned.bam");
+        File unalignedBamFile = new File(tmpdir + "/986_1_unaligned.bam");
         unalignedBamFile.deleteOnExit();
 
-        File unalignedMd5File = new File("testdata/986_1_unaligned.bam.md5");
+        File unalignedMd5File = new File(tmpdir + "/986_1_unaligned.bam.md5");
         unalignedMd5File.deleteOnExit();
-        
-        File metricsFile = new File("testdata/986_1_unaligned.bam_alignment_filter_metrics.json");
+          
+        File metricsFile = new File(tmpdir + "/986_1_unaligned.bam_alignment_filter_metrics.json");
         metricsFile.deleteOnExit();
-
-        assertEquals("e4d38f7fdf65cd7069631c72ab0f5103", CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"));
-  
+ 
     }
     /**
      * Test of instanceMain method and program record to separate unmapped reads into one file for single read data.
@@ -167,51 +151,56 @@ public class AlignmentFilterTest {
     @Test
     public void testSingleReadMainUnMappedFile() throws FileNotFoundException, IOException {
         
-        System.out.println("instanceMain with unmapped file");
-
+        System.out.println("instanceMain with single read unmapped file");
+        
+        String tmpdir = "testdata/test3";
+        
         String[] args = {
             "IN=testdata/bam/single_986_1.sam",
             "IN=testdata/bam/single_986_1_human_unmapped_with_ref.sam",
-            "OUT=testdata/single_986_1.bam",
-            "OUT=testdata/single_986_1_human.bam",
-            "OUTPUT_UNALIGNED=testdata/single_986_1_unaligned.bam",
+            "OUT=" + tmpdir + "/single_986_1.bam",
+            "OUT=" + tmpdir + "/single_986_1_human.bam",
+            "OUTPUT_UNALIGNED=" + tmpdir + "/single_986_1_unaligned.bam",
             "CREATE_MD5_FILE=true",
-            "TMP_DIR=testdata/",
+            "TMP_DIR=" + tmpdir + "/",
             "VALIDATION_STRINGENCY=SILENT"
         };
 
         filter.instanceMain(args);
         assertEquals(
           filter.getCommandLine(),
-          "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/single_986_1.sam, testdata/bam/single_986_1_human_unmapped_with_ref.sam] OUTPUT_ALIGNMENT=[testdata/single_986_1.bam, testdata/single_986_1_human.bam] OUTPUT_UNALIGNED=testdata/single_986_1_unaligned.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+          "uk.ac.sanger.npg.picard.AlignmentFilter " +
+          "INPUT_ALIGNMENT=[testdata/bam/single_986_1.sam, testdata/bam/single_986_1_human_unmapped_with_ref.sam] " +
+          "OUTPUT_ALIGNMENT=[" + tmpdir + "/single_986_1.bam, " + tmpdir + "/single_986_1_human.bam] " +
+          "OUTPUT_UNALIGNED=" + tmpdir + "/single_986_1_unaligned.bam TMP_DIR=[" + tmpdir + "] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
         
-        File filteredBamFile = new File("testdata/single_986_1.bam");
+        File filteredBamFile = new File(tmpdir + "/single_986_1.bam");
         filteredBamFile.deleteOnExit();
 
-        File md5File = new File("testdata/single_986_1.bam.md5");
+        File md5File = new File(tmpdir  + "/single_986_1.bam.md5");  
         md5File.deleteOnExit();
         
-        assertEquals("5082d4b82ec8815b7a621e50bfffa8c3", CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
+        assertEquals("55f0a25bec8ad386896f29cd2411da89", CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
        
-        File filteredHumanBamFile = new File("testdata/single_986_1_human.bam");
+        File filteredHumanBamFile = new File(tmpdir + "/single_986_1_human.bam");
         filteredHumanBamFile.deleteOnExit();
 
-        File humanMd5File = new File("testdata/single_986_1_human.bam.md5");
+        File humanMd5File = new File(tmpdir + "/single_986_1_human.bam.md5");
         humanMd5File.deleteOnExit();
-
-        assertEquals("d3140987f7c9d5ff74031019449e8579", CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"));
-  
-        File unalignedBamFile = new File("testdata/single_986_1_unaligned.bam");
-        unalignedBamFile.deleteOnExit();
-
-        File unalignedMd5File = new File("testdata/single_986_1_unaligned.bam.md5");
-        unalignedMd5File.deleteOnExit();
         
-        File metricsFile = new File("testdata/single_986_1_unaligned.bam_alignment_filter_metrics.json");
-        metricsFile.deleteOnExit();
-
-        assertEquals("251dcbc63c0dac88a31f777dc379992c", CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"));
+        assertEquals("4a946d11b021ea265ea8042a53705590", CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"));
   
+        File unalignedBamFile = new File(tmpdir + "/single_986_1_unaligned.bam");
+        unalignedBamFile.deleteOnExit();
+     
+        File unalignedMd5File = new File(tmpdir + "/single_986_1_unaligned.bam.md5");
+        unalignedMd5File.deleteOnExit();
+      
+        File metricsFile = new File(tmpdir + "/single_986_1_unaligned.bam_alignment_filter_metrics.json");
+        metricsFile.deleteOnExit();
+        
+        assertEquals("d398ee75d56355332831cc2b862fe6ca", CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"));
+        
     }
 
 }
