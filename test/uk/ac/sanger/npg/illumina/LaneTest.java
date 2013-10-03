@@ -50,45 +50,27 @@ public class LaneTest {
 
     private static File output = new File("testdata/6000_1.bam");
 
-    private static Lane lane;
-
     public LaneTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        
-        System.out.println("Create a lane");
-        lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        
-        System.out.println("tearDownClass");
-        lane = null;
-    }
     @Test (expected = RuntimeException.class)
     public void bothConfigfileNotAvailable(){
        
-        System.out.println("Failed to create a lane with non-exist intensity and basecall directories");
+        System.out.println("Failed to create a lane with non-existent intensity and basecall directories");
         Lane failedLane = new Lane(intensityDir + "_not", baseCallDir + "_not", null, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
     }
     
     @Test
-    public void readBaseCallProgramOK(){
+    public void readLaneOK(){
         
+    	Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("readBaseCallProgramRecord");
         SAMProgramRecord baseCallProgram = lane.readBaseCallProgramRecord();
         assertEquals( baseCallProgram.getId(), "basecalling");
         assertEquals( baseCallProgram.getProgramName(), "RTA");
         assertEquals( baseCallProgram.getProgramVersion(), "1.10.36.0");
         assertEquals( baseCallProgram.getAttribute("DS"), "Basecalling Package");
-    }
-
-    @Test
-    public void readTileListOK(){
         
         System.out.println("readTileList");
         int [] expectedTileList = {
@@ -98,10 +80,6 @@ public class LaneTest {
             2201,2202,2203,2204,2205,2206,2207,2208
         };
         assertArrayEquals(expectedTileList, lane.readTileList());
-    }
-
-    @Test
-    public void reduceTileListOK(){
 
         System.out.println("reduceTileList");
         int [] givenTileList = {
@@ -111,16 +89,39 @@ public class LaneTest {
             2201,2202,2203,2204,2205,2206,2207,2208
         };
         lane.setTileList(givenTileList);
-
+        
         lane.reduceTileList(1102, 2);
         
-        int [] expectedTileList = {1102,1103};
-        assertArrayEquals(lane.getTileList(), expectedTileList);
+        int [] newExpectedTileList = {1102,1103};
+        assertArrayEquals(lane.getTileList(), newExpectedTileList);
+    
+        System.out.println("readRunfoder");
+        assertEquals(lane.readRunfoder(), "110323_HS13_06000_B_B039WABXX");
+
+        System.out.println("readRunDate");
+        Date runDate = lane.readRunDate();
+        long expected = 1300838400000L;
+        assertEquals(runDate.getTime(), expected);
+
+        System.out.println("readInstrumentAndRunID");
+        assertEquals(lane.readInstrumentAndRunID(), "HS13_6000");
+
+        System.out.println("readCycleRangeByRead");
+        int[][] expectedRange = {
+        		{1,2},
+        		{51,52}
+        };
+        assertArrayEquals(lane.readCycleRangeByRead(), expectedRange);
+
+        System.out.println("readBarCodeIndexCycles");
+        assertNull(lane.readBarCodeIndexCycles());
+
     }
 
     @Test (expected = RuntimeException.class)
-    public void reduceTileListFirstTileException(){
+    public void reduceTileListTileException(){
 
+    	Lane lane1 = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("Fail to reduceTileList");
         int [] givenTileList = {
             1101,1102,1103,1104,1105,1106,1107,1108,
@@ -128,85 +129,39 @@ public class LaneTest {
             2101,2102,2103,2104,2105,2106,2107,2108,
             2201,2202,2203,2204,2205,2206,2207,2208
         };
-        lane.setTileList(givenTileList);
+        lane1.setTileList(givenTileList);
 
-        lane.reduceTileList(3308, 2);
-    }
-
-    @Test (expected = RuntimeException.class)
-    public void reduceTileListTileLimitException(){
+        lane1.reduceTileList(3308, 2);
 
         System.out.println("Fail to reduceTileList again");
-        int [] givenTileList = {
+        int [] newGivenTileList = {
             1101,1102,1103,1104,1105,1106,1107,1108,
             1201,1202,1203,1204,1205,1206,1207,1208,
             2101,2102,2103,2104,2105,2106,2107,2108,
             2201,2202,2203,2204,2205,2206,2207,2208
         };
-        lane.setTileList(givenTileList);
+        lane1.setTileList(newGivenTileList);
 
-        lane.reduceTileList(1103, 33);
-    }
-
-    @Test
-    public void readRunfolderOK(){
-        
-        System.out.println("readRunfoder");
-        assertEquals(lane.readRunfoder(), "110323_HS13_06000_B_B039WABXX");
-    }
- 
-    @Test
-    public void readRunDateOK(){
-        
-        System.out.println("readRunDate");
-        Date runDate = lane.readRunDate();
-        long expected = 1300838400000L;
-        assertEquals(runDate.getTime(), expected);
-    }
-    
-    @Test
-    public void readInstrumentAndRunIDOK(){
-        
-        System.out.println("readInstrumentAndRunID");
-        assertEquals(lane.readInstrumentAndRunID(), "HS13_6000");
+        lane1.reduceTileList(1103, 33);
     }
 
-    @Test
-    public void reaCycleRangeByReadOK(){
-        
-        System.out.println("readCycleRangeByRead");
-        int[][] expected = {
-            {1,2},
-            {51,52}
-        };
-        assertArrayEquals(lane.readCycleRangeByRead(), expected);
-    }
-
-    @Test
-    public void reaBarCodeIndexCyclesNotOK(){
-        
-        System.out.println("readBarCodeIndexCycles");
-        assertNull(lane.readBarCodeIndexCycles());
-    }
-
+   
     @Test
     public void checkCycleRangeByReadOK() throws Exception{
-        
+           	
+    	Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("checkCycleRangeByRead");
         HashMap<String, int[]> cycleRangeByRead = lane.checkCycleRangeByRead();
         int [] read1CycleRange = {1, 2};
         assertArrayEquals(cycleRangeByRead.get("read1"), read1CycleRange);
         int [] read2CycleRange = {51, 52};
         assertArrayEquals(cycleRangeByRead.get("read2"), read2CycleRange);
-    }
-
-    @Test
-    public void checkCycleRangeByReadFromRunInfoOK() throws Exception{
-        
+    
         System.out.println("getCycleRangeByReadFromRunInfoFile");
-        HashMap<String, int[]> cycleRangeByRead = lane.getCycleRangeByReadFromRunInfoFile();
-        assertNull(cycleRangeByRead);
+        HashMap<String, int[]> cycleRangeByRead1 = lane.getCycleRangeByReadFromRunInfoFile();
+        assertNull(cycleRangeByRead1);
     }
+    
     @Test
     public void readCycleRangeFromRunParameters(){
 
@@ -220,8 +175,7 @@ public class LaneTest {
         boolean pfFilter2 = true;
 
         Lane lane2 = new Lane(intensityDir2, baseCallDir2, runfolderDir2, laneNumber2, includeSecondCall2, pfFilter2, output, barcodeSeqTagName, barcodeQualTagName);
-
-        
+    
         HashMap<String, int[]> cycleRangeByRead = lane2.getCycleRangeByReadFromRunParametersFile();
         
         assertEquals(cycleRangeByRead.keySet().size(), 3);
@@ -275,25 +229,18 @@ public class LaneTest {
     }
 
     @Test
-    public void readInstrumentProgramOK(){
-
+    public void readInstrumentLaneHeaderOK() throws Exception{
+    	
+    	Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("readInstrumentProgramRecord");
         SAMProgramRecord instrumentProgram = lane.readInstrumentProgramRecord();
         assertEquals( instrumentProgram.getId(), "SCS");
         assertEquals( instrumentProgram.getProgramName(), "RTA");
         assertEquals( instrumentProgram.getProgramVersion(), "1.10.36.0");
         assertEquals( instrumentProgram.getAttribute("DS"), "Controlling software on instrument");
-    }
-
-    @Test
-    public void readConfigsOK() throws Exception{
-        
+    
         System.out.println("readConfigs");
         assertTrue(lane.readConfigs());
-    }
-
-    @Test
-    public void generateHeaderOK() throws Exception{
 
         System.out.println("Generate output bam header");
         SAMReadGroupRecord readGroup = new SAMReadGroupRecord("1");
@@ -305,22 +252,18 @@ public class LaneTest {
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
         factory.setCreateMd5File(true);
-        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, tempBamFile);
+        SAMFileWriter outputSamHeader = factory.makeSAMOrBAMWriter(header, true, tempBamFile);
 
-        outputSam.close();
+        outputSamHeader.close();
 
-        File md5File = new File(tempBamFile.getAbsolutePath() + ".md5");
-        md5File.deleteOnExit();
-        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
-        String md5 = md5Stream.readLine();
-        assertEquals("121501fc17f92ccc1360ccb7c6bb8762", md5);
-    }
-
-    @Test
-    public void generateOutputSamStreamOK() throws Exception{
-
+        File headerMd5File = new File(tempBamFile.getAbsolutePath() + ".md5");
+        headerMd5File.deleteOnExit();
+        BufferedReader headerMd5Stream = new BufferedReader(new FileReader(headerMd5File));
+        String headerMd5 = headerMd5Stream.readLine();
+        assertEquals("121501fc17f92ccc1360ccb7c6bb8762", headerMd5);
+        	
         System.out.println("Generate output stream");
-        
+
         SAMFileWriterFactory.setDefaultCreateMd5File(true);
         SAMFileWriter outputSam = lane.generateOutputSamStream();
         assertNotNull(outputSam);
@@ -332,13 +275,9 @@ public class LaneTest {
         BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
         String md5 = md5Stream.readLine();
         assertEquals("121501fc17f92ccc1360ccb7c6bb8762", md5);
-    }
 
-    @Test
-    public void processTilesOK() throws IOException, Exception{
-        
         System.out.println("Process Tiles");
-        
+
         String id = "HS13_6000";
         int[] cycleRangeRead1 = {1, 2};
         int[] cycleRangeRead2 = {51, 52};
@@ -354,25 +293,25 @@ public class LaneTest {
         lane.setId(id);
         lane.setTileList(tileList);
 
-        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
-        tempBamFile.deleteOnExit();
+        File tempBamFile1 = File.createTempFile("test", ".bam", new File("testdata/"));
+        tempBamFile1.deleteOnExit();
 
-        SAMFileWriterFactory factory = new SAMFileWriterFactory();
-        factory.setCreateMd5File(true);
-        SAMFileHeader header = new SAMFileHeader();
-        SAMFileWriter outputSam = factory.makeSAMOrBAMWriter(header, true, tempBamFile);
+        SAMFileWriterFactory factory1 = new SAMFileWriterFactory();
+        factory1.setCreateMd5File(true);
+        SAMFileHeader header1 = new SAMFileHeader();
+        SAMFileWriter outputSam1 = factory1.makeSAMOrBAMWriter(header1, true, tempBamFile1);
 
-        assertTrue(lane.processTiles(outputSam));
+        assertTrue(lane.processTiles(outputSam1));
 
-        outputSam.close();
+        outputSam1.close();
 
-        File md5File = new File(tempBamFile.getAbsolutePath() + ".md5");
-        md5File.deleteOnExit();
-        BufferedReader md5Stream = new BufferedReader(new FileReader(md5File));
-        String md5 = md5Stream.readLine();
-        assertEquals("0dbd4158a9d9dea6403daa285945113b", md5);
+        File md5File1 = new File(tempBamFile1.getAbsolutePath() + ".md5");
+        md5File1.deleteOnExit();
+        BufferedReader md5Stream1 = new BufferedReader(new FileReader(md5File1));
+        String md51 = md5Stream1.readLine();
+        assertEquals("0dbd4158a9d9dea6403daa285945113b", md51);
     }
-    
+
     @Test
     public void checkGARunOK() throws Exception {
         
