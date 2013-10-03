@@ -43,7 +43,7 @@ public class PosFileReaderTest {
     
     @AfterClass
     public static void tearDownClass() throws Exception {
-        System.out.println("Close the pos fiile reader");
+        System.out.println("Close the pos file reader");
         posFileReader.close();
     }
     
@@ -54,13 +54,10 @@ public class PosFileReaderTest {
     }
     @Test
     public void testCountTotalClusters(){
-        System.out.println("check total cluster number correct");
+        System.out.println("Check total cluster number correct");
         assertEquals(posFileReader.getTotalCluster(), 353693);
-    }
-    
-    @Test
-    public void testNext() throws FileNotFoundException{
-        System.out.println("test next method");
+   
+        System.out.println("Test next method");
         PositionFileReader.Position firstPos = posFileReader.next();
         assertEquals(firstPos.x, "1547");
         assertEquals(firstPos.y, "997");
@@ -69,12 +66,9 @@ public class PosFileReaderTest {
             posFileReader.next();
         }
         assertEquals(posFileReader.getCurrentTotalClusters(), 353693);
-    }
     
-    @Test
-    public void testNoMoreNext(){
-        System.out.println("test no more next method");
-        PositionFileReader.Position firstPos = posFileReader.next();
-        assertNull(firstPos);
+        System.out.println("Test no more next method");
+        PositionFileReader.Position lastPos = posFileReader.next();
+        assertNull(lastPos);
     }
 }
