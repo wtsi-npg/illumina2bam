@@ -170,8 +170,8 @@ public class SplitBamByChromosomesUnitTest {
     System.out.println("SplitBamByChromosomes instanceMain: xahuman test case, V=false, U=false");
     
     String[] splitPaths = {
-        "testdata/10503_1_human_split_by_chromosome_excluded.sam", 
-        "testdata/10503_1_human_split_by_chromosome_target.sam" };
+        "testdata/10503_1_human_split_by_chromosome_excluded_no_unaligned.sam", 
+        "testdata/10503_1_human_split_by_chromosome_target_no_unaligned.sam" };
     String[] args = {
         "I=testdata/bam/10503_1_fix_mate.sam",
         "X="+splitPaths[0],
