@@ -229,8 +229,8 @@ public class SplitBamByChromosomesUnitTest {
 
         if (i == 0) {
         	 System.out.println(splitPaths[0]+"\t checking read groups in excluded");
-        	 //assertEquals(8, readNamesInFile.toArray().length);
-             //assertArrayEquals(expectedReadNamesInExcluded, readNames);
+        	 assertEquals(8, readNamesInFile.toArray().length);
+             assertArrayEquals(expectedReadNamesInExcluded, readNames);
         }
         else {
             System.out.println(splitPaths[1]+"\t checking read groups in target");
@@ -311,7 +311,7 @@ UNALIGN read1 read2 destination
     for (int i=0; i<2; i++) {
     	
         File splitFile = new File(splitPaths[i]);
-        //splitFile.deleteOnExit();
+        splitFile.deleteOnExit();
         assertTrue(splitFile.exists());
      
         IoUtil.assertFileIsReadable(splitFile);
