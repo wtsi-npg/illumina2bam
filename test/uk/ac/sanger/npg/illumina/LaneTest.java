@@ -117,7 +117,6 @@ public class LaneTest {
         assertNull(lane.readBarCodeIndexCycles());
 
     }
-
     @Test (expected = RuntimeException.class)
     public void reduceTileListTileException(){
 
@@ -132,20 +131,23 @@ public class LaneTest {
         lane1.setTileList(givenTileList);
 
         lane1.reduceTileList(3308, 2);
+    }
+    
+    @Test (expected = RuntimeException.class)
+    public void reduceTileListTileAgainException(){
+    	Lane lane1 = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+    	System.out.println("Fail to reduceTileList again");
+    	int [] newGivenTileList = {
+    			1101,1102,1103,1104,1105,1106,1107,1108,
+    			1201,1202,1203,1204,1205,1206,1207,1208,
+    			2101,2102,2103,2104,2105,2106,2107,2108,
+    			2201,2202,2203,2204,2205,2206,2207,2208
+    	};
+    	lane1.setTileList(newGivenTileList);
 
-        System.out.println("Fail to reduceTileList again");
-        int [] newGivenTileList = {
-            1101,1102,1103,1104,1105,1106,1107,1108,
-            1201,1202,1203,1204,1205,1206,1207,1208,
-            2101,2102,2103,2104,2105,2106,2107,2108,
-            2201,2202,2203,2204,2205,2206,2207,2208
-        };
-        lane1.setTileList(newGivenTileList);
-
-        lane1.reduceTileList(1103, 33);
+    	lane1.reduceTileList(1103, 33);
     }
 
-   
     @Test
     public void checkCycleRangeByReadOK() throws Exception{
            	
