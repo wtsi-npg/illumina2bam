@@ -49,7 +49,7 @@ public class BamMergerTest {
     public void testMain() throws FileNotFoundException, IOException {
         
         System.out.println("instanceMain");
-        
+              
         String[] args = {
             "ALIGNED=testdata/bam/6210_8_aligned.sam",
             "I=testdata/bam/6210_8.sam",
@@ -63,13 +63,6 @@ public class BamMergerTest {
         assertEquals(merger.getCommandLine(), "uk.ac.sanger.npg.picard.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned.sam INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_merged.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa KEEP_ALL_PG=false KEEP_EXTRA_UNMAPPED_READS=false REPLACE_ALIGNED_BASE_QUALITY=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
               );
 
-    }
-        
-    /**
-     * Test output bam MD5
-     */
-    @Test
-    public void testOutputBam() throws FileNotFoundException, IOException {
         System.out.println("checking output bam md5");
         File mergedBamFile = new File("testdata/6210_8_merged.bam");
         mergedBamFile.deleteOnExit();

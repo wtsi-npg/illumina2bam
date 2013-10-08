@@ -33,9 +33,11 @@ public class FilterFileReaderTest {
     private static String testFilterFile = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/s_1_1101.filter";
     private static FilterFileReader filterFileReader;
 
+    // Leave the @Before/AfterClass to see if these get threaded as well as @Test
+    
     @BeforeClass
     public static void setUpClass() throws Exception {
-        System.out.println("Crate a filter file reader");
+        System.out.println("Create a filter file reader");
         filterFileReader = new FilterFileReader(testFilterFile);
     }
 
@@ -51,36 +53,27 @@ public class FilterFileReaderTest {
         assertEquals(filterFileReader.getTotalClusters(), 2609912);
         assertEquals(filterFileReader.getCurrentCluster(), 0);
         assertTrue(filterFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextFirstClusterOK() {
+  
         System.out.println("Read first cluster");
         int filter = (Integer) filterFileReader.next();
         assertEquals(filter, 0);
         assertEquals(filterFileReader.getCurrentCluster(), 1);
         assertEquals(filterFileReader.getCurrentPFClusters(), 0);
         assertTrue(filterFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextMiddleClusterOK() {
-        System.out.println("Read some more clusters and check 319th clsuter");
+   
+        System.out.println("Read some more clusters and check 319th cluster");
         for (int i = 0; i < 317; i++) {
             filterFileReader.next();
         }
-        int filter = (Integer) filterFileReader.next();
+        filter = (Integer) filterFileReader.next();
         assertEquals(filter, 1);
         assertEquals(filterFileReader.getCurrentCluster(), 319);
         assertEquals(filterFileReader.getTotalClusters(), 2609912);
         assertEquals(filterFileReader.getCurrentPFClusters(), 264);
         assertTrue(filterFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextLastClusterOK() {
+   
         System.out.println("Read all clusters till the last one");
-        int filter = -1;
+        filter = -1;
 
         while (filterFileReader.hasNext()) {
             filter = (Integer) filterFileReader.next();

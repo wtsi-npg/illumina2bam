@@ -1,3 +1,7 @@
+release 1.12
+- use separate test directories test1/2/3 where threading can cause output file clashes e.g. AlignmentFilterTest
+- merge tests where one test uses the output of another e.g. ChangeBamHeaderTest
+
 release-1.11
 - include PG field in new RG header records
 - use Picard 1.96 rather than 1.84
