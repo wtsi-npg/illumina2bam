@@ -151,7 +151,7 @@ public class TileTest {
         assertEquals(tile.convertPhredQualByteArrayToFastqString(readIndex[1]), "!");
 
         System.out.println("ProcessTile");
-        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
+        File tempBamFile = File.createTempFile("testNextCluster", ".bam", new File("testdata/"));
         tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
@@ -175,7 +175,7 @@ public class TileTest {
     public void checkCorruptedBCLFile() throws Exception {
         
         System.out.println("Corrupted bcl file");
-        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
+        File tempBamFile = File.createTempFile("testCorruptedBCL", ".bam", new File("testdata/"));
         tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
@@ -203,7 +203,7 @@ public class TileTest {
     public void processAnotherTile() throws Exception {
         
         System.out.println("Process another tile from another run");
-        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
+        File tempBamFile = File.createTempFile("testAnotherTile", ".bam", new File("testdata/"));
         tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
