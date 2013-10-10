@@ -78,14 +78,6 @@ public class BamQualityQuantisationTest {
 
         qualObj.instanceMain(args);   
         assertEquals(qualObj.getCommandLine(), "uk.ac.sanger.npg.picard.BamQualityQuantisation INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_squashed.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    USE_OLD_QUALITY=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
-
-    }
-        
-    /**
-     * Test output bam MD5
-     */
-    @Test
-    public void testOutputBam() throws FileNotFoundException, IOException {
         
         System.out.println("checking output bam md5");
         

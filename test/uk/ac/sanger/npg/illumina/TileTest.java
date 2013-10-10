@@ -30,6 +30,7 @@ import net.sf.samtools.SAMFileWriterFactory;
 import net.sf.samtools.SAMRecord;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -74,51 +75,27 @@ public class TileTest {
     }
 
     @Test
-    public void checkBclSclFileName() {
+    public void checkTileOK() throws Exception {
         
         System.out.println("getBaseCallFileName");
         assertEquals(tile.getBaseCallFileName(100, true), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C100.1/s_1_1101.bcl");
         assertEquals(tile.getBaseCallFileName(100, false), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C100.1/s_1_1101.scl");
-    }
-    
-    @Test
-    public void checkFilterFileName(){
         
         System.out.println("Checking filter file name in base call lane directory");
         assertEquals(tile.getFilterFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/s_1_1101.filter");
-    }
-
-    @Test
-    public void checkPosFileName(){
         
         System.out.println("Checking pos file name");
         assertEquals(tile.getPosFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/s_1_1101_pos.txt");
-    }   
- 
-    @Test
-    public void checkclocsFileName(){
         
         System.out.println("Checking clocs file name");
         assertEquals(tile.getcLocsFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.clocs");
-    }
-        
-    @Test
-    public void checkLocsFileName(){
         
         System.out.println("Checking locs file name");
         assertEquals(tile.getLocsFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.locs");
-    }
- 
-    @Test
-    public void checkReadName() {
-        
+    
         System.out.println("getReadName");
         String[] pos = {"21238", "9999"};
         assertEquals(tile.getReadName(pos), "HS13_6000:1:1101:21238:9999");
-    }
-
-    @Test
-    public void checkOneSAMRecord() {
         
         System.out.println("getSAMRecord");
         byte [][] baseQuals = { {78, 71}, {33, 32}};
@@ -131,27 +108,19 @@ public class TileTest {
                 + "	*	*	0	*	*	*	*	"
                 + "NG	BA	E2:Z:AAA	RG:Z:1	QT:Z:FC	RT:Z:TC	ci:i:5";
         assertEquals(record.format(), result);
-    }
-    
-    @Test
-    public void checkOneSAMRecordDualIndex() {
         
         System.out.println("getSAMRecord with dual index reads");
-        byte [][] baseQuals = { {78, 71}, {33, 32}};
-        String readName = "HS13_6000:1:1101:21238:9999";
-        String secondBases = "AAA";
-        byte [][] baseQualsIndex = {{84, 67}, {37 ,34} };
+        byte [][] baseQuals1 = { {78, 71}, {33, 32}};
+        String readName1 = "HS13_6000:1:1101:21238:9999";
+        String secondBases1 = "AAA";
+        byte [][] baseQualsIndex1 = {{84, 67}, {37 ,34} };
         byte [][] baseQualsIndex2 = {{84, 67}, {37 ,34} };
         tile.setSecondBarcodeSeqTagName("sb");
         tile.setSecondBarcodeQualTagName("qd");
-        SAMRecord record = tile.getSAMRecord(
-                null, readName, 5, baseQuals, secondBases, baseQualsIndex, baseQualsIndex2, 0, true, true);
-        String result = "HS13_6000:1:1101:21238:9999	589	*	*	0	*	*	*	*	NG	BA	E2:Z:AAA	RG:Z:1	QT:Z:FC	RT:Z:TC	sb:Z:TC	qd:Z:FC	ci:i:5";
-        assertEquals(record.format(), result);
-    }
-
-    @Test
-    public void checkFullInitialMethods() throws Exception {
+        SAMRecord record1 = tile.getSAMRecord(
+                null, readName1, 5, baseQuals1, secondBases1, baseQualsIndex1, baseQualsIndex2, 0, true, true);
+        String result1 = "HS13_6000:1:1101:21238:9999	589	*	*	0	*	*	*	*	NG	BA	E2:Z:AAA	RG:Z:1	QT:Z:FC	RT:Z:TC	sb:Z:TC	qd:Z:FC	ci:i:5";
+        assertEquals(record1.format(), result1);
         
         System.out.println("Check initial methods");
         assertEquals(tile.getcLocsFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.clocs");
@@ -160,10 +129,6 @@ public class TileTest {
         assertTrue(tile.isPairedRead());
         assertEquals(tile.getBclFileReaderListByRead().size(), 0);
         assertEquals(tile.getSclFileReaderListByRead().size(), 0);
-    }
-
-    @Test
-    public void checkOpenBaseCallFiles() throws Exception {
         
         System.out.println("Open basecall files");
         tile.openBaseCallFiles();
@@ -172,10 +137,6 @@ public class TileTest {
         assertEquals(tile.getBclFileReaderListByRead().get("read1").length, 2);
         assertEquals(tile.getBclFileReaderListByRead().get("read2").length, 2);
         assertEquals(tile.getBclFileReaderListByRead().get("readIndex").length, 1);
-    }
-
-    @Test
-    public void checkNextClusterMethods() throws Exception {
 
         System.out.println("Next Cluster methods");
         byte [][] read1 = tile.getNextClusterBaseQuals("read1");
@@ -189,14 +150,9 @@ public class TileTest {
         byte [][] readIndex = tile.getNextClusterBaseQuals("readIndex");
         assertEquals(tile.convertByteArrayToString(readIndex[0]), "N");
         assertEquals(tile.convertPhredQualByteArrayToFastqString(readIndex[1]), "!");
-    }
-
-
-    @Test
-    public void checkProcessTileOK() throws Exception {
 
         System.out.println("ProcessTile");
-        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
+        File tempBamFile = File.createTempFile("testNextCluster", ".bam", new File("testdata/"));
         tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
@@ -220,7 +176,8 @@ public class TileTest {
     public void checkCorruptedBCLFile() throws Exception {
         
         System.out.println("Corrupted bcl file");
-        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
+        
+        File tempBamFile = new File("testdata/testCorruptedBCL.bam");
         tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
@@ -247,8 +204,9 @@ public class TileTest {
     @Test
     public void processAnotherTile() throws Exception {
         
-        System.out.println("Process another tile from antoher run");
-        File tempBamFile = File.createTempFile("test", ".bam", new File("testdata/"));
+        System.out.println("Process another tile from another run");
+        
+        File tempBamFile = new File("testdata/testAnotherTile.bam");
         tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
@@ -302,9 +260,9 @@ public class TileTest {
         
         assertEquals(tileGA.getFilterFileName(), "testdata/110519_IL33_06284/Data/Intensities/BaseCalls//s_8_0112.filter");
         
-        File tempBamFileGA = File.createTempFile("test_ga", ".bam", new File("testdata/"));
+        File tempBamFileGA = new File("testdata/test_ga.bam");
         tempBamFileGA.deleteOnExit();
-
+ 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
         factory.setCreateMd5File(true);
         SAMFileHeader header = new SAMFileHeader();
