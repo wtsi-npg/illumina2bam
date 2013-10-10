@@ -249,7 +249,8 @@ public class LaneTest {
         lane.setReadGroup(readGroup);
 
         SAMFileHeader header = lane.generateHeader();
-        File tempBamFile = File.createTempFile("testGenerateHeader", ".bam", new File("testdata/"));
+        
+        File tempBamFile = new File("testdata/testGenerateHeader.bam");
         tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
@@ -294,8 +295,8 @@ public class LaneTest {
         lane.setCycleRangeByRead(cycleRangeByRead);
         lane.setId(id);
         lane.setTileList(tileList);
-
-        File tempBamFile1 = File.createTempFile("testProcessTiles", ".bam", new File("testdata/"));
+      
+        File tempBamFile1 = new File("testdata/testProcessTiles.bam");
         tempBamFile1.deleteOnExit();
 
         SAMFileWriterFactory factory1 = new SAMFileWriterFactory();

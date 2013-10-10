@@ -30,6 +30,7 @@ import net.sf.samtools.SAMFileWriterFactory;
 import net.sf.samtools.SAMRecord;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -175,7 +176,8 @@ public class TileTest {
     public void checkCorruptedBCLFile() throws Exception {
         
         System.out.println("Corrupted bcl file");
-        File tempBamFile = File.createTempFile("testCorruptedBCL", ".bam", new File("testdata/"));
+        
+        File tempBamFile = new File("testdata/testCorruptedBCL.bam");
         tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
@@ -203,7 +205,8 @@ public class TileTest {
     public void processAnotherTile() throws Exception {
         
         System.out.println("Process another tile from another run");
-        File tempBamFile = File.createTempFile("testAnotherTile", ".bam", new File("testdata/"));
+        
+        File tempBamFile = new File("testdata/testAnotherTile.bam");
         tempBamFile.deleteOnExit();
 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
@@ -257,9 +260,9 @@ public class TileTest {
         
         assertEquals(tileGA.getFilterFileName(), "testdata/110519_IL33_06284/Data/Intensities/BaseCalls//s_8_0112.filter");
         
-        File tempBamFileGA = File.createTempFile("test_ga", ".bam", new File("testdata/"));
+        File tempBamFileGA = new File("testdata/test_ga.bam");
         tempBamFileGA.deleteOnExit();
-
+ 
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
         factory.setCreateMd5File(true);
         SAMFileHeader header = new SAMFileHeader();
