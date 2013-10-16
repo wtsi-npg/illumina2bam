@@ -19,9 +19,7 @@
  */
 package uk.ac.sanger.npg.illumina.file.reader;
 
-import org.junit.AfterClass;
 import static org.junit.Assert.*;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -33,29 +31,21 @@ public class CLocsFileReaderTest {
     private static String testCLocsFile = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.clocs";
     private static CLocsFileReader cLocsFileReader;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        System.out.println("Create a clocs file reader");
-        cLocsFileReader = new CLocsFileReader(testCLocsFile);
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        System.out.println("Close the clocs file reader");
-        cLocsFileReader.close();
-    }
-
     @Test
-    public void checkBCLHeaderOK() {
+    public void checkClocsFileOK() {
+    	System.out.println("Create a clocs file reader");
+        try {
+			cLocsFileReader = new CLocsFileReader(testCLocsFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        
         System.out.println("Check header");
         assertEquals(cLocsFileReader.getTotalBlocks(), 65600);
         assertEquals(cLocsFileReader.getCurrentBlock(), 1);
         assertEquals(cLocsFileReader.getCurrentTotalClusters(), 0);
         assertTrue(cLocsFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextFirstClusterOK() {
+   
         System.out.println("Check first cluster");
         String[] cluster = cLocsFileReader.next().toArray();
         assertEquals(cluster[0], "1235");
@@ -63,27 +53,20 @@ public class CLocsFileReaderTest {
         assertEquals(cLocsFileReader.getCurrentBlock(), 247);
         assertEquals(cLocsFileReader.getCurrentTotalClusters(), 1);
         assertTrue(cLocsFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextMiddleClusterOK() {
+   
         System.out.println("Check some more clusters and check 307th cluster");
         for (int i = 0; i < 305; i++) {
             cLocsFileReader.next();
         }
-        String[] cluster = cLocsFileReader.next().toArray();
+        cluster = cLocsFileReader.next().toArray();
         assertEquals(cluster[0], "1279");
         assertEquals(cluster[1], "2120");
         assertEquals(cLocsFileReader.getCurrentBlock(), 330);
         assertEquals(cLocsFileReader.getCurrentTotalClusters(), 307);
         assertTrue(cLocsFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextLastClusterOK() {
-
+  
         System.out.println("Read all clusters but still blocks not read");
-        String[] cluster = null;
+        cluster = null;
 
         while (cLocsFileReader.getCurrentTotalClusters() < 2609912) {
             cluster = cLocsFileReader.next().toArray();
@@ -93,23 +76,36 @@ public class CLocsFileReaderTest {
         assertEquals(cLocsFileReader.getCurrentBlock(), 65518);
         assertEquals(cLocsFileReader.getCurrentTotalClusters(), 2609912);
         assertTrue(cLocsFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextLastBlockOK() {
+  
         System.out.println("No more cluster and block");
-        PositionFileReader.Position cluster = null;
+        PositionFileReader.Position cluster2 = null;
 
         while (cLocsFileReader.hasNext()) {
-            cluster = cLocsFileReader.next();
+            cluster2 = cLocsFileReader.next();
         }
-        assertNull(cluster);
+        assertNull(cluster2);
         assertEquals(cLocsFileReader.getCurrentBlock(), 65600);
         assertEquals(cLocsFileReader.getCurrentTotalClusters(), 2609912);
+        
+        System.out.println("Close the clocs file reader");
+        cLocsFileReader.close();
     }
 
     @Test(expected = RuntimeException.class)
     public void checkAfterLastBlock() throws RuntimeException {
+    	System.out.println("Create a clocs file reader");
+        try {
+			cLocsFileReader = new CLocsFileReader(testCLocsFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		PositionFileReader.Position cluster2 = null;
+    	while (cLocsFileReader.hasNext()) {
+            cluster2 = cLocsFileReader.next();
+        }
+    	assertNull(cluster2);
+    	
         System.out.println("Try again after all blocks and cluster being read");
         assertFalse(cLocsFileReader.hasNext());
         assertNull(cLocsFileReader.next());

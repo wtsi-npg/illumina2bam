@@ -20,6 +20,8 @@
 package uk.ac.sanger.npg.illumina.file.reader;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -52,15 +54,11 @@ public class LocsFileReaderTest {
         LocsFileReader locsFileReader1 = new LocsFileReader("testdata/111014_M00119_0028_AMS0001310-00300/Data/Intensities/L001/s_1_1_nonexist.locs");
     }
     @Test
-    public void testTotalCluster() {
+    public void testTotalNextCluster() {
         System.out.println("checking total cluster number and current total cluster number");
         assertEquals(locsFileReader.getTotalCluster(), 235085);
         assertEquals(locsFileReader.getCurrentTotalClusters(), 0);
-    }
-    
-    @Test
-    public void testNext() throws FileNotFoundException{
-        
+  
         System.out.println("test next method");
         String [] firstPos = locsFileReader.next().toArray();
         assertEquals(firstPos[0], "16440");
@@ -77,8 +75,16 @@ public class LocsFileReaderTest {
     }
     
     @Test (expected= RuntimeException.class)
-    public void testNoMoreNext(){
+    public void testNoMoreNext() throws Exception {
+        LocsFileReader locsFileReader2 = new LocsFileReader("testdata/111014_M00119_0028_AMS0001310-00300/Data/Intensities/L001/s_1_1.locs");
+        assertNotNull(locsFileReader2);
+        
+        String [] lastPos = null;
+        for(int i = 1; i< 235086; i++){
+            lastPos = locsFileReader2.next().toArray();
+        }
+        
         System.out.println("test no more next method");
-        locsFileReader.next();
+        locsFileReader2.next();
     }
 }

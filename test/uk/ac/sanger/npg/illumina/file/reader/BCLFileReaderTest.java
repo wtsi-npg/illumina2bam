@@ -30,57 +30,43 @@ import org.junit.Test;
 public class BCLFileReaderTest {
 
     private static String testBCLFile = "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/BaseCalls/L001/C1.1/s_1_1101.bcl";
-    private static BCLFileReader bclFileReader;
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        System.out.println("Crate an bcl file reader");
-        bclFileReader = new BCLFileReader(testBCLFile);
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        System.out.println("Close the bcl file reader");
-        bclFileReader.close();
-    }
+    private BCLFileReader bclFileReader;
 
     @Test
-    public void checkBCLHeaderOK() {
+    public void checkBCLReaderOK() {
+    	System.out.println("Create an bcl file reader");
+        try {
+			bclFileReader = new BCLFileReader(testBCLFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        
         System.out.println("Read bcl header");
-        assertEquals(bclFileReader.getTotalClusters(), 2609912);
-        assertEquals(bclFileReader.getCurrentCluster(), 0);
+        assertEquals(bclFileReader.getTotalClusters(), 2609912); 
+        assertEquals(bclFileReader.getCurrentCluster(), 0); 
         assertTrue(bclFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextFirstClusterOK() {
-        System.out.println("check first cluster");
+   
+        System.out.println("Check first cluster");
         byte [] cluster = bclFileReader.next();
         assertEquals((char) cluster[0], 'N');
         assertEquals((char) (cluster[1]+ 64), 64);
         assertEquals(bclFileReader.getCurrentCluster(), 1);
         assertTrue(bclFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextMiddleClusterOK() {
-        System.out.println("Read the some more clusters and check the 307th one");
+  
+        System.out.println("Read some more clusters and check the 307th one");
         for (int i = 0; i < 305; i++) {
             bclFileReader.next();
         }
-        byte [] cluster = bclFileReader.next();
+        cluster = bclFileReader.next();
         assertEquals((char)cluster[0], 'A');
         assertEquals((char)(cluster[1] + 64 ), '^');
         assertEquals(bclFileReader.getCurrentCluster(), 307);
         assertEquals(bclFileReader.getTotalClusters(), 2609912);
         assertTrue(bclFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextLastClusterOK() {
+   
         System.out.println("Read cluster until last one");
         
-        byte[] cluster = null;
+        cluster = null;
 
         while (bclFileReader.hasNext()) {
             cluster = bclFileReader.next();
@@ -91,12 +77,15 @@ public class BCLFileReaderTest {
         assertEquals(bclFileReader.getTotalClusters(), 2609912);
         assertFalse(bclFileReader.hasNext());
         assertNull(bclFileReader.next());
+        
+        System.out.println("Close the bcl file reader");
+        bclFileReader.close();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void checkCorruptedFileReading() throws Exception{
         System.out.println("Read a corrupted bcl file ");
-        //total cluster in header is correct but the cluster in the scecond half are corrupted
+        //total cluster in header is correct but the clusters in the second half are corrupted
         String testBCLFileCorrupt = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/BaseCalls/L003/C59.1/s_3_1101.bcl";
         BCLFileReader bclFileReaderCorrupt = new BCLFileReader(testBCLFileCorrupt);
         int totalCluster = bclFileReaderCorrupt.getTotalClusters();
@@ -108,7 +97,7 @@ public class BCLFileReaderTest {
 
     @Test
     public void checkCorruptedFileReadingWrongHeader() throws Exception{
-        System.out.println("Read a corrupted bcl file the header with wrong infromation");
+        System.out.println("Read a corrupted bcl file the header with wrong information");
         //total cluster in header is wrong
         String testBCLFileCorrupt = "testdata/110405_HS17_06067_A_B035CABXX/Data/Intensities/BaseCalls/L003/C59.1/s_3_1105.bcl";
         BCLFileReader bclFileReaderCorrupt = new BCLFileReader(testBCLFileCorrupt);
