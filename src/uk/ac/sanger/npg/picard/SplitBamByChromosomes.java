@@ -221,6 +221,11 @@ public class SplitBamByChromosomes extends PicardCommandLine {
 				} else {
 					unaligned = false;
 				}
+			} else { // one or both reads are unmapped
+				if (EXCLUDE_UNALIGNED) {
+					// FixMate has reset * Y or Y * to Y Y
+					destination = EXCLUDED_INDEX;
+				}
 			}
 		}
 		if (unaligned && EXCLUDE_UNALIGNED && destination==TARGET_INDEX) {
