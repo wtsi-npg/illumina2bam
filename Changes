@@ -1,7 +1,6 @@
-release 1.13
-- handled EXCLUDE_UNALIGNED=true for xahuman in SplitBamByChromosomes
 
 release 1.12
+- handled EXCLUDE_UNALIGNED=true for xahuman in SplitBamByChromosomes
 - use separate test directories test1/2/3 where threading can cause output file clashes e.g. AlignmentFilterTest
 - merge tests where one test uses the output of another e.g. ChangeBamHeaderTest
 
