@@ -46,47 +46,37 @@ public class SCLFileReaderTest {
     }
 
     @Test
-    public void checkBCLHeaderOK() {
+    public void checkSCLFileOK() {
         System.out.println("Read the scl file header");
         assertEquals(sclFileReader.getTotalClusters(), 2609912);
         assertEquals(sclFileReader.getCurrentCluster(), 0);
         assertTrue(sclFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextFirstClusterOK() {
-        System.out.println("Read the first clsuter from scl file");
+   
+        System.out.println("Read the first cluster from scl file");
         char cluster = sclFileReader.next();
         assertEquals(cluster, 'A');
         assertEquals(sclFileReader.getCurrentCluster(), 1);
         assertTrue(sclFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextMiddleClusterOK() {
+  
         System.out.println("Read more clusters and check 307th cluster");
         for (int i = 0; i < 305; i++) {
             sclFileReader.next();
         }
-        char cluster = sclFileReader.next();
-        assertEquals(cluster, 'T');
+        char middleCluster = sclFileReader.next();
+        assertEquals(middleCluster, 'T');
 
         assertEquals(sclFileReader.getCurrentCluster(), 307);
         assertEquals(sclFileReader.getTotalClusters(), 2609912);
         assertTrue(sclFileReader.hasNext());
-    }
-
-    @Test
-    public void checkNextLastClusterOK() {
 
         System.out.println("Read more clusters till the last one");
         
-        char cluster = ' ';
+        char lastCluster = ' ';
 
         while (sclFileReader.hasNext()) {
-            cluster = sclFileReader.next();
+            lastCluster = sclFileReader.next();
         }
-        assertEquals(cluster, 'C');
+        assertEquals(lastCluster, 'C');
         assertEquals(sclFileReader.getCurrentCluster(), 2609912);
         assertEquals(sclFileReader.getTotalClusters(), 2609912);
         assertFalse(sclFileReader.hasNext());
