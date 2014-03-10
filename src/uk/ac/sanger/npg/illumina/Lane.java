@@ -65,6 +65,8 @@ public class Lane {
     private String secondBarcodeSeqTagName;
     private String secondBarcodeQualTagName;
 
+	private int bc_read;
+	private int sec_bc_read;
   
     //config xml file name and XML Documetns
     private final String baseCallsConfig;
@@ -220,6 +222,9 @@ public class Lane {
                 tile.setSecondBarcodeSeqTagName(secondBarcodeSeqTagName);
             }
             
+			tile.set_bc_read(this.bc_read);
+			tile.set_sec_bc_read(this.sec_bc_read);
+
             log.info("Opening all basecall files");
             tile.openBaseCallFiles();
             
@@ -1183,6 +1188,20 @@ public class Lane {
     public void setSecondBarcodeQualTagName(String secondBarcodeQualTagName) {
         this.secondBarcodeQualTagName = secondBarcodeQualTagName;
     }
+
+	/**
+	 * @param bc_read which read should the barcode tag sit on?
+	 */
+	public void set_bc_read(int bc_read) {
+		this.bc_read = bc_read;
+	}
+
+	/**
+	 * @param sec_bc_read which read should the second barcode tag sit on?
+	 */
+	public void set_sec_bc_read(int sec_bc_read) {
+		this.sec_bc_read = sec_bc_read;
+	}
 
     /**
      * @return the cycleRangeByRead

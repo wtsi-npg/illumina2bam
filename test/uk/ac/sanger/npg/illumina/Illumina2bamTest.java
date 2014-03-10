@@ -45,7 +45,7 @@ public class Illumina2bamTest {
         public File md5File = null;
         public Data(String fileName){
             tempBamFile = new File(fileName);
-            tempBamFile.deleteOnExit();
+//            tempBamFile.deleteOnExit();
             md5File = new File(tempBamFile.getPath() + ".md5");
             md5File.deleteOnExit();
         }
@@ -192,4 +192,52 @@ public class Illumina2bamTest {
 
         assertEquals("f8452061bbc72a2dbfb4eda3d5ed896a",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
+
+    /**
+     * Test for BC_READ option.
+     */
+    @Test
+    public void bcReadTest() {
+        
+        System.out.println("processing specific cycle range");
+        Data testData = new Data("testdata/test_6000_BC_READ.sam");
+        String[] args = {"INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities",
+			"BC_READ=2",
+            "LANE=1",
+            "OUTPUT=" + testData.tempBamFile.getPath(),
+            "VALIDATION_STRINGENCY=STRICT",
+            "CREATE_MD5_FILE=true",
+            "FIRST_TILE=1101",
+            "COMPRESSION_LEVEL=1",
+            "TILE_LIMIT=1",
+            "LB=TestLibrary",
+            "SM=TestSample",
+            "ST=TestStudy",
+            "TMP_DIR=testdata/",
+            "FIRST_CYCLE=1",
+            "FINAL_CYCLE=2",
+            "FIRST_CYCLE=52",
+            "FINAL_CYCLE=53",
+			"FIRST_INDEX=50",
+			"FINAL_INDEX=51",
+            "RUN_START_DATE=2011-03-23T00:00:00+0000"
+        };
+        
+        testData.commonAsserts(args);        
+        assertEquals("uk.ac.sanger.npg.illumina.Illumina2bam"
+                + " INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities"
+                + " LANE=1 OUTPUT=" + testData.tempBamFile.getPath()
+                + " SAMPLE_ALIAS=TestSample LIBRARY_NAME=TestLibrary"
+                + " STUDY_NAME=TestStudy RUN_START_DATE=2011-03-23T00:00:00+0000 FIRST_TILE=1101 TILE_LIMIT=1 BC_READ=2"
+				+ " FIRST_CYCLE=[1, 52] FINAL_CYCLE=[2, 53] FIRST_INDEX_CYCLE=[50] FINAL_INDEX_CYCLE=[51]"
+                + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
+                + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
+                + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
+                + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
+                testData.illumina2bam.getCommandLine()
+               );
+
+        assertEquals("c31d1cc84eff1ab6ce5ba5fa462fe014",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+    }
+
 }
