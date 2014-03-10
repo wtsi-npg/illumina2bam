@@ -1,4 +1,6 @@
 
+- Add BC_READ and SEC_BC_READ command line options to specify which reads the barcode tag and second barcode tag should be attached to
+
 release 1.12
 - handled EXCLUDE_UNALIGNED=true for xahuman in SplitBamByChromosomes
 - use separate test directories test1/2/3 where threading can cause output file clashes e.g. AlignmentFilterTest
