@@ -45,7 +45,7 @@ public class Illumina2bamTest {
         public File md5File = null;
         public Data(String fileName){
             tempBamFile = new File(fileName);
-//            tempBamFile.deleteOnExit();
+            tempBamFile.deleteOnExit();
             md5File = new File(tempBamFile.getPath() + ".md5");
             md5File.deleteOnExit();
         }
