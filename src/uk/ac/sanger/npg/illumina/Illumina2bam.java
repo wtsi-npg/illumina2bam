@@ -106,11 +106,17 @@ public class Illumina2bam extends PicardCommandLine {
     @Option(shortName="BC_QUAL", doc="Tag name for barcode quality.")
     public String BARCODE_QUALITY_TAG_NAME = "QT";
 
+	@Option(doc="Which read (1 or 2) should the barcode sequence and quality be added to?", optional=true)
+	public Integer BC_READ;
+
     @Option(shortName="SEC_BC_SEQ", doc="Tag name for second  barcode sequence.", optional=true)
     public String SECOND_BARCODE_SEQUENCE_TAG_NAME;
 
     @Option(shortName="SEC_BC_QUAL", doc="Tag name for second barcode quality.", optional=true)
     public String SECOND_BARCODE_QUALITY_TAG_NAME;  
+
+	@Option(doc="Which read (1 or 2) should the second barcode sequence and quality be added to?", optional=true)
+	public Integer SEC_BC_READ;
 
 
     @Option(shortName="FIRST", doc="First cycle for each standard (non-index) read.  Can be specified multiple times, for runs with multiple reads.  If this option is used, both a first and last cycle must be specified for all reads (including index reads).",
@@ -226,6 +232,27 @@ public class Illumina2bam extends PicardCommandLine {
             }
             lane.reduceTileList(this.FIRST_TILE, this.TILE_LIMIT);
         }
+
+		if (this.BC_READ == null) {
+			this.BC_READ = 1;
+		}
+
+		if (this.SEC_BC_READ == null) {
+			this.SEC_BC_READ = this.BC_READ;
+		}
+
+		if (this.BC_READ != 1 && this.BC_READ != 2) {
+			log.error("BC_READ must be 1 or 2");
+			return 1;
+		}
+
+		if (this.SEC_BC_READ != 1 && this.SEC_BC_READ != 2) {
+			log.error("SEC_BC_READ must be 1 or 2");
+			return 1;
+		}
+
+		lane.set_bc_read(this.BC_READ);
+		lane.set_sec_bc_read(this.SEC_BC_READ);
 
         log.info("Generating bam or sam file output stream with header");
         SAMFileWriter outBam = lane.generateOutputSamStream();
