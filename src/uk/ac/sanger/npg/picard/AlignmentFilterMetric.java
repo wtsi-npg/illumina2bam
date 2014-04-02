@@ -87,7 +87,6 @@ public class AlignmentFilterMetric {
         
         int [] alignmentByRefPaired = this.checkAlignmentsByRef(recordList,0x80,0x80);
         int sumAlignmentsPaired = this.sumOfArray(alignmentByRefPaired);
-log.debug("SumAlignments = "+sumAlignments+","+sumAlignmentsPaired);
 
         
         if(sumAlignments == 1 && sumAlignmentsPaired == 1){
@@ -96,7 +95,6 @@ log.debug("SumAlignments = "+sumAlignments+","+sumAlignmentsPaired);
             int indexRefPaired = this.indexAlignment(alignmentByRefPaired);
             
             if(indexRef != -1 && indexRefPaired != -1){
-log.debug("Incrementing ChimericReadsCount "+indexRef+" ,"+indexRefPaired);
                 
                getChimericReadsCount()[indexRef][indexRefPaired]++;
             }
@@ -152,7 +150,6 @@ log.debug("Incrementing ChimericReadsCount "+indexRef+" ,"+indexRefPaired);
 	
 			int found = 0;	
 	        for (SAMRecord record: recordSet) {
-log.debug("Count="+count+"  Flags="+record.getFlags()+"   looking for "+flag+ " = "+result);
                 if( (record.getFlags() & flag) == result) {
 					if (!record.getReadUnmappedFlag()) {
 	                    found = 1;

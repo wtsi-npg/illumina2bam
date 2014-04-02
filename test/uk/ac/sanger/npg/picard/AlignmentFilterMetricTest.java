@@ -62,8 +62,6 @@ public class AlignmentFilterMetricTest {
 		paired_mapped.setReadUnmappedFlag(false);
 		paired_mapped.setSecondOfPairFlag(true);
 
-System.out.println("Flag = " + paired_mapped.getFlags());
-        
         ArrayList<SAMRecord> recordSet = new ArrayList<SAMRecord>();
         ArrayList<SAMRecord> pairedRecordSet = new ArrayList<SAMRecord>();
         ArrayList<ArrayList<SAMRecord>> recordList = new ArrayList();
