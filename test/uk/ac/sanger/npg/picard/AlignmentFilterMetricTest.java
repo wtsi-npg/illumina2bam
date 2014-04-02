@@ -48,23 +48,36 @@ public class AlignmentFilterMetricTest {
         System.out.println("checkNextReadsForChimera");
         
         SAMFileHeader header = new SAMFileHeader();
-        SAMRecord record1 = new SAMRecord(header);
-        record1.setReadUnmappedFlag(true);
+        SAMRecord sam_unmapped = new SAMRecord(header);
+        sam_unmapped.setReadUnmappedFlag(true);
         
-        SAMRecord record2 = new SAMRecord(header);
-        record2.setReadUnmappedFlag(false);
+        SAMRecord sam_mapped = new SAMRecord(header);
+        sam_mapped.setReadUnmappedFlag(false);
+
+		SAMRecord paired_unmapped = new SAMRecord(header);
+		paired_unmapped.setReadUnmappedFlag(true);
+		paired_unmapped.setSecondOfPairFlag(true);
         
-        List<SAMRecord> recordList = new ArrayList<SAMRecord>();
-        List<SAMRecord> pairedRecordList = new ArrayList<SAMRecord>();
+		SAMRecord paired_mapped = new SAMRecord(header);
+		paired_mapped.setReadUnmappedFlag(false);
+		paired_mapped.setSecondOfPairFlag(true);
+
+System.out.println("Flag = " + paired_mapped.getFlags());
         
-        recordList.add(record1);
-        recordList.add(record2);
+        ArrayList<SAMRecord> recordSet = new ArrayList<SAMRecord>();
+        ArrayList<SAMRecord> pairedRecordSet = new ArrayList<SAMRecord>();
+        ArrayList<ArrayList<SAMRecord>> recordList = new ArrayList();
+
+        recordSet.add(sam_unmapped); 
+        recordSet.add(paired_mapped); 
+        pairedRecordSet.add(sam_mapped); 
+        pairedRecordSet.add(paired_unmapped); 
         
-        pairedRecordList.add(record2);
-        pairedRecordList.add(record1);
+        recordList.add(recordSet);
+        recordList.add(pairedRecordSet);
 
         AlignmentFilterMetric instance = new AlignmentFilterMetric(2);      
-        instance.checkNextReadsForChimera(recordList, pairedRecordList);
+        instance.checkNextReadsForChimera(recordList);
         
         int[][] chiremeraReadsCount = instance.getChimericReadsCount();
         assertEquals(chiremeraReadsCount[1][0], 1);
