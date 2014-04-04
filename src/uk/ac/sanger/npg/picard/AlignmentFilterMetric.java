@@ -80,13 +80,14 @@ public class AlignmentFilterMetric {
      * @param recordList
      * @param pairedRecordList
      */
-    public void checkNextReadsForChimera(List<SAMRecord> recordList,  List<SAMRecord> pairedRecordList){
+    public void checkNextReadsForChimera(ArrayList<ArrayList<SAMRecord>> recordList){
 
-        int [] alignmentByRef = this.checkAlignmentsByRef(recordList);
+        int [] alignmentByRef = this.checkAlignmentsByRef(recordList,0x80,0);
         int sumAlignments = this.sumOfArray(alignmentByRef);
         
-        int [] alignmentByRefPaired = this.checkAlignmentsByRef(pairedRecordList);
+        int [] alignmentByRefPaired = this.checkAlignmentsByRef(recordList,0x80,0x80);
         int sumAlignmentsPaired = this.sumOfArray(alignmentByRefPaired);
+
         
         if(sumAlignments == 1 && sumAlignmentsPaired == 1){
             
@@ -100,18 +101,21 @@ public class AlignmentFilterMetric {
             
             if(indexRef != indexRefPaired){
   
+                log.debug("We seem to have a problem: indexRef="+indexRef+"  indexRefPaired="+indexRefPaired);
+/*
                 for(int i= 0; i< this.numberAlignments; i++){
                     log.debug(recordList.get(i).format());
                     log.debug(pairedRecordList.get(i).format());
                 }
+*/
             }
         }
 
         readsCountByAlignedNumForward[sumAlignments]++;
         
-        if( !pairedRecordList.isEmpty() ){
+//        if( !pairedRecordList.isEmpty() ){
             readsCountByAlignedNumReverse[sumAlignmentsPaired]++;
-        }
+//        }
         
     }
     
@@ -136,19 +140,23 @@ public class AlignmentFilterMetric {
     }
     
 
-    private int[] checkAlignmentsByRef(List<SAMRecord> recordList){
+    private int[] checkAlignmentsByRef(ArrayList<ArrayList<SAMRecord>> recordList, int flag, int result){
         
         int [] alignmentsByRef = new int[recordList.size()];
         
         int count = 0;
         
-        for(SAMRecord record: recordList){
-            if( record.getReadUnmappedFlag() ){
-                alignmentsByRef[count] = 0;
-            }else{
-                alignmentsByRef[count] = 1;
-            }
-            count++;
+		for (List<SAMRecord> recordSet: recordList) {
+	
+			int found = 0;	
+	        for (SAMRecord record: recordSet) {
+                if( (record.getFlags() & flag) == result) {
+					if (!record.getReadUnmappedFlag()) {
+	                    found = 1;
+					}
+                }
+			}
+            alignmentsByRef[count++] = found;
         }
         return alignmentsByRef;
     }
