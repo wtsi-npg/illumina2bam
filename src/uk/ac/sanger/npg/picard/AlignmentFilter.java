@@ -35,13 +35,13 @@ import net.sf.samtools.*;
 public class AlignmentFilter extends PicardCommandLine {
 
 /*
- * A replacement for SAMRecordIterator to support a peek() method
+ * A wrapper around any SAMRecordIterator to support a peek() method
  */
-private class NpgSAMRecordIterator {
+private class SAMRecordPeekableIterator implements SAMRecordIterator{
 	private SAMRecordIterator si = null;
 	private SAMRecord nextRecord = null;
 
-	public NpgSAMRecordIterator(SAMRecordIterator i) {
+	public SAMRecordPeekableIterator(SAMRecordIterator i) {
 		si = i;
 		if (si.hasNext()) { nextRecord = si.next(); }
 	}
@@ -50,32 +50,26 @@ private class NpgSAMRecordIterator {
 		SAMRecord tmpRecord = nextRecord;
 		if (si.hasNext()) { nextRecord = si.next(); }
 		else              { nextRecord = null; }
-		return tmpRecord;
+		return null == tmpRecord ? si.next() : tmpRecord ; //using si.next to throw appropriate exception
 	}
 
 	public boolean hasNext() {
 		return (nextRecord != null);
 	}
 
+	public SAMRecordIterator assertSorted(SAMFileHeader.SortOrder order) {
+		si.assertSorted(order);
+		return this;
+	}
+
+	public void close() { si.close(); }
+
+	public void remove() { throw new UnsupportedOperationException(); }
+
 	public SAMRecord peek() {
 		return nextRecord;
 	}
 
-}
-
-/*
- * A replacement for SAMFileReader to return our new iterator
- */
-private class NPGSamFileReader extends SAMFileReader {
-
-	public NPGSamFileReader(File filename) {
-		super(filename);
-	}
-
-	public NpgSAMRecordIterator NPGiterator() {
-		NpgSAMRecordIterator iterator = new NpgSAMRecordIterator(super.iterator());
-		return iterator;
-	}
 }
 
 
@@ -145,9 +139,9 @@ private class NPGSamFileReader extends SAMFileReader {
         IoUtil.assertFileIsWritable(METRICS_FILE);
 
         log.info("Open input files");
-        final List<NPGSamFileReader> inputReaderList  = new ArrayList<NPGSamFileReader>();
+        final List<SAMFileReader> inputReaderList  = new ArrayList<SAMFileReader>();
         for(File file : INPUT_ALIGNMENT){
-             final NPGSamFileReader reader = new NPGSamFileReader(file);
+             final SAMFileReader reader = new SAMFileReader(file);
              inputReaderList.add(reader);
         }
 
@@ -185,9 +179,9 @@ private class NPGSamFileReader extends SAMFileReader {
         }
 
         log.info("Starting read and writing records");
-        List<NpgSAMRecordIterator> inputReaderIteratorList = new ArrayList<NpgSAMRecordIterator>();
-        for(NPGSamFileReader reader : inputReaderList){
-            NpgSAMRecordIterator iterator = reader.NPGiterator();
+        List<SAMRecordPeekableIterator> inputReaderIteratorList = new ArrayList<SAMRecordPeekableIterator>();
+        for(SAMFileReader reader : inputReaderList){
+            SAMRecordPeekableIterator iterator = new SAMRecordPeekableIterator(reader.iterator());
             inputReaderIteratorList.add(iterator);
         }
  
@@ -210,7 +204,7 @@ private class NPGSamFileReader extends SAMFileReader {
              * This may be one record, or two if paired, or more if there are secondary or supplementary alignments
              *
              */
-            for(NpgSAMRecordIterator inputReaderIterator : inputReaderIteratorList){
+            for(SAMRecordPeekableIterator inputReaderIterator : inputReaderIteratorList){
 
 				ArrayList<SAMRecord> recordSet = new ArrayList<SAMRecord>();
 				String name = inputReaderIterator.peek().getReadName();
@@ -251,7 +245,7 @@ private class NPGSamFileReader extends SAMFileReader {
         }
 
         log.info("Closing all the files");
-        for(NPGSamFileReader reader : inputReaderList){
+        for(SAMFileReader reader : inputReaderList){
             reader.close();
         }
         for(SAMFileWriter writer : outputWriterList){
