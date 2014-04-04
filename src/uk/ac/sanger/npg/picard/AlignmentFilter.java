@@ -37,11 +37,11 @@ public class AlignmentFilter extends PicardCommandLine {
 /*
  * A replacement for SAMRecordIterator to support a peek() method
  */
-private class NPGSamRecordIterator {
+private class NpgSAMRecordIterator {
 	private SAMRecordIterator si = null;
 	private SAMRecord nextRecord = null;
 
-	public NPGSamRecordIterator(SAMRecordIterator i) {
+	public NpgSAMRecordIterator(SAMRecordIterator i) {
 		si = i;
 		if (si.hasNext()) { nextRecord = si.next(); }
 	}
@@ -72,8 +72,8 @@ private class NPGSamFileReader extends SAMFileReader {
 		super(filename);
 	}
 
-	public NPGSamRecordIterator NPGiterator() {
-		NPGSamRecordIterator iterator = new NPGSamRecordIterator(super.iterator());
+	public NpgSAMRecordIterator NPGiterator() {
+		NpgSAMRecordIterator iterator = new NpgSAMRecordIterator(super.iterator());
 		return iterator;
 	}
 }
@@ -185,9 +185,9 @@ private class NPGSamFileReader extends SAMFileReader {
         }
 
         log.info("Starting read and writing records");
-        List<NPGSamRecordIterator> inputReaderIteratorList = new ArrayList<NPGSamRecordIterator>();
+        List<NpgSAMRecordIterator> inputReaderIteratorList = new ArrayList<NpgSAMRecordIterator>();
         for(NPGSamFileReader reader : inputReaderList){
-            NPGSamRecordIterator iterator = reader.NPGiterator();
+            NpgSAMRecordIterator iterator = reader.NPGiterator();
             inputReaderIteratorList.add(iterator);
         }
  
@@ -210,7 +210,7 @@ private class NPGSamFileReader extends SAMFileReader {
              * This may be one record, or two if paired, or more if there are secondary or supplementary alignments
              *
              */
-            for(NPGSamRecordIterator inputReaderIterator : inputReaderIteratorList){
+            for(NpgSAMRecordIterator inputReaderIterator : inputReaderIteratorList){
 
 				ArrayList<SAMRecord> recordSet = new ArrayList<SAMRecord>();
 				String name = inputReaderIterator.peek().getReadName();
