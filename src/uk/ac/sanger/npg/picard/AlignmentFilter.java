@@ -37,7 +37,7 @@ public class AlignmentFilter extends PicardCommandLine {
 /*
  * A wrapper around any SAMRecordIterator to support a peek() method
  */
-private class SAMRecordPeekableIterator implements SAMRecordIterator{
+static private class SAMRecordPeekableIterator implements SAMRecordIterator{
 	private SAMRecordIterator si = null;
 	private SAMRecord nextRecord = null;
 
