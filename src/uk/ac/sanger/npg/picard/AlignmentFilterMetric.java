@@ -140,7 +140,7 @@ public class AlignmentFilterMetric {
     }
     
 
-    private int[] checkAlignmentsByRef(ArrayList<ArrayList<SAMRecord>> recordList, int flag, int result){
+    static private int[] checkAlignmentsByRef(ArrayList<ArrayList<SAMRecord>> recordList, int flag, int result){
         
         int [] alignmentsByRef = new int[recordList.size()];
         
