@@ -56,10 +56,12 @@ public class AlignmentFilterMetricTest {
 
 		SAMRecord paired_unmapped = new SAMRecord(header);
 		paired_unmapped.setReadUnmappedFlag(true);
+		paired_unmapped.setReadPairedFlag(true);
 		paired_unmapped.setSecondOfPairFlag(true);
         
 		SAMRecord paired_mapped = new SAMRecord(header);
 		paired_mapped.setReadUnmappedFlag(false);
+		paired_mapped.setReadPairedFlag(true);
 		paired_mapped.setSecondOfPairFlag(true);
 
         ArrayList<SAMRecord> recordSet = new ArrayList<SAMRecord>();

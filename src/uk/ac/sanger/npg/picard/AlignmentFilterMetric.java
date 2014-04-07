@@ -82,10 +82,10 @@ public class AlignmentFilterMetric {
      */
     public void checkNextReadsForChimera(ArrayList<ArrayList<SAMRecord>> recordList){
 
-        int [] alignmentByRef = this.checkAlignmentsByRef(recordList,0x80,0);
+        int [] alignmentByRef = this.checkAlignmentsByRef(recordList,false);
         int sumAlignments = this.sumOfArray(alignmentByRef);
         
-        int [] alignmentByRefPaired = this.checkAlignmentsByRef(recordList,0x80,0x80);
+        int [] alignmentByRefPaired = this.checkAlignmentsByRef(recordList,true);
         int sumAlignmentsPaired = this.sumOfArray(alignmentByRefPaired);
 
         
@@ -140,7 +140,7 @@ public class AlignmentFilterMetric {
     }
     
 
-    static private int[] checkAlignmentsByRef(ArrayList<ArrayList<SAMRecord>> recordList, int flag, int result){
+    static private int[] checkAlignmentsByRef(ArrayList<ArrayList<SAMRecord>> recordList, boolean result){
         
         int [] alignmentsByRef = new int[recordList.size()];
         
@@ -150,7 +150,7 @@ public class AlignmentFilterMetric {
 	
 			int found = 0;	
 	        for (SAMRecord record: recordSet) {
-                if( (record.getFlags() & flag) == result) {
+                if( (record.getReadPairedFlag() && record.getSecondOfPairFlag()) == result) {
 					if (!record.getReadUnmappedFlag()) {
 	                    found = 1;
 					}
