@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.TimeZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import uk.ac.sanger.npg.bam.util.CheckMd5;
@@ -212,4 +213,56 @@ public class AlignmentFilterTest {
         
     }
 
+    /**
+     * Test of exception should templates be out of order.
+     */
+    @Test
+    public void testExceptionOnOutOfOrderTemplates() throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain with out of order templates");
+        String outputName = "testdata/986_1_fail";
+        
+        File outputDir = new File("testdata/986_1_fail");
+        outputDir.mkdir();
+        
+        String[] args = {
+            "IN=testdata/bam/986_1.sam",
+            "IN=testdata/bam/986_1_human_out_of_order.sam",
+            "OUT=" + outputName + "/986_1.bam",
+            "OUT=" + outputName + "/986_1_human.bam",
+            "CREATE_MD5_FILE=true",
+            "TMP_DIR=" + outputName + "/",
+            "VALIDATION_STRINGENCY=SILENT"
+        };
+
+        boolean thrown = false;
+        try {
+            filter.instanceMain(args);
+        } catch (AlignmentFilter.RecordMissingOrOutOfOrder e){
+            thrown = true;
+        }
+        assertTrue("correctly throw exception on reading BAM files with templates in different orders",thrown);
+        assertEquals(
+          filter.getCommandLine(),
+          "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human_out_of_order.sam] " +
+          "OUTPUT_ALIGNMENT=[" + outputName + "/986_1.bam, " +  outputName + "/986_1_human.bam] " +
+          "TMP_DIR=[" + outputName + "] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        
+        File filteredBamFile = new File(outputName + "/986_1.bam");  
+       
+        File md5File = new File(outputName  + "/986_1.bam.md5");  
+        
+        File filteredHumanBamFile = new File(outputName + "/986_1_human.bam");      
+        
+        File humanMd5File = new File(outputName  + "/986_1_human.bam.md5");  
+         
+        File metricsFile = new File(outputName + "/986_1_human.bam_alignment_filter_metrics.json");
+        
+        if (metricsFile.exists()) {metricsFile.delete();}
+        if (filteredBamFile.exists()) {filteredBamFile.delete();}
+        if (md5File.exists()) {md5File.delete();}
+        if (filteredHumanBamFile.exists()) {filteredHumanBamFile.delete();}
+        if (humanMd5File.exists()) {humanMd5File.delete();}
+        outputDir.deleteOnExit();
+    }
 }

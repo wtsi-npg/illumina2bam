@@ -34,6 +34,13 @@ import net.sf.samtools.*;
 
 public class AlignmentFilter extends PicardCommandLine {
 
+/**
+ * Exception to be thrown on finding template(name) grouped alignment records from 
+ * different input files are either in a different order to the first file, or
+ * missing from the first file.
+ */
+public class RecordMissingOrOutOfOrder extends RuntimeException {}
+
 /*
  * A wrapper around any SAMRecordIterator to support a peek() method
  */
@@ -204,10 +211,10 @@ static private class SAMRecordPeekableIterator implements SAMRecordIterator{
              * This may be one record, or two if paired, or more if there are secondary or supplementary alignments
              *
              */
+            String name = inputReaderIteratorList.get(0).peek().getReadName();
             for(SAMRecordPeekableIterator inputReaderIterator : inputReaderIteratorList){
 
 				ArrayList<SAMRecord> recordSet = new ArrayList<SAMRecord>();
-				String name = inputReaderIterator.peek().getReadName();
 
 				// while the name does not change, add to record set
 				while (inputReaderIterator.hasNext() && inputReaderIterator.peek().getReadName().equals(name)) {
@@ -242,6 +249,10 @@ static private class SAMRecordPeekableIterator implements SAMRecordIterator{
 				tempOut.addAlignment(sam);
 			}
 
+        }
+
+        for(SAMRecordPeekableIterator inputReaderIterator : inputReaderIteratorList){
+            if(inputReaderIterator.hasNext()){ throw new RecordMissingOrOutOfOrder(); }
         }
 
         log.info("Closing all the files");
