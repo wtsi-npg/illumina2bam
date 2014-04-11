@@ -203,7 +203,7 @@ static private class SAMRecordPeekableIterator implements SAMRecordIterator{
         while(inputReaderIteratorList.get(0).hasNext()){
             totalReads++;
 
-            ArrayList<ArrayList<SAMRecord>> recordList = new ArrayList();
+            ArrayList<ArrayList<SAMRecord>> recordList = new ArrayList<ArrayList<SAMRecord>>();
 
             /*
              * read the next set of records from each file in turn
