@@ -98,6 +98,7 @@ public class AlignmentFilterTest {
         outputDir.deleteOnExit();
         
     }
+
     /**
      * Test of instanceMain method and program record to separate unmapped reads into one file.
      */
@@ -212,6 +213,65 @@ public class AlignmentFilterTest {
         assertEquals("251dcbc63c0dac88a31f777dc379992c", CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"));
         
     }
+
+    /**
+     * Test of instanceMain method and program record to handle supplementary reads
+     */
+    @Test
+    public void testSupplementaryReads() throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain with single read unmapped file");
+        
+        String tmpdir = "testdata";
+        
+        String[] args = {
+            "IN=testdata/bam/single_986_1.sam",
+            "IN=testdata/bam/single_986_1_human_with_sup.sam",
+            "OUT=" + tmpdir + "/sup_986_1.bam",
+            "OUT=" + tmpdir + "/sup_986_1_human.bam",
+            "OUTPUT_UNALIGNED=" + tmpdir + "/sup_986_1_unaligned.bam",
+            "CREATE_MD5_FILE=true",
+            "TMP_DIR=" + tmpdir + "/",
+            "VALIDATION_STRINGENCY=SILENT"
+        };
+
+        filter.instanceMain(args);
+        assertEquals(
+          filter.getCommandLine(),
+          "uk.ac.sanger.npg.picard.AlignmentFilter " +
+          "INPUT_ALIGNMENT=[testdata/bam/single_986_1.sam, testdata/bam/single_986_1_human_with_sup.sam] " +
+          "OUTPUT_ALIGNMENT=[" + tmpdir + "/sup_986_1.bam, " + tmpdir + "/sup_986_1_human.bam] " +
+          "OUTPUT_UNALIGNED=" + tmpdir + "/sup_986_1_unaligned.bam TMP_DIR=[" + tmpdir + "] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        
+        File filteredBamFile = new File(tmpdir + "/sup_986_1.bam");
+        filteredBamFile.deleteOnExit();
+
+        File md5File = new File(tmpdir  + "/sup_986_1.bam.md5");  
+        md5File.deleteOnExit();
+        
+        assertEquals("788df0d54aca50cb28725f807e036bc3", CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
+       
+        File filteredHumanBamFile = new File(tmpdir + "/sup_986_1_human.bam");
+        filteredHumanBamFile.deleteOnExit();
+
+        File humanMd5File = new File(tmpdir + "/sup_986_1_human.bam.md5");
+        humanMd5File.deleteOnExit();
+        
+        assertEquals("730b0417b7b1a647ee9c19fec8cd6ac4", CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"));
+  
+        File unalignedBamFile = new File(tmpdir + "/sup_986_1_unaligned.bam");
+        unalignedBamFile.deleteOnExit();
+     
+        File unalignedMd5File = new File(tmpdir + "/sup_986_1_unaligned.bam.md5");
+        unalignedMd5File.deleteOnExit();
+      
+        File metricsFile = new File(tmpdir + "/sup_986_1_unaligned.bam_alignment_filter_metrics.json");
+        metricsFile.deleteOnExit();
+        
+        assertEquals("d67851f23e1dd7de217ee57e6482b8fe", CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"));
+        
+    }
+
 
     /**
      * Test of exception should templates be out of order.
