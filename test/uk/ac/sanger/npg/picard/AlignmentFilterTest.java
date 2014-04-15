@@ -222,7 +222,9 @@ public class AlignmentFilterTest {
         
         System.out.println("instanceMain with single read unmapped file");
         
-        String tmpdir = "testdata";
+		String tmpdir = "testdata/sup";
+        File tmpfile = new File(tmpdir);
+		tmpfile.mkdir();
         
         String[] args = {
             "IN=testdata/bam/single_986_1.sam",
@@ -249,7 +251,7 @@ public class AlignmentFilterTest {
         File md5File = new File(tmpdir  + "/sup_986_1.bam.md5");  
         md5File.deleteOnExit();
         
-        assertEquals("788df0d54aca50cb28725f807e036bc3", CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
+        assertEquals("d1084412aa9f547670c17b3841bb076f", CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
        
         File filteredHumanBamFile = new File(tmpdir + "/sup_986_1_human.bam");
         filteredHumanBamFile.deleteOnExit();
@@ -257,7 +259,7 @@ public class AlignmentFilterTest {
         File humanMd5File = new File(tmpdir + "/sup_986_1_human.bam.md5");
         humanMd5File.deleteOnExit();
         
-        assertEquals("730b0417b7b1a647ee9c19fec8cd6ac4", CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"));
+        assertEquals("51e669a7084c096272b38053a3d1d864", CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"));
   
         File unalignedBamFile = new File(tmpdir + "/sup_986_1_unaligned.bam");
         unalignedBamFile.deleteOnExit();
@@ -268,7 +270,7 @@ public class AlignmentFilterTest {
         File metricsFile = new File(tmpdir + "/sup_986_1_unaligned.bam_alignment_filter_metrics.json");
         metricsFile.deleteOnExit();
         
-        assertEquals("d67851f23e1dd7de217ee57e6482b8fe", CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"));
+        assertEquals("c1fa2fe9cbe9332b3a57bcd5f6bf7059", CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"));
         
     }
 
