@@ -225,7 +225,7 @@ static private class SAMRecordPeekableIterator implements SAMRecordIterator{
 
             }
             
-            //metrics.checkNextReadsForChimera(recordList, pairedRecordList);
+            metrics.checkNextReadsForChimera(recordList);
 
             int firstAlignedIndex = this.checkOneRecord(recordList);
             SAMFileWriter tempOut;
