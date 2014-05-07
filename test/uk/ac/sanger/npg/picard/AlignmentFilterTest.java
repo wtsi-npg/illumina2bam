@@ -327,4 +327,47 @@ public class AlignmentFilterTest {
         if (humanMd5File.exists()) {humanMd5File.delete();}
         outputDir.deleteOnExit();
     }
+
+    /**
+     * Test to ensure we count chimeric reads in the metrics
+     */
+    @Test
+    public void testChimericReads() throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain with chimeric reads");
+        
+		String tmpdir = "testdata/chimeric";
+        File tmpfile = new File(tmpdir);
+		tmpfile.mkdir();
+        
+        String[] args = {
+            "IN=testdata/bam/chimeric.sam",
+            "OUT=" + tmpdir + "/chimeric.bam",
+            "OUTPUT_UNALIGNED=" + tmpdir + "/chimeric_unaligned.bam",
+            "TMP_DIR=" + tmpdir + "/",
+            "VALIDATION_STRINGENCY=SILENT",
+			"METRICS=" + tmpdir + "/chimeric.json"
+        };
+
+        filter.instanceMain(args);
+        
+        File filteredBamFile = new File(tmpdir + "/chimeric.bam");
+        filteredBamFile.deleteOnExit();
+
+        File unalignedBamFile = new File(tmpdir + "/chimeric_unaligned.bam");
+        unalignedBamFile.deleteOnExit();
+     
+        File metricsFile = new File(tmpdir + "/chimeric.json");
+        metricsFile.deleteOnExit();
+
+		try {
+			Process p = Runtime.getRuntime().exec("cmp " + tmpdir + "/chimeric.json testdata/bam/chimeric.json");
+			p.waitFor();
+			assertEquals(p.exitValue(), 0);
+   		}
+		catch (Exception err) {
+			err.printStackTrace();
+		}     
+    }
+
 }

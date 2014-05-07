@@ -100,22 +100,12 @@ public class AlignmentFilterMetric {
             }
             
             if(indexRef != indexRefPaired){
-  
                 log.debug("We seem to have a problem: indexRef="+indexRef+"  indexRefPaired="+indexRefPaired);
-/*
-                for(int i= 0; i< this.numberAlignments; i++){
-                    log.debug(recordList.get(i).format());
-                    log.debug(pairedRecordList.get(i).format());
-                }
-*/
             }
         }
 
         readsCountByAlignedNumForward[sumAlignments]++;
-        
-//        if( !pairedRecordList.isEmpty() ){
-            readsCountByAlignedNumReverse[sumAlignmentsPaired]++;
-//        }
+        readsCountByAlignedNumReverse[sumAlignmentsPaired]++;
         
     }
     
