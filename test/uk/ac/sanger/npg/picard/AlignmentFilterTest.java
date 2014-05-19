@@ -21,6 +21,8 @@ package uk.ac.sanger.npg.picard;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.TimeZone;
 import static org.junit.Assert.assertEquals;
@@ -38,6 +40,35 @@ import uk.ac.sanger.npg.bam.util.CheckMd5;
 public class AlignmentFilterTest {
     
     AlignmentFilter filter = new AlignmentFilter();
+
+	public int compareFiles(String fILE_ONE2, String fILE_TWO2) throws FileNotFoundException, IOException {
+
+		File f1 = new File(fILE_ONE2); //OUTFILE
+		File f2 = new File(fILE_TWO2); //INPUT
+
+		FileReader fR1 = new FileReader(f1);
+		FileReader fR2 = new FileReader(f2);
+
+		BufferedReader reader1 = new BufferedReader(fR1);
+		BufferedReader reader2 = new BufferedReader(fR2);
+
+		String line1 = null;
+		String line2 = null;
+		int flag=1;
+		while (true) {	// Continue while there are equal lines
+			line1 = reader1.readLine();
+			line2 = reader2.readLine();
+
+			if (line1 == null) {	// End of file 1
+				return (line2 == null ? 1 : 0); // Equal only if file 2 also ended
+			}
+
+			if (!line1.equalsIgnoreCase(line2)) {	// Different lines, or end of file 2
+				return 0;
+			}
+		}
+	}
+
 
     public AlignmentFilterTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
@@ -360,14 +391,8 @@ public class AlignmentFilterTest {
         File metricsFile = new File(tmpdir + "/chimeric.json");
         metricsFile.deleteOnExit();
 
-		try {
-			Process p = Runtime.getRuntime().exec("cmp " + tmpdir + "/chimeric.json testdata/bam/chimeric.json");
-			p.waitFor();
-			assertEquals(p.exitValue(), 0);
-   		}
-		catch (Exception err) {
-			err.printStackTrace();
-		}     
+		assertEquals(compareFiles(tmpdir + "/chimeric.json", "testdata/bam/chimeric.json"),1);
+
     }
 
 }
