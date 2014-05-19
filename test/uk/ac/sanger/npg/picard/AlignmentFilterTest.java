@@ -63,7 +63,7 @@ public class AlignmentFilterTest {
 				return (line2 == null ? 1 : 0); // Equal only if file 2 also ended
 			}
 
-			if (!line1.equalsIgnoreCase(line2)) {	// Different lines, or end of file 2
+			if (!line1.equals(line2)) {	// Different lines, or end of file 2
 				return 0;
 			}
 		}
