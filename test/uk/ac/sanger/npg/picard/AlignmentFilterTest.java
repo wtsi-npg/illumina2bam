@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.TimeZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import uk.ac.sanger.npg.bam.util.CheckMd5;
@@ -97,6 +98,7 @@ public class AlignmentFilterTest {
         outputDir.deleteOnExit();
         
     }
+
     /**
      * Test of instanceMain method and program record to separate unmapped reads into one file.
      */
@@ -210,6 +212,162 @@ public class AlignmentFilterTest {
         
         assertEquals("251dcbc63c0dac88a31f777dc379992c", CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"));
         
+    }
+
+    /**
+     * Test of instanceMain method and program record to handle supplementary reads
+     */
+    @Test
+    public void testSupplementaryReads() throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain with single read unmapped file");
+        
+		String tmpdir = "testdata/sup";
+        File tmpfile = new File(tmpdir);
+		tmpfile.mkdir();
+        
+        String[] args = {
+            "IN=testdata/bam/single_986_1.sam",
+            "IN=testdata/bam/single_986_1_human_with_sup.sam",
+            "OUT=" + tmpdir + "/sup_986_1.bam",
+            "OUT=" + tmpdir + "/sup_986_1_human.bam",
+            "OUTPUT_UNALIGNED=" + tmpdir + "/sup_986_1_unaligned.bam",
+            "CREATE_MD5_FILE=true",
+            "TMP_DIR=" + tmpdir + "/",
+            "VALIDATION_STRINGENCY=SILENT"
+        };
+
+        filter.instanceMain(args);
+        assertEquals(
+          filter.getCommandLine(),
+          "uk.ac.sanger.npg.picard.AlignmentFilter " +
+          "INPUT_ALIGNMENT=[testdata/bam/single_986_1.sam, testdata/bam/single_986_1_human_with_sup.sam] " +
+          "OUTPUT_ALIGNMENT=[" + tmpdir + "/sup_986_1.bam, " + tmpdir + "/sup_986_1_human.bam] " +
+          "OUTPUT_UNALIGNED=" + tmpdir + "/sup_986_1_unaligned.bam TMP_DIR=[" + tmpdir + "] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        
+        File filteredBamFile = new File(tmpdir + "/sup_986_1.bam");
+        filteredBamFile.deleteOnExit();
+
+        File md5File = new File(tmpdir  + "/sup_986_1.bam.md5");  
+        md5File.deleteOnExit();
+        
+        assertEquals("d1084412aa9f547670c17b3841bb076f", CheckMd5.getBamMd5AfterRemovePGVersion(filteredBamFile, "AlignmentFilter"));
+       
+        File filteredHumanBamFile = new File(tmpdir + "/sup_986_1_human.bam");
+        filteredHumanBamFile.deleteOnExit();
+
+        File humanMd5File = new File(tmpdir + "/sup_986_1_human.bam.md5");
+        humanMd5File.deleteOnExit();
+        
+        assertEquals("51e669a7084c096272b38053a3d1d864", CheckMd5.getBamMd5AfterRemovePGVersion(filteredHumanBamFile, "AlignmentFilter"));
+  
+        File unalignedBamFile = new File(tmpdir + "/sup_986_1_unaligned.bam");
+        unalignedBamFile.deleteOnExit();
+     
+        File unalignedMd5File = new File(tmpdir + "/sup_986_1_unaligned.bam.md5");
+        unalignedMd5File.deleteOnExit();
+      
+        File metricsFile = new File(tmpdir + "/sup_986_1_unaligned.bam_alignment_filter_metrics.json");
+        metricsFile.deleteOnExit();
+        
+        assertEquals("c1fa2fe9cbe9332b3a57bcd5f6bf7059", CheckMd5.getBamMd5AfterRemovePGVersion(unalignedBamFile, "AlignmentFilter"));
+        
+    }
+
+
+    /**
+     * Test of exception should templates be out of order.
+     */
+    @Test
+    public void testExceptionOnOutOfOrderTemplates() throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain with out of order templates");
+        String outputName = "testdata/986_1_fail";
+        
+        File outputDir = new File("testdata/986_1_fail");
+        outputDir.mkdir();
+        
+        String[] args = {
+            "IN=testdata/bam/986_1.sam",
+            "IN=testdata/bam/986_1_human_out_of_order.sam",
+            "OUT=" + outputName + "/986_1.bam",
+            "OUT=" + outputName + "/986_1_human.bam",
+            "CREATE_MD5_FILE=true",
+            "TMP_DIR=" + outputName + "/",
+            "VALIDATION_STRINGENCY=SILENT"
+        };
+
+        boolean thrown = false;
+        try {
+            filter.instanceMain(args);
+        } catch (AlignmentFilter.RecordMissingOrOutOfOrder e){
+            thrown = true;
+        }
+        assertTrue("correctly throw exception on reading BAM files with templates in different orders",thrown);
+        assertEquals(
+          filter.getCommandLine(),
+          "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human_out_of_order.sam] " +
+          "OUTPUT_ALIGNMENT=[" + outputName + "/986_1.bam, " +  outputName + "/986_1_human.bam] " +
+          "TMP_DIR=[" + outputName + "] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        
+        File filteredBamFile = new File(outputName + "/986_1.bam");  
+       
+        File md5File = new File(outputName  + "/986_1.bam.md5");  
+        
+        File filteredHumanBamFile = new File(outputName + "/986_1_human.bam");      
+        
+        File humanMd5File = new File(outputName  + "/986_1_human.bam.md5");  
+         
+        File metricsFile = new File(outputName + "/986_1_human.bam_alignment_filter_metrics.json");
+        
+        if (metricsFile.exists()) {metricsFile.delete();}
+        if (filteredBamFile.exists()) {filteredBamFile.delete();}
+        if (md5File.exists()) {md5File.delete();}
+        if (filteredHumanBamFile.exists()) {filteredHumanBamFile.delete();}
+        if (humanMd5File.exists()) {humanMd5File.delete();}
+        outputDir.deleteOnExit();
+    }
+
+    /**
+     * Test to ensure we count chimeric reads in the metrics
+     */
+    @Test
+    public void testChimericReads() throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain with chimeric reads");
+        
+		String tmpdir = "testdata/chimeric";
+        File tmpfile = new File(tmpdir);
+		tmpfile.mkdir();
+        
+        String[] args = {
+            "IN=testdata/bam/chimeric.sam",
+            "OUT=" + tmpdir + "/chimeric.bam",
+            "OUTPUT_UNALIGNED=" + tmpdir + "/chimeric_unaligned.bam",
+            "TMP_DIR=" + tmpdir + "/",
+            "VALIDATION_STRINGENCY=SILENT",
+			"METRICS=" + tmpdir + "/chimeric.json"
+        };
+
+        filter.instanceMain(args);
+        
+        File filteredBamFile = new File(tmpdir + "/chimeric.bam");
+        filteredBamFile.deleteOnExit();
+
+        File unalignedBamFile = new File(tmpdir + "/chimeric_unaligned.bam");
+        unalignedBamFile.deleteOnExit();
+     
+        File metricsFile = new File(tmpdir + "/chimeric.json");
+        metricsFile.deleteOnExit();
+
+		try {
+			Process p = Runtime.getRuntime().exec("cmp " + tmpdir + "/chimeric.json testdata/bam/chimeric.json");
+			p.waitFor();
+			assertEquals(p.exitValue(), 0);
+   		}
+		catch (Exception err) {
+			err.printStackTrace();
+		}     
     }
 
 }
