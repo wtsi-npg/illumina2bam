@@ -20,6 +20,7 @@
 package uk.ac.sanger.npg.illumina.file.reader;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -42,24 +43,21 @@ public class PosFileReaderTest {
     
     @AfterClass
     public static void tearDownClass() throws Exception {
-        System.out.println("Close the pos fiile reader");
+        System.out.println("Close the pos file reader");
         posFileReader.close();
     }
     
     @Test (expected= FileNotFoundException.class)
-    public void testConstructorNotOK() throws FileNotFoundException{
+        public void testConstructorNotOK() throws FileNotFoundException, IOException{
         System.out.println("The given pos file is not available");
         PosFileReader posFileReader1 = new PosFileReader("testdata/110519_IL33_06284/Data/Intensities/s_8_0112_pos_not_exist.txt");
     }
     @Test
     public void testCountTotalClusters(){
-        System.out.println("check total cluster number correct");
+        System.out.println("Check total cluster number correct");
         assertEquals(posFileReader.getTotalCluster(), 353693);
-    }
-    
-    @Test
-    public void testNext() throws FileNotFoundException{
-        System.out.println("test next method");
+   
+        System.out.println("Test next method");
         PositionFileReader.Position firstPos = posFileReader.next();
         assertEquals(firstPos.x, "1547");
         assertEquals(firstPos.y, "997");
@@ -68,12 +66,9 @@ public class PosFileReaderTest {
             posFileReader.next();
         }
         assertEquals(posFileReader.getCurrentTotalClusters(), 353693);
-    }
     
-    @Test
-    public void testNoMoreNext(){
-        System.out.println("test no more next method");
-        PositionFileReader.Position firstPos = posFileReader.next();
-        assertNull(firstPos);
+        System.out.println("Test no more next method");
+        PositionFileReader.Position lastPos = posFileReader.next();
+        assertNull(lastPos);
     }
 }

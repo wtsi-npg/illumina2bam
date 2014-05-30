@@ -34,7 +34,7 @@ import uk.ac.sanger.npg.bam.util.CheckMd5;
  */
 
 public class ChangeBamHeaderTest {
-    
+	
     ChangeBamHeader changer = new ChangeBamHeader();
     
     public ChangeBamHeaderTest() {
@@ -45,7 +45,7 @@ public class ChangeBamHeaderTest {
     /**
      * PG must be given in tag name and value in pair and separated by :
      */
-    @Test(expected = RuntimeException.class)
+    @Test(expected = RuntimeException.class) 
     public void testGetProgramRecordFromString1(){
         changer.getProgramRecordFromString("ID samtools");
     }
@@ -84,13 +84,10 @@ public class ChangeBamHeaderTest {
         assertEquals(changer.getCommandLine(),
                 "uk.ac.sanger.npg.picard.ChangeBamHeader INPUT=testdata/bam/6210_8.sam OUTPUT=testdata/6210_8_header_changed.bam PG=[ID:samtools_sorting;PN:samtools;VN:0.1.12a (r862);CL:samtools sort] SAMPLE=newSM LIBRARY=newLB DESCRIPTION=newDS TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
                     );
-    }
     
     /**
      * Test output bam MD5
      */
-    @Test
-    public void testOutputBam() throws FileNotFoundException, IOException {
         System.out.println("checking bam md5");
         File newBamFile = new File("testdata/6210_8_header_changed.bam");
         newBamFile.deleteOnExit();
@@ -98,6 +95,6 @@ public class ChangeBamHeaderTest {
         File md5File = new File("testdata/6210_8_header_changed.bam.md5");
         md5File.deleteOnExit();
 
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(newBamFile, "ChangeBamHeader"), "09d32a078c13b96acb079f1daa33afdb");
+        assertEquals("11ca0b39d43d6d716964fb36383a7e92", CheckMd5.getBamMd5AfterRemovePGVersion(newBamFile, "ChangeBamHeader"));
     }
 }

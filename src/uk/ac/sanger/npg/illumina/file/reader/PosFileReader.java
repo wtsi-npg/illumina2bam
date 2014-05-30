@@ -36,7 +36,7 @@ public class PosFileReader extends PositionFileReader  {
      * @param fileName
      * @throws FileNotFoundException 
      */
-    public PosFileReader(String fileName) throws FileNotFoundException{
+    public PosFileReader(String fileName) throws FileNotFoundException, IOException {
         
         super(fileName);
         
@@ -121,7 +121,9 @@ public class PosFileReader extends PositionFileReader  {
             posFileReader = new PosFileReader("testdata/110519_IL33_06284/Data/Intensities/s_8_0112_pos.txt");
         } catch (FileNotFoundException ex) {
            System.err.println(ex);
-        }
+        } catch (IOException ex) {
+           System.err.println(ex);
+        } 
         for(int i =0; i< 353693; i++){
              PositionFileReader.Position pos = posFileReader.next();
              System.out.println(pos.x + " " + pos.y);

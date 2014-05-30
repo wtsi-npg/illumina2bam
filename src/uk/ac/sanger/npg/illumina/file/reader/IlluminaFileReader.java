@@ -20,6 +20,7 @@ package uk.ac.sanger.npg.illumina.file.reader;
 
 import java.io.*;
 import java.util.Iterator;
+import java.util.zip.GZIPInputStream;
 import net.sf.picard.util.Log;
 
 
@@ -39,9 +40,9 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
     /**
      *
      * @param fileName bcl, scl, clocs, locs, pos and filter etc Illumina file name
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException, IOException
      */
-    public IlluminaFileReader(String fileName) throws FileNotFoundException {
+    public IlluminaFileReader(String fileName) throws FileNotFoundException, IOException {
 
         this.fileName = fileName;
         this.openInputFile(fileName);
@@ -52,24 +53,44 @@ public class IlluminaFileReader implements Iterator<Object>, Closeable {
      * @param fileName
      * @throws Exception
      */
-    private void openInputFile(String fileName) throws FileNotFoundException {
-
+    private void openInputFile(String fileName) throws FileNotFoundException, IOException {
+        /*
+          fileName is not necessarily a complete path.
+          If fileName ends with .gz, assume it is the path to a gzipped file.
+          Otherwise, input path may or may not be gzipped and have .gz suffix.
+         */
         if (fileName == null) {
             throw new IllegalArgumentException("File name must be given.");
         } else {
+            boolean gzip = false;
             File file = new File(fileName);
+            if (fileName.endsWith(".gz")) {
+                gzip = true;
+            } else if (!file.exists()) { 
+                // uncompressed file not found, try with .gz suffix
+                gzip = true;
+                file = new File(fileName+".gz");
+            }
+            // check validity of File object and open relevant input stream
             if (!file.exists()) {
-                throw new FileNotFoundException("File does not exist: " + fileName);
+                throw new FileNotFoundException("Input does not exist: " 
+                                                + fileName);
             } else if (file.isDirectory()) {
-                throw new IllegalArgumentException("File name is a directory: " + fileName);
+                throw new IllegalArgumentException("File name is a directory: " 
+                                                   + fileName);
             } else if (!file.canRead()) {
-                throw new FileNotFoundException("File cannot be read: " + fileName);
+                throw new FileNotFoundException("Input cannot be read: " 
+                                                + fileName);
             } else {
-                this.inputStream = new DataInputStream(
-                        new BufferedInputStream(
-                          new FileInputStream(file)
-                        )
-                );
+                InputStream inputBase;
+                if (gzip) {
+                    // constructor may throw IOException
+                    inputBase = new GZIPInputStream(new FileInputStream(file));
+                } else {
+                    inputBase = new FileInputStream(file);
+                }
+                this.inputStream = 
+                    new DataInputStream(new BufferedInputStream(inputBase));
             }
         }
     }

@@ -21,7 +21,10 @@ package uk.ac.sanger.npg.picard;
 import java.io.File;
 import java.io.IOException;
 import java.util.TimeZone;
+import java.util.ArrayList;
 import net.sf.samtools.SAMFileReader;
+import net.sf.samtools.SAMProgramRecord;
+import net.sf.samtools.SAMReadGroupRecord;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import uk.ac.sanger.npg.bam.util.CheckMd5;
@@ -82,7 +85,19 @@ public class BamIndexDecoderTest {
         File outputMetrics = new File(outputName + ".metrics");
         File outputMd5 = new File(outputName + ".sam.md5");
 
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"), "e88bcf9899f021825eaacf4d7d5bc91f");
+        SAMFileReader samFileReader = new SAMFileReader(outputFile);
+        ArrayList<SAMProgramRecord> pgrl = new ArrayList<SAMProgramRecord>();
+        for (SAMProgramRecord r: samFileReader.getFileHeader().getProgramRecords()){
+          if(r.getProgramName().equals("BamIndexDecoder")) {pgrl.add(r);}
+        }
+        assertEquals(1, pgrl.size());
+        SAMProgramRecord pgr = pgrl.get(0);
+        for (SAMReadGroupRecord r: samFileReader.getFileHeader().getReadGroups()){
+          assertEquals(pgr.getId(), r.getAttribute("PG"));
+        }
+        samFileReader.close();
+
+        assertEquals("d1c35cdd7e2b180204c545ddfe354fe9", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
         
         outputFile.delete();
         outputMetrics.delete();
@@ -126,13 +141,13 @@ public class BamIndexDecoderTest {
          
         File outputMetrics = new File(outputName + "/6383_8.metrics");
         outputMetrics.delete();
-        String [] md5s = {"a6c6561b3b110864f5914aaf373bbf4b", "0e4f9481fbdd8a6e8d465c726eab254c", "c1d8143c195c0934bd049ef6dc5b400e"};
+        String [] md5s = {"7159436dd98ab2df85ee5a9a4644428e", "cf5272ef745f967b4b9008572961810a", "f254c0d4a2d8c9747ac4099ea30d3993"};
         for (int i=0;i<3;i++){
             File outputFile = new File(outputName + "/6383_8#" + i + ".bam");
             outputFile.deleteOnExit();
             File outputMd5 = new File(outputName + "/6383_8#" + i + ".bam.md5");
             outputMd5.deleteOnExit();
-            assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"), md5s[i]);
+            assertEquals(md5s[i], CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
         }
         
         outputDir.deleteOnExit();

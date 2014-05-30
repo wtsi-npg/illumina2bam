@@ -1,3 +1,39 @@
+release 1.14
+- AlignmentFilter now supports BAM/SAM files containing secondary and supplemental alignments
+
+release 1.13
+- Add BC_READ and SEC_BC_READ command line options to specify which reads the barcode tag and second barcode tag should be attached to
+
+release 1.12
+- handled EXCLUDE_UNALIGNED=true for xahuman in SplitBamByChromosomes
+- use separate test directories test1/2/3 where threading can cause output file clashes e.g. AlignmentFilterTest
+- merge tests where one test uses the output of another e.g. ChangeBamHeaderTest
+
+release-1.11
+- include PG field in new RG header records
+- use Picard 1.96 rather than 1.84
+- [Hinxton #354882] separate_y_chromosome_data
+
+release-1.10
+- bugfix for single fragment/read templates in AlignmentFilter
+- use Picard 1.84
+
+release-1.09
+- allow cycle range by read to be specified on command line
+
+release-1.08
+- corrects compile errors which went undetected in 1.07
+
+release-1.07
+- adapted IlluminaFileReader to read either normal or gzip compressed files
+
+release-1.06
+- corrects errors in git tagging with 1.04 and 1.05
+
+release-1.04
+- new tool SplitBamByChromosomes
+- Can split BAM output into "target" and "excluded" files based on chromosomes to which reads align. Chromosomes defined as entries in SQ list from BAM header.
+
 release-1.03
  - read both tile list and range
 
@@ -5,6 +41,7 @@ release-1.02
  - remove dist for github
  - new tool BamAdapterFinder
  - add bcel jar file in lib
+
 release-1.01
 - add program information in AlignmentFilter metrics file
 

@@ -292,6 +292,8 @@ public class BamIndexDecoder extends PicardCommandLine {
             log.info("Open a list of output bam/sam file per barcode");
             outputList = new HashMap<String, SAMFileWriter>();
         }
+        final SAMFileHeader outputHeader = header.clone();
+        final SAMProgramRecord programRecord = this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
 
         for (int count = 0; count <= barcodeList.size(); count++) {
 
@@ -315,6 +317,7 @@ public class BamIndexDecoder extends PicardCommandLine {
 
             for(SAMReadGroupRecord r : oldReadGroupList){
                     SAMReadGroupRecord newReadGroupRecord = new SAMReadGroupRecord(r.getId() + "#" + barcodeName, r);
+                    newReadGroupRecord.setAttribute("PG", programRecord.getProgramGroupId());
                     String pu = newReadGroupRecord.getPlatformUnit();
                     if(pu != null){
                         newReadGroupRecord.setPlatformUnit(pu + "#" + barcodeName);
@@ -343,10 +346,9 @@ public class BamIndexDecoder extends PicardCommandLine {
                         + barcodeName
                         + "."
                         + OUTPUT_FORMAT;
-                final SAMFileHeader outputHeader = header.clone();
-                outputHeader.setReadGroups(readGroupList);
-                this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
-                final SAMFileWriter outPerBarcode = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader, true, new File(barcodeBamOutputName));
+                final SAMFileHeader perBarcodeOutputHeader = outputHeader.clone();
+                perBarcodeOutputHeader.setReadGroups(readGroupList);
+                final SAMFileWriter outPerBarcode = new SAMFileWriterFactory().makeSAMOrBAMWriter(perBarcodeOutputHeader, true, new File(barcodeBamOutputName));
                 outputList.put(barcode, outPerBarcode);
             }
             barcodeNameList.put(barcode, barcodeName);
@@ -354,9 +356,7 @@ public class BamIndexDecoder extends PicardCommandLine {
         
         if (OUTPUT != null) {
             log.info("Open output file with header: " + OUTPUT.getName());
-            final SAMFileHeader outputHeader = header.clone();
             outputHeader.setReadGroups(fullReadGroupList);
-            this.addProgramRecordToHead(outputHeader, this.getThisProgramRecord(programName, programDS));
             this.out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader, true, OUTPUT);
         }
 

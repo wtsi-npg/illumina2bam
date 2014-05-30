@@ -1,0 +1,22 @@
+@HD	VN:1.0	SO:unsorted
+@SQ	SN:MAL1	LN:643292	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:6a7e6510bdae0ad38e8bc3aa1adf537f	SP:Plasmodium falciparum
+@SQ	SN:MAL2	LN:947102	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:d34154a67b6b8e10d2d7aea3c83e09e7	SP:Plasmodium falciparum
+@SQ	SN:MAL3	LN:1060087	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:468c14169020248f4e41799de3a4bef5	SP:Plasmodium falciparum
+@SQ	SN:MAL4	LN:1204112	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:9b74fcd8d379f3763a31050acf098f3a	SP:Plasmodium falciparum
+@SQ	SN:MAL5	LN:1343552	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:3d84171954a6768f2a9d93796fe58d9a	SP:Plasmodium falciparum
+@SQ	SN:MAL6	LN:1418244	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:d2f87cf0c3570ae0da5dfd71bd4c506a	SP:Plasmodium falciparum
+@SQ	SN:MAL7	LN:1501717	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:493245de8db9737efb5ce128e6b65661	SP:Plasmodium falciparum
+@SQ	SN:MAL8	LN:1419563	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:1878bd1367b051daff937555e44f41b7	SP:Plasmodium falciparum
+@SQ	SN:MAL9	LN:1541723	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:87f4b581b5db461261b36b5344fe9df4	SP:Plasmodium falciparum
+@SQ	SN:MAL10	LN:1687655	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:a13945591ca5a84710655be93c75d623	SP:Plasmodium falciparum
+@SQ	SN:MAL11	LN:2038337	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:909466c6a0faec815f63b21047beea15	SP:Plasmodium falciparum
+@SQ	SN:MAL12	LN:2271477	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:2126c4b9020f575571a1f83b7c20721b	SP:Plasmodium falciparum
+@SQ	SN:MAL13	LN:2895605	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:5c761a4674f0363bb789b5a982952bfc	SP:Plasmodium falciparum
+@SQ	SN:MAL14	LN:3291871	UR:file:/nfs/srpipe_references/references/Plasmodium_falciparum/3D7/all/fasta/MAL.version2.1.4.fasta	AS:3D7	M5:03d21468ae712ffe4f1c62d54e4c2e2a	SP:Plasmodium falciparum
+@RG	ID:1	PL:ILLUMINA	PU:080703_IL16_0986_1_human	LB:Pfd6-01 (HP216) 1	PI:162	DS:Study Plasmodium falciparum genome variation 1: Genome sequencing of field samples of Plasmodium falciparum	DT:2008-07-03T01:00:00+0100	SM:Pfd6-01 (HP216)	CN:SC
+@PG	ID:hack	PN:hack
+IL16_986:1:9:99:272	4	*	0	0	*	*	0	0	TAAGTTTGCACACATCCAGCATTTCTTCACATGTCAG	>>>><>>>>>>>>>>>>>>>>>>>>>>>>>>><>>>:	X0:i:1	X1:i:0	MD:Z:37	RG:Z:1	XG:i:0	AM:i:37	NM:i:0	SM:i:37	XM:i:0	XO:i:0	XT:A:U
+IL16_986:1:9:99:391	4	*	0	0	*	*	0	0	AGATATAAAATGAACTATTAAATGAGATGACAACATA	>>>>>>>>>>>>>>>>>>>>>>>>>:>><>>><>>>>	X0:i:1	X1:i:0	MD:Z:37	RG:Z:1	XG:i:0	AM:i:37	NM:i:0	SM:i:37	XM:i:0	XO:i:0	XT:A:U
+IL16_986:1:9:9:307	16	MAL6	942998	0	37M	*	0	0	TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	>>>>>>>/<7>>><+>>>>>>>>>>>>>>>>>>>>>>	X0:i:2692	MD:Z:37	RG:Z:1	XG:i:0	AM:i:0	NM:i:0	SM:i:0	XM:i:0	XO:i:0	XT:A:R
+IL16_986:1:9:9:47	16	MAL6	942998	0	37M	*	0	0	TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>	X0:i:2692	MD:Z:37	RG:Z:1	XG:i:0	AM:i:0	NM:i:0	SM:i:0	XM:i:0	XO:i:0	XT:A:R
+IL16_986:1:9:9:954	16	MAL6	942998	0	37M	*	0	0	TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>	X0:i:2692	MD:Z:37	RG:Z:1	XG:i:0	AM:i:0	NM:i:0	SM:i:0	XM:i:0	XO:i:0	XT:A:R

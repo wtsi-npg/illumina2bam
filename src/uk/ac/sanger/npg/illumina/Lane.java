@@ -65,6 +65,8 @@ public class Lane {
     private String secondBarcodeSeqTagName;
     private String secondBarcodeQualTagName;
 
+	private int bc_read;
+	private int sec_bc_read;
   
     //config xml file name and XML Documetns
     private final String baseCallsConfig;
@@ -220,6 +222,9 @@ public class Lane {
                 tile.setSecondBarcodeSeqTagName(secondBarcodeSeqTagName);
             }
             
+			tile.set_bc_read(this.bc_read);
+			tile.set_sec_bc_read(this.sec_bc_read);
+
             log.info("Opening all basecall files");
             tile.openBaseCallFiles();
             
@@ -651,14 +656,12 @@ public class Lane {
 
             if (!isIndexedRead.equalsIgnoreCase("Y")) {
                 readCount++;
-                cycleRangeByReadMap.put("read" + readCount, cycleRange);
+                cycleRangeByReadMap.put(getReadName(readCount, false), 
+                                        cycleRange);
             } else {
                 indexReadCount++;
-                String indexReadName = "readIndex";
-                if (indexReadCount != 1) {
-                    indexReadName += indexReadCount;
-                }
-                cycleRangeByReadMap.put(indexReadName, cycleRange);
+                cycleRangeByReadMap.put(getReadName(indexReadCount, true), 
+                                        cycleRange);
             }
         }
 
@@ -688,6 +691,84 @@ public class Lane {
         this.getCycleRangeByRead().remove("readIndex2");
         
     }
+
+    /**
+     * Overwrites cycleRangeByRead with the given inputs.  Uses previously established naming convention.
+     Returns a non-zero exit status if input cycle ranges are invalid.
+     (firstCycs, lastCycs) or (firstIndexCycs, lastIndexCycs) may be both empty
+     **/
+    public int overwriteCycleRangeByRead(ArrayList<Integer> firstCycs, 
+                                         ArrayList<Integer> lastCycs,
+                                         ArrayList<Integer> firstIndexCycs, 
+                                         ArrayList<Integer> lastIndexCycs) {
+        HashMap<String, int[]> cycleRangeByRead = new HashMap<String, int[]>(8);
+        int readCount = 0;
+        int indexReadCount = 0;
+        if (!validCycleRanges(firstCycs, lastCycs)) { 
+            log.error("Invalid non-index cycle range");
+            return 2; 
+        } else if (!validCycleRanges(firstIndexCycs, lastIndexCycs)) {
+            log.error("Invalid index cycle range");
+            return 2;
+        } 
+        for (int i=0; i<firstCycs.size(); i++) {
+            readCount++;
+            String name = getReadName(readCount, false);
+            int[] cycleRange = { firstCycs.get(i), lastCycs.get(i) };
+            cycleRangeByRead.put(name, cycleRange);
+        }
+        for (int i=0; i<firstIndexCycs.size(); i++) {
+            indexReadCount++;
+            String name = getReadName(indexReadCount, true);
+            int[] cycleRange = { firstIndexCycs.get(i), 
+                                 lastIndexCycs.get(i) };
+            cycleRangeByRead.put(name, cycleRange);
+        }
+        if (cycleRangeByRead.isEmpty()) {
+            log.warn("Overwriting cycle range by read with empty map!");
+        }
+        this.setCycleRangeByRead(cycleRangeByRead);
+        return 0;
+    }
+
+    /**
+     * Sanity check for cycle ranges specified on command line
+     * May have both arguments empty (but not only one argument empty)
+     *
+     **/
+    private boolean validCycleRanges(ArrayList<Integer> first, 
+                                     ArrayList<Integer> last) {
+        if (first.isEmpty() && last.isEmpty()) { 
+            return true; 
+        } else if (first.isEmpty() || last.isEmpty()) {
+            log.error("Cannot specify only one of (first cycle, final cycle)");
+            return false;
+        } else if (first.size() != last.size()) {
+            log.error("Lists of first and final cycles "
+                      +"must be of equal length!");
+            return false;
+        } 
+        for (int i=0; i<first.size(); i++) {
+            if (first.get(i) >= last.get(i)) {
+                log.error("Must have first cycle < final cycle");
+                return false;
+            }
+        }
+        return true;
+    } 
+
+    private String getReadName(int readCount, boolean isIndex) {
+        // implements naming convention used by earlier versions of Lane.java
+        String readName;
+        if (isIndex) {
+            if (readCount==1) { readName = "readIndex"; }
+            else { readName = "readIndex"+String.valueOf(readCount); }
+        } else {
+            readName = "read"+String.valueOf(readCount);
+        }
+        return readName;
+    }
+
     
     /**
      * From runParameters file:
@@ -971,6 +1052,9 @@ public class Lane {
          }
 
          if(this.readGroup != null){
+           if(this.readGroup.getAttribute("PG") == null){
+             this.readGroup.setAttribute("PG", this.instrumentProgram.getId());
+           }
            header.addReadGroup(readGroup);
          }
 
@@ -985,10 +1069,10 @@ public class Lane {
      */
     public void reduceTileList(Integer firstTile, Integer tileLimit){
 
-        ArrayList<Integer> reducedTileList = new ArrayList<Integer>();
+        List<Integer> reducedTileList = new ArrayList<Integer>();
 
         for (int tileNumber : this.tileList){
-            if( tileNumber >= firstTile.intValue() ){
+            if( firstTile == null || tileNumber >= firstTile.intValue() ){
                 reducedTileList.add(tileNumber);
             }
         }
@@ -997,17 +1081,16 @@ public class Lane {
             throw new RuntimeException("The Given first tile number " + firstTile + " was not found.");
         }
 
-        List<Integer> limitedTileList = reducedTileList;
         if(tileLimit != null && tileLimit > 0){
             if(tileLimit > reducedTileList.size()){
                 throw new RuntimeException("The Given first tile limit " + tileLimit + " was too big.");
             }
-            limitedTileList = reducedTileList.subList(0, tileLimit.intValue());
+            reducedTileList = reducedTileList.subList(0, tileLimit.intValue());
         }
 
-        int [] newTileList = new int[limitedTileList.size()];
+        int [] newTileList = new int[reducedTileList.size()];
         int i = 0;
-        for(Integer tileNumber : limitedTileList){
+        for(Integer tileNumber : reducedTileList){
             newTileList[i] = tileNumber.intValue();
             i++;
         }
@@ -1105,6 +1188,20 @@ public class Lane {
     public void setSecondBarcodeQualTagName(String secondBarcodeQualTagName) {
         this.secondBarcodeQualTagName = secondBarcodeQualTagName;
     }
+
+	/**
+	 * @param bc_read which read should the barcode tag sit on?
+	 */
+	public void set_bc_read(int bc_read) {
+		this.bc_read = bc_read;
+	}
+
+	/**
+	 * @param sec_bc_read which read should the second barcode tag sit on?
+	 */
+	public void set_sec_bc_read(int sec_bc_read) {
+		this.sec_bc_read = sec_bc_read;
+	}
 
     /**
      * @return the cycleRangeByRead

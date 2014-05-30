@@ -76,8 +76,16 @@ public class BamReadTrimmerTest {
                 + "MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
               );
 
+        System.out.println("checking bam md5");
+        File trimmedBamFile = new File("testdata/6210_8_trimmed.bam");
+        trimmedBamFile.deleteOnExit();
+
+        File md5File = new File("testdata/6210_8_trimmed.bam.md5");
+        md5File.deleteOnExit();
+
+        assertEquals("ad8b8cbc6f08d1091464678271147222", CheckMd5.getBamMd5AfterRemovePGVersion(trimmedBamFile, "BamReadTrimmer"));
+
     }
-    
     /**
      * Test trimming sam record methods
      */
@@ -126,22 +134,6 @@ public class BamReadTrimmerTest {
         assertEquals(record.getAttribute("rs"),"AAATT");
         assertEquals(record.getAttribute("qs"),"<><<>");
         
-    }
-    
-    /**
-     * Test output bam MD5
-     */
-    @Test
-    public void testOutputBam() throws FileNotFoundException, IOException {
-        System.out.println("checking bam md5");
-        File trimmedBamFile = new File("testdata/6210_8_trimmed.bam");
-        trimmedBamFile.deleteOnExit();
-
-        File md5File = new File("testdata/6210_8_trimmed.bam.md5");
-        md5File.deleteOnExit();
-
-        assertEquals(CheckMd5.getBamMd5AfterRemovePGVersion(trimmedBamFile, "BamReadTrimmer"), "f9e783ed5b2c670dfc61633b4edf49c7");
-
     }
 
 }
