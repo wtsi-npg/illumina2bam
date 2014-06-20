@@ -1,5 +1,6 @@
 - ensure the readname does not start with :
 - Illumina X10 instruments: one loc file for all lanes and tiles
+- allow for absence of run id and instrument info in the configuration file
 
 release 1.14
 - AlignmentFilter now supports BAM/SAM files containing secondary and supplemental alignments

@@ -574,23 +574,24 @@ public class Lane {
      */
     public String readInstrumentAndRunID(){
 
-        Node nodeRunID;
-        Node nodeInstrument;
-
+	String runID      = null;
+        String instrument = null;
         try {
-            XPathExpression exprRunID = xpath.compile("RunParameters/RunFolderId/text()");
-            nodeRunID = (Node) exprRunID.evaluate(this.runConfigXmlNode, XPathConstants.NODE);
-
-            XPathExpression exprInstrument = xpath.compile("RunParameters/Instrument/text()");
-            nodeInstrument = (Node) exprInstrument.evaluate(this.runConfigXmlNode, XPathConstants.NODE);
+            XPathExpression e = xpath.compile("RunParameters/RunFolderId/text()");
+            Node n = (Node) e.evaluate(this.runConfigXmlNode, XPathConstants.NODE);
+            if (n != null) {
+                runID = n.getNodeValue();
+                e = xpath.compile("RunParameters/Instrument/text()");
+                n = (Node) e.evaluate(this.runConfigXmlNode, XPathConstants.NODE);
+                if (n != null) {
+                    instrument = n.getNodeValue();
+                }
+            }
         } catch (XPathExpressionException ex) {
             log.error("Problems to read instrument name and id run from config file: " + ex.getMessage() );
-            return null;
         }
 
-        String runID = nodeRunID.getNodeValue();
-        String instrument = nodeInstrument.getNodeValue();
-        if(runID == null || instrument ==null){
+        if(runID == null || instrument == null) {
             log.warn("No instrument name or id run returned.");
             return null;
         }
