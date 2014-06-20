@@ -151,20 +151,16 @@ public class Tile {
         final DecimalFormat tileNumberFormatter = new DecimalFormat("0000");
         this.tileNameInFour = "s_" + this.laneNumber + "_" + tileNumberFormatter.format(this.tileNumber);
 
-        this.cLocsFileName = this.intensityDir
-                + File.separator
-                + this.laneSubDir
-                + File.separator
-                + this.tileNameInFour + ".clocs";
-        this.locsFileName = this.intensityDir
-                + File.separator
-                + this.laneSubDir
-                + File.separator
-                + this.tileName + ".locs";
-
-        this.posFileName = this.intensityDir
-                + File.separator
-                + this.tileNameInFour + "_pos.txt";
+        String sep  = File.separator;
+        String idir = this.intensityDir + sep;
+        this.posFileName      = idir + this.tileNameInFour + "_pos.txt";
+        this.cLocsFileName    = idir + this.laneSubDir + sep + this.tileNameInFour + ".clocs";
+        String lfn            = idir + this.laneSubDir + sep + this.tileName + ".locs";
+        File locsFile = new File( lfn );
+        if (!locsFile.exists()) {
+          lfn                 = idir + "s.locs"; 
+	}
+        this.locsFileName     = lfn;
 
         this.filterFileName = this.checkFilterFileName();
     }
@@ -190,7 +186,7 @@ public class Tile {
         PositionFileReader positionReader = null;
 
         if(clocsFile.exists()){
-            
+
            log.info("open clocs file: " + this.getcLocsFileName());
            positionReader = new CLocsFileReader(this.getcLocsFileName());
         }else if(locsFile.exists()){
@@ -627,17 +623,15 @@ public class Tile {
     }
 
     /**
-     * form read name for one cluster
+     * form read name for one cluster, read id is optional
      *
      * @param pos
      * @return whole read name
      */
     public String getReadName(String [] pos){
-        return this.id
-                + ":" + this.laneNumber
-                + ":" + this.tileNumber
-                + ":" + pos[0]
-                + ":" + pos[1];
+        String readId = this.id;
+        String name = (readId == null || readId.isEmpty()) ? "" + this.laneNumber : (readId + ":" + this.laneNumber);
+        return (name + ":" + this.tileNumber + ":" + pos[0] + ":" + pos[1]);
     }
 
     /**
