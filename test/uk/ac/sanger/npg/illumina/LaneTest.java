@@ -95,8 +95,8 @@ public class LaneTest {
         int [] newExpectedTileList = {1102,1103};
         assertArrayEquals(lane.getTileList(), newExpectedTileList);
     
-        System.out.println("readRunfoder");
-        assertEquals(lane.readRunfoder(), "110323_HS13_06000_B_B039WABXX");
+        System.out.println("readRunfolder");
+        assertEquals(lane.readRunfolder(), "110323_HS13_06000_B_B039WABXX");
 
         System.out.println("readRunDate");
         Date runDate = lane.readRunDate();

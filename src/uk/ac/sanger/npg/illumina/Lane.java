@@ -406,7 +406,7 @@ public class Lane {
             log.info("Instrument name and run id to be used as part of read name: " + this.id );
         }
         
-        this.runfolderConfig = this.readRunfoder();
+        this.runfolderConfig = this.readRunfolder();
         if(this.runfolderConfig != null ){
             log.info("Runfolder: " + runfolderConfig);
         }
@@ -990,7 +990,7 @@ public class Lane {
      * 
      * @return  runfolder name
      */
-    public String readRunfoder(){
+    public String readRunfolder(){
         
         String runfolder = null;
         try {
