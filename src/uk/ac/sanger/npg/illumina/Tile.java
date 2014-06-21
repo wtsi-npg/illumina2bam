@@ -51,8 +51,8 @@ public class Tile {
     private String secondBarcodeSeqTagName;
     private String secondBarcodeQualTagName;
 
-	private int bc_read;
-	private int sec_bc_read;
+    private int bc_read;
+    private int sec_bc_read;
 
     private final HashMap<String, int[]> cycleRangeByRead;
 
@@ -159,7 +159,7 @@ public class Tile {
         File locsFile = new File( lfn );
         if (!locsFile.exists()) {
           lfn                 = idir + "s.locs"; 
-	}
+        }
         this.locsFileName     = lfn;
 
         this.filterFileName = this.checkFilterFileName();
@@ -265,16 +265,16 @@ public class Tile {
 
             //write to bam
             if(!(this.pfFilter && filtered == 0)){
-				byte [][] read1_qi1 = null;
-				byte [][] read1_qi2 = null;
-				byte [][] read2_qi1 = null;
-				byte [][] read2_qi2 = null;
-				if (this.bc_read == 0) { this.bc_read = 1; }
-				if (this.sec_bc_read == 0) { this.sec_bc_read = this.bc_read; }
-				if (this.bc_read == 1) { read1_qi1 = basesQualsIndex; } 
-				else                   { read2_qi1 = basesQualsIndex; }
-				if (this.sec_bc_read == 1) { read1_qi2 = basesQualsIndex2; } 
-				else                       { read2_qi2 = basesQualsIndex2; }
+                byte [][] read1_qi1 = null;
+                byte [][] read1_qi2 = null;
+                byte [][] read2_qi1 = null;
+                byte [][] read2_qi2 = null;
+                if (this.bc_read == 0) { this.bc_read = 1; }
+                if (this.sec_bc_read == 0) { this.sec_bc_read = this.bc_read; }
+                if (this.bc_read == 1) { read1_qi1 = basesQualsIndex; } 
+                else                   { read2_qi1 = basesQualsIndex; }
+                if (this.sec_bc_read == 1) { read1_qi2 = basesQualsIndex2; } 
+                else                       { read2_qi2 = basesQualsIndex2; }
 
                 SAMRecord recordRead1 = this.getSAMRecord(samFileHeader, readName, clusterIndex, basesQuals1, secondBases1, read1_qi1, read1_qi2, filtered, pairedRead, true);
                 this.writeToBam(outputSam, recordRead1);
@@ -813,18 +813,18 @@ public class Tile {
         this.secondBarcodeQualTagName = secondBarcodeQualTagName;
     }
 
-	/**
-	 * @param bc_read the read to put the barcode tag on
-	 */
-	public void set_bc_read(int bc_read) {
-		this.bc_read = bc_read;
-	}
+    /**
+     * @param bc_read the read to put the barcode tag on
+     */
+    public void set_bc_read(int bc_read) {
+        this.bc_read = bc_read;
+    }
 
-	/**
-	 * @param sec_bc_read the read to put the second barcode tag on
-	 */
-	public void set_sec_bc_read(int sec_bc_read) {
-		this.sec_bc_read = sec_bc_read;
-	}
+    /**
+     * @param sec_bc_read the read to put the second barcode tag on
+     */
+    public void set_sec_bc_read(int sec_bc_read) {
+        this.sec_bc_read = sec_bc_read;
+    }
 
 }
