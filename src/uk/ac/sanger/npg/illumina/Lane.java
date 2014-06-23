@@ -92,7 +92,7 @@ public class Lane {
     private SAMProgramRecord instrumentProgram;
     
     private Date runDateConfig;
-    private String runfolderConfig;
+    private String runfolderConfig; //name of runfolder (without path) from config
     
     //other fields    
     private SAMProgramRecord illumina2bamProgram;
@@ -126,6 +126,10 @@ public class Lane {
 
         this.intensityDir      = intensityDir;
         this.baseCallDir       = baseCallDir;
+        File baseCallDirObj = new File(this.baseCallDir);
+        if(!baseCallDirObj.exists() || !baseCallDirObj.isDirectory()){
+            throw new RuntimeException("No basecall directory "+this.baseCallDir);
+        }
         this.runFolder         = runFolder;
         this.laneNumber        = laneNumber;
         this.includeSecondCall = secondCall;
@@ -160,6 +164,12 @@ public class Lane {
         xpath = factory.newXPath();
 
         this.initConfigsDoc();
+        try {
+            log.info("Reading config xml files");
+            readConfigs();
+        } catch (Exception ex) {
+            throw new RuntimeException("Problem reading config files", ex);
+        }
     }
 
     /**
@@ -255,7 +265,7 @@ public class Lane {
         try {
             db = dbf.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
-            log.error(ex, "Problems to generate XML DocumentBuilder");
+            log.error(ex, "Problem generating XML DocumentBuilder");
         }
 
         File baseCallsConfigFile = new File(this.baseCallsConfig);
@@ -264,9 +274,9 @@ public class Lane {
             try {
                 baseCallsConfigDoc = db.parse(baseCallsConfigFile);
             } catch (SAXException ex) {
-                log.error(ex, "Problems to parsing basecalls config xml file " + this.baseCallsConfig);
+                log.error(ex, "Problem parsing basecalls config xml file " + this.baseCallsConfig);
             } catch (IOException ex) {
-                log.error(ex, "Problems to read basecall config file " + this.baseCallsConfig);
+                log.error(ex, "Problem reading basecall config file " + this.baseCallsConfig);
             }
 
             NodeList runNodeList = baseCallsConfigDoc.getElementsByTagName("Run");
@@ -294,7 +304,7 @@ public class Lane {
         }
    
         if( this.runConfigXmlNode == null ){
-            throw new RuntimeException("Both Intensities and BassCalls config files are not available or format wrong");
+            log.info("Neither Intensities nor BaseCalls config files are available or they have unrecognised formats");
         }
         
         this.runParametersDoc = this.fromXmlToDocument(this.runParametersFile, db);
@@ -332,16 +342,22 @@ public class Lane {
         
         log.info("Reading BaseCalls config xml file " + this.baseCallsConfig);
 
-        if (baseCallsConfigDoc == null) {
-            log.info("Problems to read baseCalls config file: " + this.baseCallsConfig);
+        if (baseCallsConfigDoc == null && this.runParametersDoc == null) {
+            log.info("No parse of baseCalls config or runParameters files");
             this.baseCallProgram = new SAMProgramRecord("basecalling");
             return;
         }
 
         //read basecall software name and version
-        this.baseCallProgram = this.readBaseCallProgramRecord();
+        if(this.baseCallsConfigDoc != null){
+            log.info("Reading BaseCalls config XML file for basecalling program record " + this.baseCallsConfig );
+            this.baseCallProgram = this.readBaseCallProgramRecord();
+        }else{
+            log.info("Reading runParameters XML file for basecalling program record " + this.runParametersFile );
+            this.baseCallProgram = this.readBaseCallProgramRecordFromRunParameterFile();
+        }
         if(baseCallProgram == null){
-            throw new Exception("Problems to get base call software version from config file: " + this.baseCallsConfig);
+            throw new Exception("Problem getting base call software version from config file: " + this.baseCallsConfig);
         }else{
             log.info("BaseCall Program: " + baseCallProgram.getProgramName() + " " + baseCallProgram.getProgramVersion());
         }
@@ -355,7 +371,7 @@ public class Lane {
     private void readIntensityConfig() throws Exception {
 
         if (intensityConfigDoc == null && this.runParametersDoc == null) {
-            log.info("Intensity config xml file and runParameters xml file both are not available");
+            log.info("No parse of Intensity config or runParameters files");
             this.instrumentProgram = new SAMProgramRecord("SCS");
             return;
         }
@@ -370,7 +386,7 @@ public class Lane {
         }
         
         if(instrumentProgram == null){
-            throw new Exception("Problems to get instrument software version from config or runParameters file: " + this.intensityConfig);
+            throw new Exception("Problem getting instrument software version from config or runParameters file: " + this.intensityConfig);
         }else{
             log.info("Instrument Program: " + instrumentProgram.getProgramName() + " " + instrumentProgram.getProgramVersion());
         }
@@ -393,7 +409,11 @@ public class Lane {
         this.tileList = this.mergeTileList(tileListByList, tileListByRange);
 
         if(tileList == null){
-            throw new RuntimeException("Problems to read tile list from config file:" + this.baseCallsConfig);
+            tileList = calcTileList();
+        }
+
+        if(tileList == null){
+            throw new RuntimeException("Problems reading tile list from config file:" + this.baseCallsConfig + ", or calculating from RunInfo:" + runInfoFile );
         }else{
             log.info("Number of Tiles: " + tileList.length);
         }
@@ -406,31 +426,34 @@ public class Lane {
             log.info("Instrument name and run id to be used as part of read name: " + this.id );
         }
         
-        this.runfolderConfig = this.readRunfolder();
-        if(this.runfolderConfig != null ){
+        runfolderConfig = readRunfolder();
+        if(runfolderConfig == null && runParametersDoc != null){
+            runfolderConfig = this.readRunfolderFromRunParametersFile();
+        }
+        if(runfolderConfig != null ){
             log.info("Runfolder: " + runfolderConfig);
         }
         
-        this.runDateConfig = this.readRunDate();
-        if(this.runDateConfig != null){
+        runDateConfig = readRunDate();
+        if(runDateConfig == null && runParametersDoc != null){
+            runDateConfig = this.readRunDateFromRunParametersFile();
+        }
+        if(runDateConfig != null){
             log.info("Run date: " + runDateConfig);
         }
         
         //try different file for cycle and read information
         if(this.cycleRangeByRead == null && this.runInfoDoc != null){
-            
             log.info("Check cycle range per read from RunInfo file");
             this.cycleRangeByRead = this.getCycleRangeByReadFromRunInfoFile();
         }
         
         if(this.cycleRangeByRead == null && this.runParametersDoc != null){
-            
            log.info("Check cycle reange per read from runParameter file");
            this.cycleRangeByRead = this.getCycleRangeByReadFromRunParametersFile();
         }
         
         if(this.cycleRangeByRead == null){
-        
            log.info("Check number of Reads and cycle numbers for each read");
            this.cycleRangeByRead = this.checkCycleRangeByRead();
         }
@@ -467,8 +490,38 @@ public class Lane {
 
         return null;
     }
-    
     /**
+     *
+     * @return a list of tile number
+     */
+    public int [] calcTileList(){
+//     <FlowcellLayout LaneCount="8" SurfaceCount="2" SwathCount="2" TileCount="24">
+        Node nodeLayout;
+        try {
+            XPathExpression expr = xpath.compile("/RunInfo/Run/FlowcellLayout");
+            nodeLayout = (Node) expr.evaluate(runInfoDoc, XPathConstants.NODE);
+        } catch (XPathExpressionException ex) {
+            log.error(ex, "Problems parsing RunInfo /RunInfo/Run/FlowcellLayout");
+            return null;
+        }
+
+        int numSurfaces =  Integer.parseInt(nodeLayout.getAttributes().getNamedItem("SurfaceCount").getNodeValue());
+        int numSwaths = Integer.parseInt(nodeLayout.getAttributes().getNamedItem("SwathCount").getNodeValue());
+        int numTilesPerSwath = Integer.parseInt(nodeLayout.getAttributes().getNamedItem("TileCount").getNodeValue());
+        int[] calcedList = new int[numSwaths * numTilesPerSwath * numSurfaces];
+        int count = 0;
+        for (int isur = 1; isur <= numSurfaces; ++isur){
+          for (int iswa = 1; iswa <= numSwaths; ++iswa){
+            for (int itile = 1; itile <= numTilesPerSwath; ++itile){
+              calcedList[count]= 1000 * isur + 100 * iswa + itile;
+              count++;
+            }
+          }
+        }
+        return count>0 ? calcedList : null; 
+    }
+    
+   /**
      *
      * @return an object of SAMProgramRecord for base calling program
      */
@@ -499,12 +552,41 @@ public class Lane {
         return baseCallProgramConfig;
     }
 
+   /**
+     *
+     * @return an object of SAMProgramRecord for base calling program
+     */
+    public SAMProgramRecord readBaseCallProgramRecordFromRunParameterFile (){
+
+        Node nodeRTAVersion;
+        try {
+            XPathExpression exprBaseCallSoftware = xpath.compile("/RunParameters/Setup/RTAVersion/text()");
+            nodeRTAVersion = (Node) exprBaseCallSoftware.evaluate(this.runParametersDoc, XPathConstants.NODE);
+        } catch (XPathExpressionException ex) {
+            log.error(ex, "Problems readind base calling program RTA version /RunParameters/Setup/RTAVersion from run parameter file");
+            return null;
+        }
+        String softwareVersion = nodeRTAVersion.getNodeValue();
+    
+        if(softwareVersion == null){
+            log.warn("No base calling program name or version returned");
+        }
+        
+        SAMProgramRecord baseCallProgramConfig = new SAMProgramRecord("basecalling");
+        baseCallProgramConfig.setProgramName("RTA");
+        baseCallProgramConfig.setProgramVersion(softwareVersion);
+        baseCallProgramConfig.setAttribute("DS", "Basecalling Package");
+
+        return baseCallProgramConfig;
+    }
+
     /**
      *
      * @return a list of tile number
      */
     public int[] readTileList() {
 
+        if(this.runConfigXmlNode == null) {return null;}
         int[] tileListConfig = null;
         
         NodeList tilesForLane;
@@ -512,7 +594,7 @@ public class Lane {
             XPathExpression exprLane = xpath.compile("TileSelection/Lane[@Index=" + this.laneNumber + "]/Tile/text()");
             tilesForLane = (NodeList) exprLane.evaluate(this.runConfigXmlNode, XPathConstants.NODESET);
         } catch (XPathExpressionException ex) {
-            log.error(ex, "Problems to got a list of tiles from config files." );
+            log.error(ex, "Problem getting a list of tiles from config files." );
             return null;
         }       
         tileListConfig = new int[tilesForLane.getLength()];
@@ -535,6 +617,7 @@ public class Lane {
      */
     public int[] readTileRange() {
 
+        if(this.runConfigXmlNode == null) {return null;}
         int[] tileRangeConfig = null;
         
         NodeList tileRangeList;
@@ -542,7 +625,7 @@ public class Lane {
             XPathExpression exprLane = xpath.compile("TileSelection/Lane[@Index=" + this.laneNumber + "]/TileRange");
             tileRangeList = (NodeList) exprLane.evaluate(this.runConfigXmlNode, XPathConstants.NODESET);
         } catch (XPathExpressionException ex) {
-            log.error(ex, "Problems to got a list of tiles from config files." );
+            log.error(ex, "Problem getting a list of tile ranges from config files." );
             return null;
         }
         
@@ -576,7 +659,8 @@ public class Lane {
 
         String runID      = null;
         String instrument = null;
-        try {
+        if(this.runConfigXmlNode != null){
+          try {
             XPathExpression e = xpath.compile("RunParameters/RunFolderId/text()");
             Node n = (Node) e.evaluate(this.runConfigXmlNode, XPathConstants.NODE);
             if (n != null) {
@@ -587,10 +671,10 @@ public class Lane {
                     instrument = n.getNodeValue();
                 }
             }
-        } catch (XPathExpressionException ex) {
+          } catch (XPathExpressionException ex) {
             log.error("Problems to read instrument name and id run from config file: " + ex.getMessage() );
+          }
         }
-
         if(runID == null || instrument == null) {
             log.warn("No instrument name or id run returned.");
             return null;
@@ -890,7 +974,7 @@ public class Lane {
             }
 
         } catch (XPathExpressionException ex) {
-            log.error(ex, "Problems to read cycles numbers");
+            log.error(ex, "Problem reading cycle numbers from config xml files");
             return null;
         }
         return cycleRangeByReadConfig;
@@ -986,7 +1070,7 @@ public class Lane {
         instrumentProgramConfig.setAttribute("DS", "Controlling software on instrument");
 
         return instrumentProgramConfig;
-    }    
+    }
     /**
      * 
      * @return  runfolder name
@@ -994,20 +1078,43 @@ public class Lane {
     public String readRunfolder(){
         
         String runfolder = null;
-        try {
+        if(this.runConfigXmlNode != null){
+          try {
             XPathExpression exprRunfolder = xpath.compile("RunParameters/RunFolder/text()");
             Node runfolderNode = (Node) exprRunfolder.evaluate(this.runConfigXmlNode, XPathConstants.NODE);
             if(runfolderNode == null){
                 return null;
             }
             runfolder = runfolderNode.getNodeValue();
-        } catch (XPathExpressionException ex) {
-            log.warn(ex, "Problems to read runfolder");
+          } catch (XPathExpressionException ex) {
+            log.warn(ex, "Problem reading runfolder");
+          }
         }
         
         return runfolder;
     }
     
+    /**
+     * 
+     * @return  runfolder name
+     */
+    public String readRunfolderFromRunParametersFile(){
+        
+        String runfolder = null;
+        try {
+            XPathExpression exprRunfolder = xpath.compile("RunParameters/Setup/RunID/text()");
+            Node runfolderNode = (Node) exprRunfolder.evaluate(this.runParametersDoc, XPathConstants.NODE);
+            if(runfolderNode == null){
+                return null;
+            }
+            runfolder = runfolderNode.getNodeValue();
+        } catch (XPathExpressionException ex) {
+            log.warn(ex, "Problem reading runfolder from RunID in run paramaters file");
+        }
+        
+        return runfolder;
+    }
+
     /**
      *  
      * @return run date
@@ -1015,7 +1122,8 @@ public class Lane {
     public Date readRunDate(){
 
         Date runDate = null;
-        try {
+        if(this.runConfigXmlNode != null){
+          try {
             XPathExpression exprRunDate = xpath.compile("RunParameters/RunFolderDate/text()");
             Node runDateNode = (Node) exprRunDate.evaluate(this.runConfigXmlNode, XPathConstants.NODE);
             if(runDateNode == null){
@@ -1024,15 +1132,41 @@ public class Lane {
             String runDateString = runDateNode.getNodeValue();
             SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
             runDate = formatter.parse(runDateString);
-        } catch (ParseException ex) {
+          } catch (ParseException ex) {
             log.warn(ex, "Problems parsing run date");
-        } catch (XPathExpressionException ex) {
+          } catch (XPathExpressionException ex) {
             log.warn(ex, "Problems reading run date");
+          }
         }  
 
         return runDate;
     }
-    
+
+    /**
+     *  
+     * @return run date
+     */
+    public Date readRunDateFromRunParametersFile(){
+
+        Date runDate = null;
+        try {
+            XPathExpression exprRunDate = xpath.compile("RunParameters/Setup/RunStartDate/text()");
+            Node runDateNode = (Node) exprRunDate.evaluate(this.runParametersDoc, XPathConstants.NODE);
+            if(runDateNode == null){
+                return null;
+            }
+            String runDateString = runDateNode.getNodeValue();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+            runDate = formatter.parse(runDateString);
+        } catch (ParseException ex) {
+            log.warn(ex, "Problems parsing run date in run paramaters file");
+        } catch (XPathExpressionException ex) {
+            log.warn(ex, "Problems reading run date in run paramaters file");
+        }  
+
+        return runDate;
+    }
+
     /**
      * 
      * @return BAM header
