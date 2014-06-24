@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<RunParameters xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Setup>
+    <ExperimentName>ValB</ExperimentName>
+    <ScanID>-999</ScanID>
+    <FCPosition>B</FCPosition>
+    <WorkFlowType>NOINDEX</WorkFlowType>
+    <Read1>151</Read1>
+    <IndexRead1>0</IndexRead1>
+    <IndexRead2>0</IndexRead2>
+    <Read2>151</Read2>
+    <OutputFolder>O:\tempstaging</OutputFolder>
+    <PeriodicSave>Save All Thumbnails</PeriodicSave>
+    <Flowcell>HiSeqX HD</Flowcell>
+    <FirstBaseConfirmation>false</FirstBaseConfirmation>
+    <Sbs>HiSeqX SBS</Sbs>
+    <Pe>cBot HiSeq X HD</Pe>
+    <Index />
+    <Rehyb>None</Rehyb>
+    <PerformPreRunFluidicsCheck>false</PerformPreRunFluidicsCheck>
+    <ServiceRun>false</ServiceRun>
+    <ApplicationName>HiSeq X Control Software</ApplicationName>
+    <ApplicationVersion>3.0.29.0</ApplicationVersion>
+    <RunID>140609_HX1_ValB_B_H04ENALXX</RunID>
+    <RunStartDate>140609</RunStartDate>
+    <BaseSpaceSettings>
+      <Username />
+      <RunId />
+      <TempFolder />
+      <UseBaseSpace>false</UseBaseSpace>
+      <SendInstrumentHealthToILMN>false</SendInstrumentHealthToILMN>
+      <RunMonitoringOnly>false</RunMonitoringOnly>
+    </BaseSpaceSettings>
+    <ScannerID>ST-E00143</ScannerID>
+    <ScanNumber>17</ScanNumber>
+    <ComputerName>HX1</ComputerName>
+    <FPGAVersion>10.32.18</FPGAVersion>
+    <CPLDVersion>3.0.0</CPLDVersion>
+    <RTAVersion>2.2.1</RTAVersion>
+    <ChemistryVersion>Illumina,Bruno Fluidics Controller,0,v2.0340</ChemistryVersion>
+    <CameraFirmware>2.11-B00-R02</CameraFirmware>
+    <CameraDriver>7.0.120.4387</CameraDriver>
+    <FocusCameraFirmware />
+    <Barcode>H04ENALXX</Barcode>
+    <WashBarcode>HAHALALXX</WashBarcode>
+    <Username>sbsuser</Username>
+    <SelectedSections>
+      <Section Name="A_1" />
+      <Section Name="B_1" />
+      <Section Name="C_1" />
+      <Section Name="D_1" />
+      <Section Name="E_1" />
+      <Section Name="F_1" />
+      <Section Name="G_1" />
+      <Section Name="H_1" />
+    </SelectedSections>
+    <FocusMethod>DynamicITF</FocusMethod>
+    <SelectedSurface>BothLaneSurfaces</SelectedSurface>
+    <SwathScanMode>AutoSwath</SwathScanMode>
+    <EnableLft>true</EnableLft>
+    <AutoTiltOnce>true</AutoTiltOnce>
+    <EnableAutoCenter>true</EnableAutoCenter>
+    <EnableAnalysis>true</EnableAnalysis>
+    <EnableBasecalling>true</EnableBasecalling>
+    <EnableCameraLogging>false</EnableCameraLogging>
+    <FPGADynamicFocusSettings>
+      <MaxInitialZJumpHalfUm>3</MaxInitialZJumpHalfUm>
+      <MaxSubsequentZJumpHalfUm>7</MaxSubsequentZJumpHalfUm>
+      <NumberOfInitialZJumps>0</NumberOfInitialZJumps>
+      <CVGainStart>350</CVGainStart>
+      <CVGainPosLocked>350</CVGainPosLocked>
+      <Offset>150</Offset>
+      <HotPixel>200</HotPixel>
+      <MotorDelayFrames>21</MotorDelayFrames>
+      <SoftwareLaserLag>350</SoftwareLaserLag>
+      <DitherSize>100</DitherSize>
+      <GroupSize>50</GroupSize>
+      <DitherShift>20</DitherShift>
+      <IntensityCeiling>65535</IntensityCeiling>
+      <IGain>50</IGain>
+      <IHistory>4</IHistory>
+    </FPGADynamicFocusSettings>
+    <TileWidth>3200</TileWidth>
+    <TileHeight>7244</TileHeight>
+    <ImageWidth>3200</ImageWidth>
+    <ImageHeight>174420</ImageHeight>
+    <LaneLength>60.175</LaneLength>
+    <NumTilesPerSwath>24</NumTilesPerSwath>
+    <NumSwaths>2</NumSwaths>
+    <UseExistingRecipe>false</UseExistingRecipe>
+    <Reads>
+      <Read Number="1" NumCycles="151" IsIndexedRead="N" />
+      <Read Number="2" NumCycles="151" IsIndexedRead="N" />
+    </Reads>
+    <ReagentKits>
+      <Sbs>
+        <SbsReagentKit>
+          <ID>9969643RGT4145278</ID>
+          <Prime>false</Prime>
+          <NumberCyclesRemaining>310</NumberCyclesRemaining>
+          <IsNew50Cycle>false</IsNew50Cycle>
+          <IsNew200Cycle>true</IsNew200Cycle>
+        </SbsReagentKit>
+      </Sbs>
+      <Index />
+      <Pe>
+        <ReagentKit>
+          <ID>15049916RGT4100222</ID>
+        </ReagentKit>
+      </Pe>
+      <Rehyb />
+    </ReagentKits>
+    <ReagentBottles>
+      <Sbs />
+    </ReagentBottles>
+    <Resume>false</Resume>
+    <ResumeCycle>0</ResumeCycle>
+    <TempFolder>O:\Illumina\HiSeqTemp\140609_HX1_ValB_B_H04ENALXX</TempFolder>
+    <RecipeFragmentVersion>3.0.4</RecipeFragmentVersion>
+    <PromptForPeReagents>false</PromptForPeReagents>
+    <MockRun>false</MockRun>
+    <ScannedBarcode />
+    <CopyImages>false</CopyImages>
+  </Setup>
+  <Version>1</Version>
+</RunParameters>
