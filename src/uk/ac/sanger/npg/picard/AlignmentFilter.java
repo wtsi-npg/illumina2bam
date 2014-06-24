@@ -31,7 +31,54 @@ import net.sf.samtools.*;
  *
  * @author gq1@sanger.ac.uk
  */
+
 public class AlignmentFilter extends PicardCommandLine {
+
+/**
+ * Exception to be thrown on finding template(name) grouped alignment records from 
+ * different input files are either in a different order to the first file, or
+ * missing from the first file.
+ */
+public class RecordMissingOrOutOfOrder extends RuntimeException {}
+
+/*
+ * A wrapper around any SAMRecordIterator to support a peek() method
+ */
+static private class SAMRecordPeekableIterator implements SAMRecordIterator{
+	private SAMRecordIterator si = null;
+	private SAMRecord nextRecord = null;
+
+	public SAMRecordPeekableIterator(SAMRecordIterator i) {
+		si = i;
+		if (si.hasNext()) { nextRecord = si.next(); }
+	}
+
+	public SAMRecord next() {
+		SAMRecord tmpRecord = nextRecord;
+		if (si.hasNext()) { nextRecord = si.next(); }
+		else              { nextRecord = null; }
+		return null == tmpRecord ? si.next() : tmpRecord ; //using si.next to throw appropriate exception
+	}
+
+	public boolean hasNext() {
+		return (nextRecord != null);
+	}
+
+	public SAMRecordIterator assertSorted(SAMFileHeader.SortOrder order) {
+		si.assertSorted(order);
+		return this;
+	}
+
+	public void close() { si.close(); }
+
+	public void remove() { throw new UnsupportedOperationException(); }
+
+	public SAMRecord peek() {
+		return nextRecord;
+	}
+
+}
+
 
     private final Log log = Log.getInstance(AlignmentFilter.class);
 
@@ -139,9 +186,9 @@ public class AlignmentFilter extends PicardCommandLine {
         }
 
         log.info("Starting read and writing records");
-        List<SAMRecordIterator> inputReaderIteratorList = new ArrayList<SAMRecordIterator>();
+        List<SAMRecordPeekableIterator> inputReaderIteratorList = new ArrayList<SAMRecordPeekableIterator>();
         for(SAMFileReader reader : inputReaderList){
-            SAMRecordIterator iterator = reader.iterator();
+            SAMRecordPeekableIterator iterator = new SAMRecordPeekableIterator(reader.iterator());
             inputReaderIteratorList.add(iterator);
         }
  
@@ -149,42 +196,38 @@ public class AlignmentFilter extends PicardCommandLine {
         int readsCountUnaligned = 0;
         int [] readsCountPerRef = new int [numInput];
         
+        /*
+         * Loop until we have read all records from all input files
+         */
+        
         while(inputReaderIteratorList.get(0).hasNext()){
-            
             totalReads++;
 
-            List<SAMRecord> recordList = new ArrayList<SAMRecord>();
-            List<SAMRecord> pairedRecordList = new ArrayList<SAMRecord>();
-            boolean isPairedRead = false;
+            ArrayList<ArrayList<SAMRecord>> recordList = new ArrayList<ArrayList<SAMRecord>>();
 
-            for(SAMRecordIterator inputReaderIterator : inputReaderIteratorList){
+            /*
+             * read the next set of records from each file in turn
+             * A 'set' of records is made of consecutive records with the same name
+             * This may be one record, or two if paired, or more if there are secondary or supplementary alignments
+             *
+             */
+            String name = inputReaderIteratorList.get(0).peek().getReadName();
+            for(SAMRecordPeekableIterator inputReaderIterator : inputReaderIteratorList){
 
-                if (inputReaderIterator.hasNext()) {
+				ArrayList<SAMRecord> recordSet = new ArrayList<SAMRecord>();
 
-                    SAMRecord tempRecord = inputReaderIterator.next();
-                    recordList.add(tempRecord);
+				// while the name does not change, add to record set
+				while (inputReaderIterator.hasNext() && inputReaderIterator.peek().getReadName().equals(name)) {
+					recordSet.add(inputReaderIterator.next());
+				}
 
-                    boolean tempPaired = tempRecord.getReadPairedFlag();
-                    if( tempPaired ){
-                        isPairedRead = true;
-                    }
-
-                    if ( tempPaired && inputReaderIterator.hasNext() ) {
-                        SAMRecord tempPairedRecord = inputReaderIterator.next();
-                        pairedRecordList.add(tempPairedRecord);
-                    }
-
-                }else{
-
-                    throw new RuntimeException("The input files don't have the same set of records");
-                }
+				recordList.add(recordSet);
 
             }
             
-            metrics.checkNextReadsForChimera(recordList, pairedRecordList);
+            metrics.checkNextReadsForChimera(recordList);
 
-            int firstAlignedIndex = this.checkOneRecord(recordList, pairedRecordList, isPairedRead);
-
+            int firstAlignedIndex = this.checkOneRecord(recordList);
             SAMFileWriter tempOut;
 
             if(firstAlignedIndex != -1 ){
@@ -200,15 +243,16 @@ public class AlignmentFilter extends PicardCommandLine {
                 readsCountUnaligned++;
             }
 
-            SAMRecord samRecord = recordList.get(firstAlignedIndex);
-            this.removeAlignmentsFromUnalignedRecord(samRecord);
-            tempOut.addAlignment(samRecord);
+			ArrayList<SAMRecord> recordSet = recordList.get(firstAlignedIndex);
+			for (SAMRecord sam : recordSet) {
+				this.removeAlignmentsFromUnalignedRecord(sam);
+				tempOut.addAlignment(sam);
+			}
 
-            if(isPairedRead){
-                samRecord = pairedRecordList.get(firstAlignedIndex);
-                this.removeAlignmentsFromUnalignedRecord(samRecord);
-                tempOut.addAlignment(samRecord);
-            }
+        }
+
+        for(SAMRecordPeekableIterator inputReaderIterator : inputReaderIteratorList){
+            if(inputReaderIterator.hasNext()){ throw new RecordMissingOrOutOfOrder(); }
         }
 
         log.info("Closing all the files");
@@ -248,87 +292,30 @@ public class AlignmentFilter extends PicardCommandLine {
 
 
     /**
-     * 
+     * Find the first aligned read in the record list
+     * A read is treated as 'aligned' if any of the reads in a set are aligned
+     * Returns an index into the readlist, or -1 if no aligned reads found
+     *
      * @param recordList
      * @param pairedRecordList
      * @param isPairedRead
      * @return
      */
-    public int checkOneRecord ( List<SAMRecord> recordList,  List<SAMRecord> pairedRecordList, boolean isPairedRead){
+    public int checkOneRecord (ArrayList<ArrayList<SAMRecord>> recordList){
+        int firstAlignedIndex = 0;
 
-        if( isPairedRead && ( recordList.size() != pairedRecordList.size() ) ){
+		// Look at all of the record sets
+        for(ArrayList<SAMRecord> recordSet : recordList ){
+			// for each set, see if any of the records are aligned
+			for (SAMRecord sam : recordSet) {
+				if (!sam.getReadUnmappedFlag()) {
+					return firstAlignedIndex;	// found an aligned record in the set!
+				}
+			}
+			firstAlignedIndex++;
+		}
 
-            throw new RuntimeException("Paired information is not correct in all input files for read: "
-                     + recordList.get(0).getReadName()
-                    + " " + recordList.get(0).getFlags());
-        }
-
-        int firstAlignedIndex = -1;
-
-        int count = 0;
-        String firstReadName = null;
-        boolean firstPairedFlag = false;
-        boolean firstFirstReadFlag = false;
-
-        for(SAMRecord record : recordList ){
-
-            String readName = record.getReadName();
-            boolean pairedFlag = record.getReadPairedFlag();
-            boolean firstReadFlag = false;
-            if(isPairedRead){
-                firstReadFlag = record.getFirstOfPairFlag();
-            }
-
-            if(count == 0){
-                firstReadName = readName;
-                firstPairedFlag = pairedFlag;
-                firstFirstReadFlag = firstReadFlag;
-            }
-
-            if(!readName.equals(firstReadName) || firstPairedFlag != pairedFlag || firstFirstReadFlag != firstReadFlag ){
-
-                throw new RuntimeException("Reads in input files are not the same: " + firstReadName +  " " + readName);
-
-            }
-
-
-            boolean unmappedFlag = record.getReadUnmappedFlag();
-            boolean mateUnmappedFlag =false;
-            if(isPairedRead){
-                mateUnmappedFlag = record.getMateUnmappedFlag();
-            }
-
-            boolean aligned = !unmappedFlag;
-
-            SAMRecord record2;
-            if(isPairedRead){
-
-               record2 = pairedRecordList.get(count);
-               String readName2 = record2.getReadName();
-               boolean pairedFlag2 = record2.getReadPairedFlag();
-               boolean firstReadFlag2 = record2.getFirstOfPairFlag();
-               if( !readName2.equals(readName) || pairedFlag != pairedFlag2 || firstReadFlag == firstReadFlag2 ){
-                    throw new RuntimeException("Paired reads are not together: " + readName + " " + readName2);
-               }
-
-               boolean unmappedFlag2 = record2.getReadUnmappedFlag();
-               boolean mateUnmappedFlag2 = record2.getMateUnmappedFlag();
-
-               if( mateUnmappedFlag != unmappedFlag2 || unmappedFlag != mateUnmappedFlag2 ){
-                   throw new RuntimeException("Paired read alignment information not correct: " + readName);
-               }
-
-               aligned = aligned || !unmappedFlag2;
-            }
-            if(firstAlignedIndex == -1 && aligned ){
-                firstAlignedIndex = count;
-            }
-
-            count++;
-        }
-
-        return firstAlignedIndex;
-
+        return -1;	// no aligned records found
     }
     
     /**

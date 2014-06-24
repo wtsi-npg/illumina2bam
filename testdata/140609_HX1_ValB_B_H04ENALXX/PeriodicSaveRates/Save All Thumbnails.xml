@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<PeriodicSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="Save All Thumbnails" Version="1">
+  <SaveImages>false</SaveImages>
+  <SaveThumbnails>true</SaveThumbnails>
+  <SaveProcessImages>false</SaveProcessImages>
+  <SaveZprofile>true</SaveZprofile>
+  <UseZPositionNaming>false</UseZPositionNaming>
+  <Surfaces>Both</Surfaces>
+  <Swaths>Both</Swaths>
+  <Lanes>
+    <Lane>1</Lane>
+    <Lane>2</Lane>
+    <Lane>3</Lane>
+    <Lane>4</Lane>
+    <Lane>5</Lane>
+    <Lane>6</Lane>
+    <Lane>7</Lane>
+    <Lane>8</Lane>
+  </Lanes>
+  <Channels>
+    <Channel>A</Channel>
+    <Channel>T</Channel>
+    <Channel>C</Channel>
+    <Channel>G</Channel>
+  </Channels>
+  <Chunks />
+</PeriodicSave>

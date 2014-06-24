@@ -189,14 +189,6 @@ public class Illumina2bam extends PicardCommandLine {
             lane.setSecondBarcodeQualTagName(this.SECOND_BARCODE_QUALITY_TAG_NAME);
         }
 
-        try {
-            log.info("Reading config xml files");
-            lane.readConfigs();
-        } catch (Exception ex) {
-            log.error(ex, "Problems to read config files");
-            return 1;
-        }
-
         // update cycle range with command line options (if appropriate)
         if (!FIRST_CYCLE.isEmpty()) {
             log.info("Setting cycle ranges using command-line options");

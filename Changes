@@ -1,4 +1,12 @@
+release 1.15
+- ensure the readname does not start with :
+- Illumina HiSeqX instruments: one loc file for all lanes and tiles, no config xml files in basecalls or intensities directories
+- allow for absence of run id and instrument info in the configuration file
 
+release 1.14
+- AlignmentFilter now supports BAM/SAM files containing secondary and supplemental alignments
+
+release 1.13
 - Add BC_READ and SEC_BC_READ command line options to specify which reads the barcode tag and second barcode tag should be attached to
 
 release 1.12
