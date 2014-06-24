@@ -1,3 +1,4 @@
+release 1.15
 - ensure the readname does not start with :
 - Illumina HiSeqX instruments: one loc file for all lanes and tiles, no config xml files in basecalls or intensities directories
 - allow for absence of run id and instrument info in the configuration file
