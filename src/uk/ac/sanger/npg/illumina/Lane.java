@@ -100,7 +100,6 @@ public class Lane {
 
     private final XPath xpath;
 
-
     /**
      *
      * @param intensityDir Illumina intensities directory including config xml file and clocs files under lane directory. Required.
@@ -113,6 +112,8 @@ public class Lane {
      * @param output Output file
      * @param barcodeSeqTagName
      * @param barcodeQualTagName  
+     * @param secondBarcodeSeqTagName
+     * @param secondBarcodeQualTagName  
      */
     public Lane(String intensityDir,
                 String baseCallDir,
@@ -122,7 +123,9 @@ public class Lane {
                 boolean pfFilter,
                 File output,
                 String barcodeSeqTagName,
-                String barcodeQualTagName){
+                String barcodeQualTagName,
+                String secondBarcodeSeqTagName,
+                String secondBarcodeQualTagName){
 
         this.intensityDir      = intensityDir;
         this.baseCallDir       = baseCallDir;
@@ -137,6 +140,8 @@ public class Lane {
         this.output            = output;
         this.barcodeSeqTagName  = barcodeSeqTagName;
         this.barcodeQualTagName = barcodeQualTagName;
+        this.secondBarcodeSeqTagName  = secondBarcodeSeqTagName;
+        this.secondBarcodeQualTagName = secondBarcodeQualTagName;
 
         this.baseCallsConfig = this.baseCallDir
                              + File.separator
@@ -170,6 +175,31 @@ public class Lane {
         } catch (Exception ex) {
             throw new RuntimeException("Problem reading config files", ex);
         }
+    }
+
+    /**
+     *
+     * @param intensityDir Illumina intensities directory including config xml file and clocs files under lane directory. Required.
+     * @param baseCallDir Illumina basecalls directory including config xml file, and filter files, bcl, maybe scl 
+     * files under lane cycle directory, using BaseCalls directory under intensities if not given.
+     * @param runFolder Illumina runfolder directory, upwards two levels from Intensities directory if not given
+     * @param laneNumber lane number
+     * @param secondCall including second base call or not, default false.
+     * @param pfFilter Filter cluster or not, default true.
+     * @param output Output file
+     * @param barcodeSeqTagName
+     * @param barcodeQualTagName  
+     */
+    public Lane(String intensityDir,
+                String baseCallDir,
+                String runFolder,
+                int laneNumber,
+                boolean secondCall,
+                boolean pfFilter,
+                File output,
+                String barcodeSeqTagName,
+                String barcodeQualTagName){
+        this(intensityDir, baseCallDir, runFolder, laneNumber, secondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName, (String)null, (String)null);
     }
 
     /**

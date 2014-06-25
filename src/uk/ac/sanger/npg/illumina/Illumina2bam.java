@@ -167,6 +167,12 @@ public class Illumina2bam extends PicardCommandLine {
            runfolderPath = this.RUN_FOLDER.getAbsolutePath();
         }   
 
+        if ( (this.SECOND_BARCODE_QUALITY_TAG_NAME != null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME == null)
+          || (this.SECOND_BARCODE_QUALITY_TAG_NAME == null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME != null) )
+        {
+            log.warn("Both SECOND_BARCODE_SEQUENCE_TAG_NAME and SECOND_BARCODE_QUALITY_TAG_NAME need to be given togeter or both missing");
+        }
+
         Lane lane = new Lane(this.INTENSITY_DIR.getAbsolutePath(),
                 this.BASECALLS_DIR.getAbsolutePath(),
                 runfolderPath,
@@ -175,19 +181,9 @@ public class Illumina2bam extends PicardCommandLine {
                 this.PF_FILTER,
                 this.OUTPUT,
                 this.BARCODE_SEQUENCE_TAG_NAME,
-                this.BARCODE_QUALITY_TAG_NAME);
-
-        
-        if ( (this.SECOND_BARCODE_QUALITY_TAG_NAME != null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME == null)
-          || (this.SECOND_BARCODE_QUALITY_TAG_NAME == null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME != null) )
-        {
-            
-            log.warn("Both SECOND_BARCODE_SEQUENCE_TAG_NAME and SECOND_BARCODE_QUALITY_TAG_NAME need to be given togeter or both missing");
-        }else if(this.SECOND_BARCODE_QUALITY_TAG_NAME != null && this.SECOND_BARCODE_SEQUENCE_TAG_NAME != null){
-            
-            lane.setSecondBarcodeSeqTagName(this.SECOND_BARCODE_SEQUENCE_TAG_NAME);
-            lane.setSecondBarcodeQualTagName(this.SECOND_BARCODE_QUALITY_TAG_NAME);
-        }
+                this.BARCODE_QUALITY_TAG_NAME,
+                this.SECOND_BARCODE_SEQUENCE_TAG_NAME,
+                this.SECOND_BARCODE_QUALITY_TAG_NAME);
 
         // update cycle range with command line options (if appropriate)
         if (!FIRST_CYCLE.isEmpty()) {
