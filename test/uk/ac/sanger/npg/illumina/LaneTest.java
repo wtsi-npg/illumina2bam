@@ -535,4 +535,28 @@ public class LaneTest {
 
     }
 
+    @Test
+    public void readMiSeqDualIndexLaneSeparateTagsOK(){
+        String intensityDir = "testdata/140624_MS6_13349_A_MS2639979-300V2/Data/Intensities";
+        String baseCallDir = "testdata/140624_MS6_13349_A_MS2639979-300V2/Data/Intensities/BaseCalls";
+        String runfolderDir = "testdata/140624_MS6_13349_A_MS2639979-300V2/";
+        int laneNumber = 1;
+        boolean includeSecondCall = false;
+        boolean pfFilter = true;
+        String barcodeSeqTagName = "b2";
+        String barcodeQualTagName = "q2";
+        String secondBarcodeSeqTagName = "BC";
+        String secondBarcodeQualTagName = "QT";
+
+    	Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName, secondBarcodeSeqTagName, secondBarcodeQualTagName);
+        System.out.println("getCycleRangeByRead");
+        HashMap<String,int[]> cycleRangeByRead = lane.getCycleRangeByRead();
+        assertNotNull("getCycleRangeByRead()", cycleRangeByRead );
+        assertArrayEquals(new int[]{1,75}, cycleRangeByRead.get("read1"));
+        assertArrayEquals(new int[]{96,170}, cycleRangeByRead.get("read2"));
+        assertArrayEquals(new int[]{76,87}, cycleRangeByRead.get("readIndex"));
+        assertArrayEquals(new int[]{88,95}, cycleRangeByRead.get("readIndex2"));
+
+    }
+
 }
