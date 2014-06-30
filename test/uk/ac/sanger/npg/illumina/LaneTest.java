@@ -459,16 +459,103 @@ public class LaneTest {
         assertEquals("lane.readInstrumentAndRunID()", null, lane.readInstrumentAndRunID());
 
         System.out.println("getCycleRangeByRead");
-        int[][] expectedRange = {
-        		{1,151},
-        		{152,302}
-        };
         HashMap<String,int[]> cycleRangeByRead = lane.getCycleRangeByRead();
         assertNotNull("getCycleRangeByRead()", cycleRangeByRead );
         assertArrayEquals(new int[]{1,151}, cycleRangeByRead.get("read1"));
         assertArrayEquals(new int[]{152,302}, cycleRangeByRead.get("read2"));
         assertNull(cycleRangeByRead.get("readIndex"));
         assertNull(cycleRangeByRead.get("readIndex2"));
+
+    }
+
+    @Test
+    public void readMiSeqDualIndexLaneOK(){
+        String intensityDir = "testdata/140624_MS6_13349_A_MS2639979-300V2/Data/Intensities";
+        String baseCallDir = "testdata/140624_MS6_13349_A_MS2639979-300V2/Data/Intensities/BaseCalls";
+        String runfolderDir = "testdata/140624_MS6_13349_A_MS2639979-300V2/";
+        int laneNumber = 1;
+        boolean includeSecondCall = false;
+        boolean pfFilter = true;
+        String barcodeSeqTagName = "BC";
+        String barcodeQualTagName = "QT";
+
+    	Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+        System.out.println("readBaseCallProgramRecord");
+        SAMProgramRecord baseCallProgram = lane.getBaseCallProgram();
+        assertNotNull( "Creating basecalling SAMProgramRecord", baseCallProgram);
+        assertEquals( "baseCallProgram.getId()", "basecalling", baseCallProgram.getId() );
+        assertEquals( "baseCallProgram.getProgramName()", "RTA", baseCallProgram.getProgramName() );
+        assertEquals( "baseCallProgram.getProgramVersion()", "1.18.54.0", baseCallProgram.getProgramVersion() );
+        assertEquals( "baseCallProgram.getAttribute(\"DS\")", "Basecalling Package", baseCallProgram.getAttribute("DS") );
+        System.out.println("getInstrumentProgram");
+        SAMProgramRecord instrumentProgram = lane.getInstrumentProgram();
+        assertNotNull( "Creating instrument SAMProgramRecord", instrumentProgram);
+        assertEquals( "instrumentProgram.getId()", "SCS", instrumentProgram.getId() );
+        assertEquals( "instrumentProgram.getProgramName()", "MiSeq Control Software", instrumentProgram.getProgramName() );
+        assertEquals( "instrumentProgram.getProgramVersion()", "2.4.1.3", instrumentProgram.getProgramVersion() );
+        assertEquals( "instrumentProgram.getAttribute(\"DS\")", "Controlling software on instrument", instrumentProgram.getAttribute("DS") );
+        
+        System.out.println("getTileList");
+        int [] expectedTileList = {
+            1101,1102,1103,1104,1105,1106,1107,1108,1109,1110,1111,1112,1113,1114,
+            2101,2102,2103,2104,2105,2106,2107,2108,2109,2110,2111,2112,2113,2114
+        };
+        assertArrayEquals("getTileList()", expectedTileList, lane.getTileList());
+
+        System.out.println("reduceTileList");
+        int [] givenTileList = {
+            1101,1102,1103,1104,1105,1106,1107,1108,
+            2101,2102,2103,2104,2105,2106,2107,2108
+        };
+        lane.setTileList(givenTileList);
+        
+        lane.reduceTileList(1102, 2);
+        
+        int [] newExpectedTileList = {1102,1103};
+        assertArrayEquals( newExpectedTileList, lane.getTileList() );
+    
+        System.out.println("getRunfolderConfig");
+        assertEquals("getRunfolderConfig()", "140624_MS6_13349_A_MS2639979-300V2", lane.getRunfolderConfig() );
+
+        System.out.println("getRunDateConfig");
+        Date runDateConfig = lane.getRunDateConfig();
+        long expected = 1403568000000L;
+        assertEquals( "runDateConfig.getTime()", expected, runDateConfig.getTime() );
+
+        System.out.println("readInstrumentAndRunID");
+        assertEquals("lane.readInstrumentAndRunID()", "MS6_13349", lane.readInstrumentAndRunID());
+
+        System.out.println("getCycleRangeByRead");
+        HashMap<String,int[]> cycleRangeByRead = lane.getCycleRangeByRead();
+        assertNotNull("getCycleRangeByRead()", cycleRangeByRead );
+        assertArrayEquals(new int[]{1,75}, cycleRangeByRead.get("read1"));
+        assertArrayEquals(new int[]{96,170}, cycleRangeByRead.get("read2"));
+        assertArrayEquals(new int[]{76,95}, cycleRangeByRead.get("readIndex"));
+        assertNull(cycleRangeByRead.get("readIndex2"));
+
+    }
+
+    @Test
+    public void readMiSeqDualIndexLaneSeparateTagsOK(){
+        String intensityDir = "testdata/140624_MS6_13349_A_MS2639979-300V2/Data/Intensities";
+        String baseCallDir = "testdata/140624_MS6_13349_A_MS2639979-300V2/Data/Intensities/BaseCalls";
+        String runfolderDir = "testdata/140624_MS6_13349_A_MS2639979-300V2/";
+        int laneNumber = 1;
+        boolean includeSecondCall = false;
+        boolean pfFilter = true;
+        String barcodeSeqTagName = "b2";
+        String barcodeQualTagName = "q2";
+        String secondBarcodeSeqTagName = "BC";
+        String secondBarcodeQualTagName = "QT";
+
+    	Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName, secondBarcodeSeqTagName, secondBarcodeQualTagName);
+        System.out.println("getCycleRangeByRead");
+        HashMap<String,int[]> cycleRangeByRead = lane.getCycleRangeByRead();
+        assertNotNull("getCycleRangeByRead()", cycleRangeByRead );
+        assertArrayEquals(new int[]{1,75}, cycleRangeByRead.get("read1"));
+        assertArrayEquals(new int[]{96,170}, cycleRangeByRead.get("read2"));
+        assertArrayEquals(new int[]{76,87}, cycleRangeByRead.get("readIndex"));
+        assertArrayEquals(new int[]{88,95}, cycleRangeByRead.get("readIndex2"));
 
     }
 
