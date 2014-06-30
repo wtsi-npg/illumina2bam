@@ -91,7 +91,7 @@ public class TileTest {
         assertEquals(tile.getcLocsFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.clocs");
         
         System.out.println("Checking locs file name");
-        assertEquals(tile.getLocsFileName(), "testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/L001/s_1_1101.locs");
+        assertEquals("testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities/s.locs", tile.getLocsFileName());
     
         System.out.println("getReadName");
         String[] pos = {"21238", "9999"};
