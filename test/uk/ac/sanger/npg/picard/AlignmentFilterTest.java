@@ -19,13 +19,25 @@
  */
 package uk.ac.sanger.npg.picard;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.TimeZone;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -41,34 +53,42 @@ public class AlignmentFilterTest {
     
     AlignmentFilter filter = new AlignmentFilter();
 
-	public int compareFiles(String fILE_ONE2, String fILE_TWO2) throws FileNotFoundException, IOException {
+	static private class JSONtest {
+		public String programName;
+		public String programCommand;
+		public String programVersion;
+		public int numberAlignments;
+		public int totalReads;
+		public int readsCountUnaligned;
+		public int [] readsCountPerRef;
+		public int [][] chimericReadsCount;
+		public int [] readsCountByAlignedNumReverse;
+		public int [] readsCountByAlignedNumForward;
 
-		File f1 = new File(fILE_ONE2); //OUTFILE
-		File f2 = new File(fILE_TWO2); //INPUT
+		void JSONtest() { };
+	};
+		
+	public int compareJSONFiles(String file_one, String file_two) throws FileNotFoundException, IOException {
 
-		FileReader fR1 = new FileReader(f1);
-		FileReader fR2 = new FileReader(f2);
+		ObjectMapper objectMapper = new ObjectMapper();
+		byte[] jsonData_one = Files.readAllBytes(Paths.get(file_one));
+		byte[] jsonData_two = Files.readAllBytes(Paths.get(file_two));
 
-		BufferedReader reader1 = new BufferedReader(fR1);
-		BufferedReader reader2 = new BufferedReader(fR2);
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		JSONtest filter_one = objectMapper.readValue(jsonData_one, JSONtest.class);
+		JSONtest filter_two = objectMapper.readValue(jsonData_two, JSONtest.class);
 
-		String line1 = null;
-		String line2 = null;
-		int flag=1;
-		while (true) {	// Continue while there are equal lines
-			line1 = reader1.readLine();
-			line2 = reader2.readLine();
+		assertEquals(filter_one.programCommand, filter_two.programCommand);
+		assertEquals(filter_one.numberAlignments, filter_two.numberAlignments);
+		assertEquals(filter_one.totalReads, filter_two.totalReads);
+		assertEquals(filter_one.readsCountUnaligned, filter_two.readsCountUnaligned);
+		assertArrayEquals(filter_one.readsCountPerRef, filter_two.readsCountPerRef);
+		assertArrayEquals(filter_one.chimericReadsCount, filter_two.chimericReadsCount);
+		assertArrayEquals(filter_one.readsCountByAlignedNumReverse, filter_two.readsCountByAlignedNumReverse);
+		assertArrayEquals(filter_one.readsCountByAlignedNumForward, filter_two.readsCountByAlignedNumForward);
 
-			if (line1 == null) {	// End of file 1
-				return (line2 == null ? 1 : 0); // Equal only if file 2 also ended
-			}
-
-			if (!line1.equals(line2)) {	// Different lines, or end of file 2
-				return 0;
-			}
-		}
+		return 1;
 	}
-
 
     public AlignmentFilterTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
@@ -391,7 +411,7 @@ public class AlignmentFilterTest {
         File metricsFile = new File(tmpdir + "/chimeric.json");
         metricsFile.deleteOnExit();
 
-		assertEquals(compareFiles(tmpdir + "/chimeric.json", "testdata/bam/chimeric.json"),1);
+		compareJSONFiles(tmpdir + "/chimeric.json", "testdata/bam/chimeric.json");
 
     }
 
