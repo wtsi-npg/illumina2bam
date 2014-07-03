@@ -1,8 +1,11 @@
-24.06.2014 TODO for the next release:
- AlignmentFilterTest.java, testChimericReads -
-   compare deeply the content of json files with
-   org.codehaus.jackson.map.ObjectMapper,
-   ignore the programVersion field
+release 1.16
+- AlignmentFilterTest.java, testChimericReads -
+-   compare deeply the content of json files with
+-   org.codehaus.jackson.map.ObjectMapper,
+-   ignore the programVersion field
+- Change all tabs to spaces
+- Remove javac warning
+- Fix separate tags for dual index runs and add tests
 
 release 1.15
 - ensure the readname does not start with :
