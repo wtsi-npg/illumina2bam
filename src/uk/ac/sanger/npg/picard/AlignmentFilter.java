@@ -45,37 +45,37 @@ public class RecordMissingOrOutOfOrder extends RuntimeException {}
  * A wrapper around any SAMRecordIterator to support a peek() method
  */
 static private class SAMRecordPeekableIterator implements SAMRecordIterator{
-	private SAMRecordIterator si = null;
-	private SAMRecord nextRecord = null;
+    private SAMRecordIterator si = null;
+    private SAMRecord nextRecord = null;
 
-	public SAMRecordPeekableIterator(SAMRecordIterator i) {
-		si = i;
-		if (si.hasNext()) { nextRecord = si.next(); }
-	}
+    public SAMRecordPeekableIterator(SAMRecordIterator i) {
+        si = i;
+        if (si.hasNext()) { nextRecord = si.next(); }
+    }
 
-	public SAMRecord next() {
-		SAMRecord tmpRecord = nextRecord;
-		if (si.hasNext()) { nextRecord = si.next(); }
-		else              { nextRecord = null; }
-		return null == tmpRecord ? si.next() : tmpRecord ; //using si.next to throw appropriate exception
-	}
+    public SAMRecord next() {
+        SAMRecord tmpRecord = nextRecord;
+        if (si.hasNext()) { nextRecord = si.next(); }
+        else              { nextRecord = null; }
+        return null == tmpRecord ? si.next() : tmpRecord ; //using si.next to throw appropriate exception
+    }
 
-	public boolean hasNext() {
-		return (nextRecord != null);
-	}
+    public boolean hasNext() {
+        return (nextRecord != null);
+    }
 
-	public SAMRecordIterator assertSorted(SAMFileHeader.SortOrder order) {
-		si.assertSorted(order);
-		return this;
-	}
+    public SAMRecordIterator assertSorted(SAMFileHeader.SortOrder order) {
+        si.assertSorted(order);
+        return this;
+    }
 
-	public void close() { si.close(); }
+    public void close() { si.close(); }
 
-	public void remove() { throw new UnsupportedOperationException(); }
+    public void remove() { throw new UnsupportedOperationException(); }
 
-	public SAMRecord peek() {
-		return nextRecord;
-	}
+    public SAMRecord peek() {
+        return nextRecord;
+    }
 
 }
 
@@ -214,14 +214,14 @@ static private class SAMRecordPeekableIterator implements SAMRecordIterator{
             String name = inputReaderIteratorList.get(0).peek().getReadName();
             for(SAMRecordPeekableIterator inputReaderIterator : inputReaderIteratorList){
 
-				ArrayList<SAMRecord> recordSet = new ArrayList<SAMRecord>();
+                ArrayList<SAMRecord> recordSet = new ArrayList<SAMRecord>();
 
-				// while the name does not change, add to record set
-				while (inputReaderIterator.hasNext() && inputReaderIterator.peek().getReadName().equals(name)) {
-					recordSet.add(inputReaderIterator.next());
-				}
+                // while the name does not change, add to record set
+                while (inputReaderIterator.hasNext() && inputReaderIterator.peek().getReadName().equals(name)) {
+                    recordSet.add(inputReaderIterator.next());
+                }
 
-				recordList.add(recordSet);
+                recordList.add(recordSet);
 
             }
             
@@ -243,11 +243,11 @@ static private class SAMRecordPeekableIterator implements SAMRecordIterator{
                 readsCountUnaligned++;
             }
 
-			ArrayList<SAMRecord> recordSet = recordList.get(firstAlignedIndex);
-			for (SAMRecord sam : recordSet) {
-				this.removeAlignmentsFromUnalignedRecord(sam);
-				tempOut.addAlignment(sam);
-			}
+            ArrayList<SAMRecord> recordSet = recordList.get(firstAlignedIndex);
+            for (SAMRecord sam : recordSet) {
+                this.removeAlignmentsFromUnalignedRecord(sam);
+                tempOut.addAlignment(sam);
+            }
 
         }
 
@@ -304,18 +304,18 @@ static private class SAMRecordPeekableIterator implements SAMRecordIterator{
     public int checkOneRecord (ArrayList<ArrayList<SAMRecord>> recordList){
         int firstAlignedIndex = 0;
 
-		// Look at all of the record sets
+        // Look at all of the record sets
         for(ArrayList<SAMRecord> recordSet : recordList ){
-			// for each set, see if any of the records are aligned
-			for (SAMRecord sam : recordSet) {
-				if (!sam.getReadUnmappedFlag()) {
-					return firstAlignedIndex;	// found an aligned record in the set!
-				}
-			}
-			firstAlignedIndex++;
-		}
+            // for each set, see if any of the records are aligned
+            for (SAMRecord sam : recordSet) {
+                if (!sam.getReadUnmappedFlag()) {
+                    return firstAlignedIndex; // found an aligned record in the set!
+                }
+            }
+            firstAlignedIndex++;
+        }
 
-        return -1;	// no aligned records found
+        return -1; // no aligned records found
     }
     
     /**

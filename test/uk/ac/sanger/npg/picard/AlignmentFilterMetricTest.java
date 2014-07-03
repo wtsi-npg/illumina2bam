@@ -37,8 +37,7 @@ import uk.ac.sanger.npg.bam.util.CheckMd5;
  */
 public class AlignmentFilterMetricTest {
     
-    public AlignmentFilterMetricTest() {
-    }
+    public AlignmentFilterMetricTest() { }
 
     /**
      * Test of checkNextReadsForChimera method, of class AlignmentFilterMetric.
@@ -54,19 +53,19 @@ public class AlignmentFilterMetricTest {
         SAMRecord sam_mapped = new SAMRecord(header);
         sam_mapped.setReadUnmappedFlag(false);
 
-		SAMRecord paired_unmapped = new SAMRecord(header);
-		paired_unmapped.setReadUnmappedFlag(true);
-		paired_unmapped.setReadPairedFlag(true);
-		paired_unmapped.setSecondOfPairFlag(true);
+        SAMRecord paired_unmapped = new SAMRecord(header);
+        paired_unmapped.setReadUnmappedFlag(true);
+        paired_unmapped.setReadPairedFlag(true);
+        paired_unmapped.setSecondOfPairFlag(true);
         
-		SAMRecord paired_mapped = new SAMRecord(header);
-		paired_mapped.setReadUnmappedFlag(false);
-		paired_mapped.setReadPairedFlag(true);
-		paired_mapped.setSecondOfPairFlag(true);
+        SAMRecord paired_mapped = new SAMRecord(header);
+        paired_mapped.setReadUnmappedFlag(false);
+        paired_mapped.setReadPairedFlag(true);
+        paired_mapped.setSecondOfPairFlag(true);
 
         ArrayList<SAMRecord> recordSet = new ArrayList<SAMRecord>();
         ArrayList<SAMRecord> pairedRecordSet = new ArrayList<SAMRecord>();
-        ArrayList<ArrayList<SAMRecord>> recordList = new ArrayList();
+        ArrayList<ArrayList<SAMRecord>> recordList = new ArrayList<ArrayList<SAMRecord>>();
 
         recordSet.add(sam_unmapped); 
         recordSet.add(paired_mapped); 

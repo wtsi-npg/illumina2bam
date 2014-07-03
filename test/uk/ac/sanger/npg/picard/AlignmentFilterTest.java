@@ -53,42 +53,42 @@ public class AlignmentFilterTest {
     
     AlignmentFilter filter = new AlignmentFilter();
 
-	static private class JSONtest {
-		public String programName;
-		public String programCommand;
-		public String programVersion;
-		public int numberAlignments;
-		public int totalReads;
-		public int readsCountUnaligned;
-		public int [] readsCountPerRef;
-		public int [][] chimericReadsCount;
-		public int [] readsCountByAlignedNumReverse;
-		public int [] readsCountByAlignedNumForward;
+    static private class JSONtest {
+        public String programName;
+        public String programCommand;
+        public String programVersion;
+        public int numberAlignments;
+        public int totalReads;
+        public int readsCountUnaligned;
+        public int [] readsCountPerRef;
+        public int [][] chimericReadsCount;
+        public int [] readsCountByAlignedNumReverse;
+        public int [] readsCountByAlignedNumForward;
 
-		void JSONtest() { };
-	};
-		
-	public int compareJSONFiles(String file_one, String file_two) throws FileNotFoundException, IOException {
+        void JSONtest() { };
+    };
+        
+    public int compareJSONFiles(String file_one, String file_two) throws FileNotFoundException, IOException {
 
-		ObjectMapper objectMapper = new ObjectMapper();
-		byte[] jsonData_one = Files.readAllBytes(Paths.get(file_one));
-		byte[] jsonData_two = Files.readAllBytes(Paths.get(file_two));
+        ObjectMapper objectMapper = new ObjectMapper();
+        byte[] jsonData_one = Files.readAllBytes(Paths.get(file_one));
+        byte[] jsonData_two = Files.readAllBytes(Paths.get(file_two));
 
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		JSONtest filter_one = objectMapper.readValue(jsonData_one, JSONtest.class);
-		JSONtest filter_two = objectMapper.readValue(jsonData_two, JSONtest.class);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        JSONtest filter_one = objectMapper.readValue(jsonData_one, JSONtest.class);
+        JSONtest filter_two = objectMapper.readValue(jsonData_two, JSONtest.class);
 
-		assertEquals(filter_one.programCommand, filter_two.programCommand);
-		assertEquals(filter_one.numberAlignments, filter_two.numberAlignments);
-		assertEquals(filter_one.totalReads, filter_two.totalReads);
-		assertEquals(filter_one.readsCountUnaligned, filter_two.readsCountUnaligned);
-		assertArrayEquals(filter_one.readsCountPerRef, filter_two.readsCountPerRef);
-		assertArrayEquals(filter_one.chimericReadsCount, filter_two.chimericReadsCount);
-		assertArrayEquals(filter_one.readsCountByAlignedNumReverse, filter_two.readsCountByAlignedNumReverse);
-		assertArrayEquals(filter_one.readsCountByAlignedNumForward, filter_two.readsCountByAlignedNumForward);
+        assertEquals(filter_one.programCommand, filter_two.programCommand);
+        assertEquals(filter_one.numberAlignments, filter_two.numberAlignments);
+        assertEquals(filter_one.totalReads, filter_two.totalReads);
+        assertEquals(filter_one.readsCountUnaligned, filter_two.readsCountUnaligned);
+        assertArrayEquals(filter_one.readsCountPerRef, filter_two.readsCountPerRef);
+        assertArrayEquals(filter_one.chimericReadsCount, filter_two.chimericReadsCount);
+        assertArrayEquals(filter_one.readsCountByAlignedNumReverse, filter_two.readsCountByAlignedNumReverse);
+        assertArrayEquals(filter_one.readsCountByAlignedNumForward, filter_two.readsCountByAlignedNumForward);
 
-		return 1;
-	}
+        return 1;
+    }
 
     public AlignmentFilterTest() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
@@ -119,11 +119,11 @@ public class AlignmentFilterTest {
 
         filter.instanceMain(args);
         assertEquals(
-        		filter.getCommandLine(),
-        		"uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human.sam] OUTPUT_ALIGNMENT=[" +
-        		outputName + "/986_1.bam, " +
-        		outputName + "/986_1_human.bam] TMP_DIR=[" + 
-        		outputName + "] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
+                filter.getCommandLine(),
+                "uk.ac.sanger.npg.picard.AlignmentFilter INPUT_ALIGNMENT=[testdata/bam/986_1.sam, testdata/bam/986_1_human.sam] OUTPUT_ALIGNMENT=[" +
+                outputName + "/986_1.bam, " +
+                outputName + "/986_1_human.bam] TMP_DIR=[" + 
+                outputName + "] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false"
         );
 
         File filteredBamFile = new File(outputName  + "/986_1.bam");
@@ -273,9 +273,9 @@ public class AlignmentFilterTest {
         
         System.out.println("instanceMain with single read unmapped file");
         
-		String tmpdir = "testdata/sup";
+        String tmpdir = "testdata/sup";
         File tmpfile = new File(tmpdir);
-		tmpfile.mkdir();
+        tmpfile.mkdir();
         
         String[] args = {
             "IN=testdata/bam/single_986_1.sam",
@@ -387,9 +387,9 @@ public class AlignmentFilterTest {
         
         System.out.println("instanceMain with chimeric reads");
         
-		String tmpdir = "testdata/chimeric";
+        String tmpdir = "testdata/chimeric";
         File tmpfile = new File(tmpdir);
-		tmpfile.mkdir();
+        tmpfile.mkdir();
         
         String[] args = {
             "IN=testdata/bam/chimeric.sam",
@@ -397,7 +397,7 @@ public class AlignmentFilterTest {
             "OUTPUT_UNALIGNED=" + tmpdir + "/chimeric_unaligned.bam",
             "TMP_DIR=" + tmpdir + "/",
             "VALIDATION_STRINGENCY=SILENT",
-			"METRICS=" + tmpdir + "/chimeric.json"
+            "METRICS=" + tmpdir + "/chimeric.json"
         };
 
         filter.instanceMain(args);
@@ -411,7 +411,7 @@ public class AlignmentFilterTest {
         File metricsFile = new File(tmpdir + "/chimeric.json");
         metricsFile.deleteOnExit();
 
-		compareJSONFiles(tmpdir + "/chimeric.json", "testdata/bam/chimeric.json");
+        compareJSONFiles(tmpdir + "/chimeric.json", "testdata/bam/chimeric.json");
 
     }
 
