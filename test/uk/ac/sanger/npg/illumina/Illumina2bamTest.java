@@ -99,7 +99,7 @@ public class Illumina2bamTest {
                 + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
                 testData.illumina2bam.getCommandLine()
                );
-	
+    
         SAMFileReader samFileReader = new SAMFileReader(testData.tempBamFile);
         SAMProgramRecord pgr = samFileReader.getFileHeader().getProgramRecords().get(0);
         List<SAMReadGroupRecord> rgl =  samFileReader.getFileHeader().getReadGroups();
@@ -202,7 +202,7 @@ public class Illumina2bamTest {
         System.out.println("processing specific cycle range");
         Data testData = new Data("testdata/test_6000_BC_READ.sam");
         String[] args = {"INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities",
-			"BC_READ=2",
+            "BC_READ=2",
             "LANE=1",
             "OUTPUT=" + testData.tempBamFile.getPath(),
             "VALIDATION_STRINGENCY=STRICT",
@@ -218,8 +218,8 @@ public class Illumina2bamTest {
             "FINAL_CYCLE=2",
             "FIRST_CYCLE=52",
             "FINAL_CYCLE=53",
-			"FIRST_INDEX=50",
-			"FINAL_INDEX=51",
+            "FIRST_INDEX=50",
+            "FINAL_INDEX=51",
             "RUN_START_DATE=2011-03-23T00:00:00+0000"
         };
         
@@ -229,7 +229,7 @@ public class Illumina2bamTest {
                 + " LANE=1 OUTPUT=" + testData.tempBamFile.getPath()
                 + " SAMPLE_ALIAS=TestSample LIBRARY_NAME=TestLibrary"
                 + " STUDY_NAME=TestStudy RUN_START_DATE=2011-03-23T00:00:00+0000 FIRST_TILE=1101 TILE_LIMIT=1 BC_READ=2"
-				+ " FIRST_CYCLE=[1, 52] FINAL_CYCLE=[2, 53] FIRST_INDEX_CYCLE=[50] FINAL_INDEX_CYCLE=[51]"
+                + " FIRST_CYCLE=[1, 52] FINAL_CYCLE=[2, 53] FIRST_INDEX_CYCLE=[50] FINAL_INDEX_CYCLE=[51]"
                 + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
                 + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
                 + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
@@ -240,4 +240,56 @@ public class Illumina2bamTest {
         assertEquals("c31d1cc84eff1ab6ce5ba5fa462fe014",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 
+    /**
+     * Test dual index run.
+     */
+    @Test
+    public void dualIndexRunTest() {
+        System.out.println("processing dual index run");
+        Data testData = new Data("testdata/test_dual_13349.sam");
+        String[] args = {"INTENSITY_DIR=testdata/140624_MS6_13349_A_MS2639979-300V2/Data/Intensities",
+                "LANE=1",
+                "OUTPUT=" + testData.tempBamFile.getPath(),
+                "SAMPLE_ALIAS=TestSample",
+                "LIBRARY_NAME=TestLibrary",
+                "STUDY_NAME=TestStudy",
+                "RUN_START_DATE=2011-03-23T00:00:00+0000",
+                "FIRST_TILE=1101",
+                "TILE_LIMIT=1",
+                "TMP_DIR=testdata/",
+                "VALIDATION_STRINGENCY=STRICT",
+                "COMPRESSION_LEVEL=1",
+                "CREATE_MD5_FILE=true",
+                "PF_FILTER=false"
+               };
+        testData.commonAsserts(args);        
+        assertEquals("2c0d8b137bd8fe5afe5e50c11b561b0f",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+    }
+
+    /**
+     * Test propagation of SEC_BC_SEQ option.
+     */
+    @Test
+    public void propagationOfSecondIndexParameters() {
+        System.out.println("processing dual index run - index reads in separate tags");
+        Data testData = new Data("testdata/test_dual_st_13349.sam");
+        String[] args = {"INTENSITY_DIR=testdata/140624_MS6_13349_A_MS2639979-300V2/Data/Intensities",
+                "LANE=1",
+                "OUTPUT=" + testData.tempBamFile.getPath(),
+                "SAMPLE_ALIAS=TestSample",
+                "LIBRARY_NAME=TestLibrary",
+                "STUDY_NAME=TestStudy",
+                "RUN_START_DATE=2011-03-23T00:00:00+0000",
+                "FIRST_TILE=1101",
+                "TILE_LIMIT=1",
+                "TMP_DIR=testdata/",
+                "VALIDATION_STRINGENCY=STRICT",
+                "COMPRESSION_LEVEL=1",
+                "CREATE_MD5_FILE=true",
+                "PF_FILTER=false",
+                "BC_SEQ=tr","BC_QUAL=tq","SEC_BC_SEQ=BC","SEC_BC_QUAL=QT"
+               };
+        testData.commonAsserts(args);        
+        assertEquals("cc191980b6d85386ae003971b02a3cc9",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+    }
 }

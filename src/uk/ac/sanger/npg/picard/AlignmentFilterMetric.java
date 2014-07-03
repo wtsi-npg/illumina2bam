@@ -136,16 +136,16 @@ public class AlignmentFilterMetric {
         
         int count = 0;
         
-		for (List<SAMRecord> recordSet: recordList) {
-	
-			int found = 0;	
-	        for (SAMRecord record: recordSet) {
+        for (List<SAMRecord> recordSet: recordList) {
+    
+            int found = 0;
+            for (SAMRecord record: recordSet) {
                 if( (record.getReadPairedFlag() && record.getSecondOfPairFlag()) == result) {
-					if (!record.getReadUnmappedFlag()) {
-	                    found = 1;
-					}
+                    if (!record.getReadUnmappedFlag()) {
+                        found = 1;
+                    }
                 }
-			}
+            }
             alignmentsByRef[count++] = found;
         }
         return alignmentsByRef;

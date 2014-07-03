@@ -1,0 +1,114 @@
+[Header],,,,
+Investigator Name,sh2,,,
+Project Name,Transposon Based Genetic Screening in Mice,,,
+Experiment Name,13349,,,
+Date,2014-06-24T11:51:11,,,
+Workflow,LibraryQC,,,
+Chemistry,Transposon_Eukaryotic,,,
+,,,,
+[Reads],,,,
+75,,,,
+75,,,,
+,,,,
+[Settings],,,,
+,,,,
+[Manifests],,,,
+,,,,
+[Data],,,,
+Sample_ID,Sample_Name,GenomeFolder,Index,Index2
+10589429,PAZC_8_5c_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TAGCTTGT
+10589430,PAZC_9_1a_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,CGATGTTT
+10589431,PAZC_7_4d_throat_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GCCAATGT
+10589432,PAZC_9_2c_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,ACAGTGGT
+10589433,PAZC_1_1c_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,ATCACGTT
+10589434,PAZC_1_1c_lung,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GATCAGCG
+10589435,PAZC_7_5f_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,CAGATCTG
+10589436,PAZC_8_7f_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TTAGGCAT
+10589437,PAZC_9_1g_Skin_tu,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GGCTACAG
+10589438,PAZC_8_4c_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,CTTGTACT
+10589439,PAZC_9_10f_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,ACTTGATG
+10589440,PAZC_8_4j_mes_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGACCACT
+10589441,PAZC_6_4f_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGGTTGTT
+10589442,PAZC_8_2f_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCTCGGTT
+10589443,PAZC_6_4d_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TAAGCGTT
+10589444,PAZC_8_1d_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCCGTCTT
+10589445,PAZC_7_6e_Thymus,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGTACCTT
+10589446,PAZC_7_6a_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TTCTGTGT
+10589447,PAZC_8_3a_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCTGCTGT
+10589448,PAZC_7_2f_cer_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TTGGAGGT
+10589449,PAZC_8_1b_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCGAGCGT
+10589450,PAZC_8_7b_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGATACGT
+10589451,PAZC_7_1e_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGCATAGT
+10589452,PAZC_6_6d_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TTGACTCT
+10589453,PAZC_8_7c_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGCGATCT
+10589454,PAZC_7_1a_mes_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TAGTGACT
+10589455,PAZC_8_2b_mes_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TACAGGAT
+10589456,PAZC_9_2a_lung,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCCTCAAT
+10589457,PAZC_9_2a_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGTGGTTG
+10589458,PAZC_8_1c_Thymus,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TAGTCTTG
+10589459,PAZC_9_8d_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCGAAGTG
+10589460,PAZC_8_3f_thorax_tu,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TAACGCTG
+10589461,PAZC_8_3f_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TTGGTATG
+10589462,PAZC_6_8e_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGAACTGG
+10589463,PAZC_9_6a_lung,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TACTTCGG
+10589464,PAZC_7_5e_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCTCACGG
+10589465,PAZC_7_5e_si_tu,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCAGGAGG
+10589466,PAZC_6_4c_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TAAGTTCG
+10589467,PAZC_8_6f_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCCAGTCG
+10589468,PAZC_6_8d_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGTATGCG
+10589469,PAZC_8_7a_cer_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCATTGAG
+10589470,PAZC_6_3b_liver,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGGCTCAG
+10589471,PAZC_9_6g_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TATGCCAG
+10589472,PAZC_9_7f_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCAGATTC
+10589473,PAZC_9_8e_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TACTAGTC
+10589474,PAZC_6_6e_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TTCAGCTC
+10589475,PAZC_8_6c_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGTCTATC
+10589476,PAZC_7_8c_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TATGTGGC
+10589477,PAZC_6_7c_mes_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TTACTCGC
+10589478,PAZC_9_5e_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCGTTAGC
+10589479,PAZC_8_4e_Thymus,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TACCGAGC
+10589480,PAZC_9_11b_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGTTCTCC
+10589481,PAZC_7_8b_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TTCGCACC
+10589482,PAZC_8_2d_lung_tu,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TTGCGTAC
+10589483,PAZC_9_11c_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCTACGAC
+10589484,MONE_1_14c_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGACAGAC
+10589485,PAZC_7_5i_Thymus,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TAGAACAC
+10589486,PAZC_14_2e_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCATCCTA
+10589487,PAZC_15_3i_lumber_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGCTGATA
+10589488,PAZC_9_6b_lung_tu,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TAGACGGA
+10589489,PAZC_15_4h_Tail,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGTGAAGA
+10589490,PAZC_15_4h_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TCTCTTCA
+10589491,PAZC_15_4h_Thymus,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TTGTTCCA
+10589492,PAZC_15_4h_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGAAGCCA
+10589493,PAZC_15_2b_Thymus,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TACCACCA
+10589494,PAZC_15_2h_mass,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,TGCGTGAA
+10589495,PAZC_15_2h_Ovary,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GGTGAGTT
+10589496,PAZC_14_2a_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GATCTCTT
+10589497,PAZC_15_4b_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GTGTCCTT
+10589498,PAZC_15_4i_lumber_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GACGGATT
+10589499,PAZC_14_4a_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GCAACATT
+10589500,PAZC_15_4c_Thymus,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GGTCGTGT
+10589501,PAZC_15_4d_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GAATCTGT
+10589502,WONE_2_1c_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GTACATCT
+10589503,WONE_2_1j_Mes_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GAGGTGCT
+10589504,WONE_2_2a_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GCATGGCT
+10589505,WONE_2_1s_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GTTAGCCT
+10589506,WONE_143488_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GTCGCTAT
+10589507,WONE_2_5g_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GGAATGAT
+10589508,WONE_2_2m_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GAGCCAAT
+10589509,WONE_2_1p_mes_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GCTCCTTG
+10589510,WONE_2_1i_mes_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GTAAGGTG
+10589511,WONE_2_8a_cer_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GAGGATGG
+10589512,WONE_20_6c_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GTTGTCGG
+10589513,WONE_2_2c_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GATAGAGG
+10589514,WONE_2_8d_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GACCTTAG
+10589515,WONE_2_8b_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GCCTGTTC
+10589516,PAZE_2_6e_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GCACTGTC
+10589517,PAZB_2_2e_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GCTAACTC
+10589518,PAZB_2_2g_cer_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GATTCATC
+10589519,PAZB_2_2g_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GTCTTGGC
+10589520,PAZB_2_2a_Tail,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GTAGAAGC
+10589521,PAZB_2_2a_Thymus,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GATGGTCC
+10589522,PAZB_2_2a_Spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GTGCTACC
+10589523,PAZB_2_2a_mes_LN,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GCGATTAC
+10589524,PAZB_2_7h_spleen,C:\Illumina\MiSeq Reporter\Genomes\WTSI_references\Mus_musculus\NCBIm37\all\fasta\,TAGGGTTAANNN,GGTTGGAC
