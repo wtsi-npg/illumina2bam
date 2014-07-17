@@ -302,7 +302,7 @@ public class IndexDecoder {
     private int countMismatches(final byte[] barcodeBytes, final byte[] readSubsequence) {
         int numMismatches = 0;
         for (int i = 0; i < barcodeBytes.length; ++i) {
-            if (!SequenceUtil.isNoCall(readSubsequence[i]) && !SequenceUtil.basesEqual(barcodeBytes[i], readSubsequence[i])) {
+            if (!SequenceUtil.isNoCall(readSubsequence[i]) && !SequenceUtil.isNoCall(barcodeBytes[i]) && !SequenceUtil.basesEqual(barcodeBytes[i], readSubsequence[i])) {
                 ++numMismatches;
             }
         }
