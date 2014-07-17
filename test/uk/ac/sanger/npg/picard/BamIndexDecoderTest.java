@@ -97,7 +97,60 @@ public class BamIndexDecoderTest {
         }
         samFileReader.close();
 
-        assertEquals("d1c35cdd7e2b180204c545ddfe354fe9", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
+        assertEquals("41eb835e32e39fb58b0dce67772a0b9e", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
+        
+        outputFile.delete();
+        outputMetrics.delete();
+        outputMd5.delete();
+        
+        outputDir.deleteOnExit();
+    }
+
+    /**
+     * Test of a barcode containing an N
+     */
+    @Test
+    public void testMainWithBarcodeContainingAnN() throws IOException {
+        
+        System.out.println("instanceMain - not split output by barcode");
+        
+        BamIndexDecoder decoder = new BamIndexDecoder();
+        
+        String outputName = "testdata/6383_8/6383_8";
+        File outputDir = new File("testdata/6383_8");
+        outputDir.mkdir();
+        
+        String[] args = {
+            "I=testdata/bam/6383_8.sam",
+            "O=" + outputName + ".sam" ,
+            "BARCODE_FILE=testdata/decode/6383_8_N.tag",
+            "METRICS_FILE=" + outputName + ".metrics",
+            "CREATE_MD5_FILE=true",
+            "TMP_DIR=testdata/",
+            "VALIDATION_STRINGENCY=SILENT",
+            "BARCODE_TAG_NAME=RT"
+        };
+
+        decoder.instanceMain(args);
+        System.out.println(decoder.getCommandLine());
+        assertEquals(decoder.getCommandLine(), "uk.ac.sanger.npg.picard.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT=testdata/6383_8/6383_8.sam BARCODE_TAG_NAME=RT BARCODE_FILE=testdata/decode/6383_8_N.tag METRICS_FILE=testdata/6383_8/6383_8.metrics TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    BARCODE_QUALITY_TAG_NAME=QT MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 CONVERT_LOW_QUALITY_TO_NO_CALL=false MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        File outputFile = new File(outputName + ".sam");
+        File outputMetrics = new File(outputName + ".metrics");
+        File outputMd5 = new File(outputName + ".sam.md5");
+
+        SAMFileReader samFileReader = new SAMFileReader(outputFile);
+        ArrayList<SAMProgramRecord> pgrl = new ArrayList<SAMProgramRecord>();
+        for (SAMProgramRecord r: samFileReader.getFileHeader().getProgramRecords()){
+          if(r.getProgramName().equals("BamIndexDecoder")) {pgrl.add(r);}
+        }
+        assertEquals(1, pgrl.size());
+        SAMProgramRecord pgr = pgrl.get(0);
+        for (SAMReadGroupRecord r: samFileReader.getFileHeader().getReadGroups()){
+          assertEquals(pgr.getId(), r.getAttribute("PG"));
+        }
+        samFileReader.close();
+
+        assertEquals("c0c4f40c920bfec05d83fbc0944ed9b5", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
         
         outputFile.delete();
         outputMetrics.delete();
@@ -141,7 +194,7 @@ public class BamIndexDecoderTest {
          
         File outputMetrics = new File(outputName + "/6383_8.metrics");
         outputMetrics.delete();
-        String [] md5s = {"7159436dd98ab2df85ee5a9a4644428e", "cf5272ef745f967b4b9008572961810a", "f254c0d4a2d8c9747ac4099ea30d3993"};
+        String [] md5s = {"2bbd7e8086a18620528344f44be98f76", "cf5272ef745f967b4b9008572961810a", "f254c0d4a2d8c9747ac4099ea30d3993"};
         for (int i=0;i<3;i++){
             File outputFile = new File(outputName + "/6383_8#" + i + ".bam");
             outputFile.deleteOnExit();
