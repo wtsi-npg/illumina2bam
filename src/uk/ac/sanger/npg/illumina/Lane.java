@@ -451,9 +451,19 @@ public class Lane {
         this.id = this.readInstrumentAndRunID();
         if(id == null){
             log.warn("Problems to read run id and instrument name from config file:" + this.baseCallsConfig);
-            this.id = "";
         }else{
             log.info("Instrument name and run id to be used as part of read name: " + this.id );
+        }
+        if(id == null){
+            this.id = this.readExperimentNameAndComputerName();
+            if(id == null){
+                log.warn("Problems to read experiment name and computer name from runParameter file");
+            }else{
+                log.info("Computer name and experiment name to be used as part of read name: " + this.id );
+            }
+        }
+        if(id == null){
+            this.id = "";
         }
         
         runfolderConfig = readRunfolder();
@@ -710,6 +720,37 @@ public class Lane {
             return null;
         }
         return instrument + "_" + runID;
+    }
+
+    /**
+     *
+     * @return experiment name with computer name as part of read name, for example, HX10_15235
+     */
+    public String readExperimentNameAndComputerName(){
+
+        String experimentName = null;
+        String computerName   = null;
+        if(this.runParametersDoc != null){
+          try {
+              XPathExpression e = xpath.compile("RunParameters/Setup/ExperimentName/text()");
+              Node n = (Node) e.evaluate(this.runParametersDoc, XPathConstants.NODE);
+              if (n != null) {
+                  experimentName = n.getNodeValue();
+                  e = xpath.compile("RunParameters/Setup/ComputerName/text()");
+                  n = (Node) e.evaluate(this.runParametersDoc, XPathConstants.NODE);
+                  if (n != null) {
+                      computerName = n.getNodeValue();
+                  }
+              }
+          } catch (XPathExpressionException ex) {
+              log.error("Problems to read experiment name and computer name from run parameter file: " + ex.getMessage() );
+          }
+        }
+        if(experimentName == null || computerName == null) {
+            log.warn("No experiment name or computer name returned.");
+            return null;
+        }
+        return computerName + "_" + experimentName;
     }
 
     /**
