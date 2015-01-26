@@ -1,3 +1,7 @@
+- Added function to read experiment name and computer name from runParameters file
+    used to generate read name prefix if config file does not exist, updated tests
+- Ignore N's in barcode sequence when looking for matches, updated tests
+
 release 1.16
 - AlignmentFilterTest.java, testChimericReads -
 -   compare deeply the content of json files with
