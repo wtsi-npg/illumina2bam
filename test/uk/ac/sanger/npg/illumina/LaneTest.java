@@ -458,6 +458,9 @@ public class LaneTest {
         System.out.println("readInstrumentAndRunID");
         assertEquals("lane.readInstrumentAndRunID()", null, lane.readInstrumentAndRunID());
 
+        System.out.println("readExperimentNameAndComputerName");
+        assertEquals("lane.readExperimentNameAndComputerName()", "HX1_ValB", lane.readExperimentNameAndComputerName());
+
         System.out.println("getCycleRangeByRead");
         HashMap<String,int[]> cycleRangeByRead = lane.getCycleRangeByRead();
         assertNotNull("getCycleRangeByRead()", cycleRangeByRead );
