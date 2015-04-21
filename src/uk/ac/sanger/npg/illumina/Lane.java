@@ -54,6 +54,7 @@ public class Lane {
     //fields must be given about what to output
     private final boolean includeSecondCall;
     private final boolean pfFilter;
+    private final boolean includeClusterIndex;
 
     //fields must be given for output bam
     private final File output;
@@ -109,6 +110,7 @@ public class Lane {
      * @param laneNumber lane number
      * @param secondCall including second base call or not, default false.
      * @param pfFilter Filter cluster or not, default true.
+     * @param clusterIndex add cluster index tag, default false.
      * @param output Output file
      * @param barcodeSeqTagName
      * @param barcodeQualTagName  
@@ -121,6 +123,7 @@ public class Lane {
                 int laneNumber,
                 boolean secondCall,
                 boolean pfFilter,
+                boolean clusterIndex,
                 File output,
                 String barcodeSeqTagName,
                 String barcodeQualTagName,
@@ -137,6 +140,7 @@ public class Lane {
         this.laneNumber        = laneNumber;
         this.includeSecondCall = secondCall;
         this.pfFilter          = pfFilter;
+        this.includeClusterIndex = clusterIndex;
         this.output            = output;
         this.barcodeSeqTagName  = barcodeSeqTagName;
         this.barcodeQualTagName = barcodeQualTagName;
@@ -186,6 +190,7 @@ public class Lane {
      * @param laneNumber lane number
      * @param secondCall including second base call or not, default false.
      * @param pfFilter Filter cluster or not, default true.
+     * @param clusterIndex add cluster index tag, default false.
      * @param output Output file
      * @param barcodeSeqTagName
      * @param barcodeQualTagName  
@@ -196,10 +201,11 @@ public class Lane {
                 int laneNumber,
                 boolean secondCall,
                 boolean pfFilter,
+                boolean clusterIndex,
                 File output,
                 String barcodeSeqTagName,
                 String barcodeQualTagName){
-        this(intensityDir, baseCallDir, runFolder, laneNumber, secondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName, (String)null, (String)null);
+        this(intensityDir, baseCallDir, runFolder, laneNumber, secondCall, pfFilter, clusterIndex, output, barcodeSeqTagName, barcodeQualTagName, (String)null, (String)null);
     }
 
     /**
@@ -254,7 +260,7 @@ public class Lane {
             
             Tile tile = new Tile(intensityDir, baseCallDir, id, laneNumber, tileNumber,
                                  cycleRangeByRead,
-                                 this.includeSecondCall, this.pfFilter,
+                                 this.includeSecondCall, this.pfFilter, this.includeClusterIndex,
                                  this.barcodeSeqTagName, this.barcodeQualTagName);
             
             if(this.secondBarcodeSeqTagName != null && this.secondBarcodeQualTagName != null){

@@ -136,8 +136,9 @@ public class Illumina2bam extends PicardCommandLine {
             optional = true)
         public ArrayList<Integer> FINAL_INDEX_CYCLE;
 
-    //TODO: add command option to skip adding ci tag
-    
+    @Option(shortName="CI", doc="Add cluster index tag, default false.", optional=true)
+    public boolean ADD_CLUSTER_INDEX_TAG = false;
+
 
     @Override
     protected int doWork() {
@@ -179,6 +180,7 @@ public class Illumina2bam extends PicardCommandLine {
                 this.LANE,
                 this.GENERATE_SECONDARY_BASE_CALLS,
                 this.PF_FILTER,
+                this.ADD_CLUSTER_INDEX_TAG,
                 this.OUTPUT,
                 this.BARCODE_SEQUENCE_TAG_NAME,
                 this.BARCODE_QUALITY_TAG_NAME,

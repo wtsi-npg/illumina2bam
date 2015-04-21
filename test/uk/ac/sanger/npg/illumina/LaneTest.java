@@ -46,6 +46,7 @@ public class LaneTest {
     private static int laneNumber = 1;
     private static boolean includeSecondCall = true;
     private static boolean pfFilter = true;
+    private static boolean includeClusterIndex = true;
     private static String barcodeSeqTagName = "RT";
     private static String barcodeQualTagName = "QT";
 
@@ -59,13 +60,13 @@ public class LaneTest {
     public void basecallDirectoryCheck(){
        
         System.out.println("Failed to create a lane with non-existent basecall directories");
-        Lane failedLane = new Lane(intensityDir + "_not", baseCallDir + "_not", null, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane failedLane = new Lane(intensityDir + "_not", baseCallDir + "_not", null, laneNumber, includeSecondCall, pfFilter, includeClusterIndex, output, barcodeSeqTagName, barcodeQualTagName);
     }
     
     @Test
     public void readLaneOK(){
         
-        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, includeClusterIndex, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("readBaseCallProgramRecord");
         SAMProgramRecord baseCallProgram = lane.readBaseCallProgramRecord();
         assertEquals( baseCallProgram.getId(), "basecalling");
@@ -122,7 +123,7 @@ public class LaneTest {
     @Test (expected = RuntimeException.class)
     public void reduceTileListTileException(){
 
-        Lane lane1 = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane1 = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, includeClusterIndex, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("Fail to reduceTileList");
         int [] givenTileList = {
             1101,1102,1103,1104,1105,1106,1107,1108,
@@ -137,7 +138,7 @@ public class LaneTest {
     
     @Test (expected = RuntimeException.class)
     public void reduceTileListTileAgainException(){
-        Lane lane1 = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane1 = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, includeClusterIndex, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("Fail to reduceTileList again");
         int [] newGivenTileList = {
                 1101,1102,1103,1104,1105,1106,1107,1108,
@@ -153,7 +154,7 @@ public class LaneTest {
     @Test
     public void checkCycleRangeByReadOK() throws Exception{
             
-        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, includeClusterIndex, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("checkCycleRangeByRead");
         HashMap<String, int[]> cycleRangeByRead = lane.checkCycleRangeByRead();
         int [] read1CycleRange = {1, 2};
@@ -177,8 +178,9 @@ public class LaneTest {
         int laneNumber2 = 1;
         boolean includeSecondCall2 = true;
         boolean pfFilter2 = true;
+        boolean includeClusterIndex2 = true;
 
-        Lane lane2 = new Lane(intensityDir2, baseCallDir2, runfolderDir2, laneNumber2, includeSecondCall2, pfFilter2, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane2 = new Lane(intensityDir2, baseCallDir2, runfolderDir2, laneNumber2, includeSecondCall2, pfFilter2, includeClusterIndex2, output, barcodeSeqTagName, barcodeQualTagName);
     
         HashMap<String, int[]> cycleRangeByRead = lane2.getCycleRangeByReadFromRunParametersFile();
         
@@ -215,8 +217,9 @@ public class LaneTest {
         int laneNumber2 = 1;
         boolean includeSecondCall2 = true;
         boolean pfFilter2 = true;
+        boolean includeClusterIndex2 = true;
 
-        Lane lane2 = new Lane(intensityDir2, baseCallDir2, null, laneNumber2, includeSecondCall2, pfFilter2, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane2 = new Lane(intensityDir2, baseCallDir2, null, laneNumber2, includeSecondCall2, pfFilter2, includeClusterIndex2, output, barcodeSeqTagName, barcodeQualTagName);
 
         int [] barCodeCycleList = lane2.readBarCodeIndexCycles();
         int [] expected = {76,77,78,79,80,81,82,83};
@@ -235,7 +238,7 @@ public class LaneTest {
     @Test
     public void readInstrumentLaneHeaderOK() throws Exception{
         
-        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, includeClusterIndex, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("readInstrumentProgramRecord");
         SAMProgramRecord instrumentProgram = lane.readInstrumentProgramRecord();
         assertEquals( instrumentProgram.getId(), "SCS");
@@ -327,9 +330,10 @@ public class LaneTest {
         int laneNumber3 = 8;
         boolean includeSecondCall3 = false;
         boolean pfFilter3 = true;
+        boolean includeClusterIndex3 = true;
         File output3 = new File("testdata/6284_8.bam");
 
-        Lane lane3 = new Lane(intensityDir3, baseCallDir3, null, laneNumber3, includeSecondCall3, pfFilter3, output3, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane3 = new Lane(intensityDir3, baseCallDir3, null, laneNumber3, includeSecondCall3, pfFilter3, includeClusterIndex3, output3, barcodeSeqTagName, barcodeQualTagName);
 
         int [] barCodeCycleList = lane3.readBarCodeIndexCycles();
         int [] expected = {77};
@@ -364,9 +368,10 @@ public class LaneTest {
         int laneNumber4 = 1;
         boolean includeSecondCall4 = false;
         boolean pfFilter4 = true;
+        boolean includeClusterIndex4 = true;
         File output4 = new File("testdata/miseq_1.bam");
 
-        Lane lane4 = new Lane(intensityDir4, baseCallDir4, runFolder, laneNumber4, includeSecondCall4, pfFilter4, output4, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane4 = new Lane(intensityDir4, baseCallDir4, runFolder, laneNumber4, includeSecondCall4, pfFilter4, includeClusterIndex4, output4, barcodeSeqTagName, barcodeQualTagName);
 
         HashMap<String, int[]> cycleRangeByRead = lane4.getCycleRangeByReadFromRunParametersFile();
         assertEquals(cycleRangeByRead.size(), 4);
@@ -405,10 +410,11 @@ public class LaneTest {
         int laneNumber = 1;
         boolean includeSecondCall = false;
         boolean pfFilter = true;
+        boolean includeClusterIndex = true;
         String barcodeSeqTagName = "RT";
         String barcodeQualTagName = "QT";
 
-        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, includeClusterIndex, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("readBaseCallProgramRecord");
         SAMProgramRecord baseCallProgram = lane.getBaseCallProgram();
         assertNotNull( "Creating basecalling SAMProgramRecord", baseCallProgram);
@@ -479,10 +485,11 @@ public class LaneTest {
         int laneNumber = 1;
         boolean includeSecondCall = false;
         boolean pfFilter = true;
+        boolean includeClusterIndex = true;
         String barcodeSeqTagName = "BC";
         String barcodeQualTagName = "QT";
 
-        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName);
+        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, includeClusterIndex, output, barcodeSeqTagName, barcodeQualTagName);
         System.out.println("readBaseCallProgramRecord");
         SAMProgramRecord baseCallProgram = lane.getBaseCallProgram();
         assertNotNull( "Creating basecalling SAMProgramRecord", baseCallProgram);
@@ -546,12 +553,13 @@ public class LaneTest {
         int laneNumber = 1;
         boolean includeSecondCall = false;
         boolean pfFilter = true;
+        boolean includeclusterIndex = true;
         String barcodeSeqTagName = "b2";
         String barcodeQualTagName = "q2";
         String secondBarcodeSeqTagName = "BC";
         String secondBarcodeQualTagName = "QT";
 
-        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, output, barcodeSeqTagName, barcodeQualTagName, secondBarcodeSeqTagName, secondBarcodeQualTagName);
+        Lane lane = new Lane(intensityDir, baseCallDir, runfolderDir, laneNumber, includeSecondCall, pfFilter, includeClusterIndex, output, barcodeSeqTagName, barcodeQualTagName, secondBarcodeSeqTagName, secondBarcodeQualTagName);
         System.out.println("getCycleRangeByRead");
         HashMap<String,int[]> cycleRangeByRead = lane.getCycleRangeByRead();
         assertNotNull("getCycleRangeByRead()", cycleRangeByRead );

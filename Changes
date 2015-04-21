@@ -1,3 +1,4 @@
+- New command line option ADD_CLUSTER_INDEX_TAG default false
 - Added function to read experiment name and computer name from runParameters file
     used to generate read name prefix if config file does not exist, updated tests
 - Ignore N's in barcode sequence when looking for matches, updated tests
