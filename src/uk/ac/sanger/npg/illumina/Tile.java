@@ -58,6 +58,7 @@ public class Tile {
 
     private final boolean includeSecondCall;
     private final boolean pfFilter;
+    private final boolean includeClusterIndex;
 
     //temp fields    
     private final String laneSubDir;
@@ -87,6 +88,7 @@ public class Tile {
      * @param cycleRangeByRead cycle range for each read, the hash key could be read1, read2 or readIndex
      * @param secondCall include second base call or not
      * @param pfFilter include PF filtered reads or not
+     * @param clusterIndex add cluter index tag, default false.
      * @param barcodeSeqTagName
      * @param barcodeQualTagName  
      */
@@ -98,6 +100,7 @@ public class Tile {
             HashMap<String, int[]> cycleRangeByRead,
             boolean secondCall,
             boolean pfFilter,
+            boolean clusterIndex,
             String barcodeSeqTagName,
             String barcodeQualTagName) {
 
@@ -112,6 +115,7 @@ public class Tile {
         
         this.includeSecondCall = secondCall;
         this.pfFilter = pfFilter;
+        this.includeClusterIndex = clusterIndex;
 
         this.cycleRangeByRead = cycleRangeByRead;
 
@@ -569,7 +573,11 @@ public class Tile {
         SAMRecord samRecord = new SAMRecord(fileHeader);
 
         samRecord.setReadName(readName);
-        samRecord.setAttribute("ci", clusterIndex);
+
+        if(this.includeClusterIndex) {
+            samRecord.setAttribute("ci", clusterIndex);
+        }
+
         samRecord.setReadBases(baseQuals[0]);
         samRecord.setBaseQualities(baseQuals[1]);
         samRecord.setReadUnmappedFlag(true);
@@ -769,7 +777,7 @@ public class Tile {
         cycleRangeByRead.put("read2", cycleRangeRead2);
         cycleRangeByRead.put("readIndex", cycleRangeIndex);
 
-        Tile tile = new Tile(intensityDir, baseCallDir, id, lane, tileNumber, cycleRangeByRead, true, true, barcodeSeqTagName, barcodeQualTagName);
+        Tile tile = new Tile(intensityDir, baseCallDir, id, lane, tileNumber, cycleRangeByRead, true, true, true, barcodeSeqTagName, barcodeQualTagName);
 
         File outBam = new File("test.bam");
         SAMFileWriterFactory factory = new SAMFileWriterFactory();
