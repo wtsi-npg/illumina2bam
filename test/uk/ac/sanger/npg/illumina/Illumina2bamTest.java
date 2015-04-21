@@ -96,7 +96,7 @@ public class Illumina2bamTest {
                 + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
                 + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
                 + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
-                + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
+                + " ADD_CLUSTER_INDEX_TAG=false VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
                 testData.illumina2bam.getCommandLine()
                );
     
@@ -108,7 +108,7 @@ public class Illumina2bamTest {
         assertEquals("Ensure PG field of RG record corresponds to the appropriate program", pgr.getId(),  rgl.get(0).getAttribute("PG"));
         samFileReader.close();
 
-        assertEquals("ce104cf5c591cdbf94eb7b584d6f5352", CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+        assertEquals("e614c4c92250472f1f01ba87bb7673e5", CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 
     /**
@@ -144,11 +144,11 @@ public class Illumina2bamTest {
                 + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
                 + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
                 + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
-                + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
+                + " ADD_CLUSTER_INDEX_TAG=false VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
                 testData.illumina2bam.getCommandLine()
                );
         
-        assertEquals("1ce96b8c94224cfaa260e871f2e997dc", CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+        assertEquals("d86e325da70ac9fe580baec4f393d518", CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 
     /**
@@ -186,11 +186,11 @@ public class Illumina2bamTest {
                 + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
                 + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
                 + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
-                + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
+                + " ADD_CLUSTER_INDEX_TAG=false VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
                 testData.illumina2bam.getCommandLine()
                );
 
-        assertEquals("f8452061bbc72a2dbfb4eda3d5ed896a",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+        assertEquals("9671152451a948627c3de6a57c9263fc",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 
     /**
@@ -233,11 +233,11 @@ public class Illumina2bamTest {
                 + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
                 + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true READ_GROUP_ID=1"
                 + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
-                + " VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
+                + " ADD_CLUSTER_INDEX_TAG=false VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
                 testData.illumina2bam.getCommandLine()
                );
 
-        assertEquals("c31d1cc84eff1ab6ce5ba5fa462fe014",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+        assertEquals("a537f56354ab6051f0766c3d1ad77993",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 
     /**
@@ -263,7 +263,7 @@ public class Illumina2bamTest {
                 "PF_FILTER=false"
                };
         testData.commonAsserts(args);        
-        assertEquals("2c0d8b137bd8fe5afe5e50c11b561b0f",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+        assertEquals("8135dfaa03f248bb23064cd121a4a298",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 
     /**
@@ -290,6 +290,6 @@ public class Illumina2bamTest {
                 "BC_SEQ=tr","BC_QUAL=tq","SEC_BC_SEQ=BC","SEC_BC_QUAL=QT"
                };
         testData.commonAsserts(args);        
-        assertEquals("cc191980b6d85386ae003971b02a3cc9",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+        assertEquals("534d7d7183ccdeead103a669b7105cb2",CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
     }
 }
