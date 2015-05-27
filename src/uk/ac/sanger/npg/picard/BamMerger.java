@@ -140,10 +140,11 @@ public class BamMerger extends PicardCommandLine {
         SAMRecordIterator iteratorIn = in.iterator();
 
         while( iteratorIn.hasNext() ){
-    
+
             SAMRecord record = iteratorIn.next();
-                        
+
             SAMRecord alignment;
+            // Check if we are out of alignments
             if(iteratorAlignments.hasNext()){
                alignment = iteratorAlignments.next();
             }else if ( this.KEEP_EXTRA_UNMAPPED_READS ) {
@@ -168,11 +169,12 @@ public class BamMerger extends PicardCommandLine {
                firstOfPair2= alignment.getFirstOfPairFlag();
             }
 
+            // Try and read in from unaligned BAM until read name matches align'd bam's read
             while( ( !readName1.equals(readName2)
                 || pairedRead1 != pairedRead2
                 || firstOfPair1 != firstOfPair2 )
             ){
-
+                // Output
                 if( this.KEEP_EXTRA_UNMAPPED_READS ){
                     out.addAlignment(record);
                 }
@@ -186,23 +188,23 @@ public class BamMerger extends PicardCommandLine {
                         firstOfPair1 = record.getFirstOfPairFlag();
                     }
                 }else{
-                    break;
+                    break; // No more unaligned input data
                 }
                 
             }
-
+            // If we've found a matching record merge them
             if(  readName1.equals(readName2)
                     && pairedRead1 == pairedRead2
                     && firstOfPair1 == firstOfPair2 
               ){
                   this.mergeRecords(alignment, record);
-                  out.addAlignment(alignment);
+                  out.addAlignment(alignment); // Write merged record
             }else if ( this.KEEP_EXTRA_UNMAPPED_READS ) {
                 out.addAlignment(record);
             }
- 
-        }
 
+        }
+        // If we have left over records in our aligned BAM something went wrong
         if( iteratorAlignments.hasNext() ){
             SAMRecord firstRecordLeft = iteratorAlignments.next();
             log.error( firstRecordLeft.getReadName() + " " + firstRecordLeft.getFlags() );
