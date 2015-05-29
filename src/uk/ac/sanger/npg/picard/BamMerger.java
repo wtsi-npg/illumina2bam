@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 import net.sf.picard.cmdline.Option;
 import net.sf.picard.cmdline.StandardOptionDefinitions;
 import net.sf.picard.cmdline.Usage;
@@ -88,6 +89,152 @@ public class BamMerger extends PicardCommandLine {
     @Option(shortName= "REPLACE_QUAL", doc="Replace base qualities in aligned bam wtih the ones in unaligned bam if true.")
     public Boolean REPLACE_ALIGNED_BASE_QUALITY = false;
     
+    private void mergealign_pairedsupp(SAMRecordIterator iteratorIn, SAMRecordIterator iteratorAlignments, SAMFileWriter out) {
+        // We are assuming the primary alignment record always comes first
+        SAMRecord alignment = null;
+        SAMRecord nextAlignment = null;
+        Stack<SAMRecord> secondary_supp = new Stack<SAMRecord>();
+        if(iteratorAlignments.hasNext()){
+            nextAlignment = iteratorAlignments.next();
+        }
+
+        while( iteratorIn.hasNext() ){
+            SAMRecord record = iteratorIn.next();
+            // Unaligned data shouldn't have these but meh
+            if (record.isSecondaryOrSupplementary())
+                continue;
+            // Check if we are out of alignments
+            if(alignment == null && nextAlignment != null) {
+                // Hunt for the primary
+                SAMRecord searchAlignment = nextAlignment;
+                while (alignment == null) {
+                    if (nextAlignment.getReadName().equals(searchAlignment.getReadName()) &&
+                        nextAlignment.getReadPairedFlag() == searchAlignment.getReadPairedFlag() &&
+                        (
+                         (
+                          nextAlignment.getReadPairedFlag() &&
+                          nextAlignment.getFirstOfPairFlag() == searchAlignment.getFirstOfPairFlag() &&
+                          nextAlignment.getSecondOfPairFlag() == searchAlignment.getSecondOfPairFlag()
+                          )
+                         ||
+                         !searchAlignment.getReadPairedFlag()
+                         )
+                        )
+                    {
+                        if (nextAlignment.isSecondaryOrSupplementary()) {
+                            secondary_supp.push(nextAlignment);
+                            if (iteratorAlignments.hasNext()) {
+                                nextAlignment = iteratorAlignments.next();
+                            } else {
+                                log.error( nextAlignment.getReadName() );
+                                throw new RuntimeException("The mapped bam file has a read where there's a supplementary/secondary but no primary.");
+                            }
+                        } else {
+                            alignment = nextAlignment;
+                            nextAlignment = null;
+                        }
+                    } else {
+                        log.error( searchAlignment.getReadName() );
+                        throw new RuntimeException("The mapped bam file has a read where there's a supplementary/secondary but no primary.");
+                    }
+                }
+                // Mop up any secondaries
+                while (iteratorAlignments.hasNext()) {
+                    nextAlignment = iteratorAlignments.next();
+                    // is it from the same mapping as the current alignment?
+                    if (nextAlignment.getReadName().equals(alignment.getReadName()) &&
+                        nextAlignment.isSecondaryOrSupplementary() &&
+                        nextAlignment.getReadPairedFlag() == alignment.getReadPairedFlag() &&
+                            (
+                             (
+                              nextAlignment.getReadPairedFlag() &&
+                              nextAlignment.getFirstOfPairFlag() == alignment.getFirstOfPairFlag() &&
+                              nextAlignment.getSecondOfPairFlag() == alignment.getSecondOfPairFlag()
+                             )
+                             ||
+                             !nextAlignment.getReadPairedFlag()
+                            )
+                        ) {
+                        // it is a secondary for current alignment
+                        secondary_supp.push(nextAlignment);
+                        nextAlignment = null;
+                    } else {
+                        // new record so we move on
+                        break;
+                    }
+                }
+                
+            } else if ( this.KEEP_EXTRA_UNMAPPED_READS ) { // no more piggies
+                out.addAlignment(record);
+                continue;
+            } else {
+                break;
+            }
+            String readName1 = record.getReadName();
+            String readName2 = alignment.getReadName();
+            
+            boolean pairedRead1 = record.getReadPairedFlag();
+            boolean pairedRead2 = alignment.getReadPairedFlag();
+            
+            boolean firstOfPair1 = false;
+            if(pairedRead1){
+                firstOfPair1 = record.getFirstOfPairFlag();
+            }
+            boolean firstOfPair2 = false;
+            if(pairedRead2){
+                firstOfPair2= alignment.getFirstOfPairFlag();
+            }
+            
+            // Try and read in from unaligned BAM until read name matches align'd bam's read
+            while( ( !readName1.equals(readName2)
+                    || pairedRead1 != pairedRead2
+                    || firstOfPair1 != firstOfPair2 )
+                  ){
+                // Output
+                if( this.KEEP_EXTRA_UNMAPPED_READS ){
+                    out.addAlignment(record);
+                }
+                
+                if (iteratorIn.hasNext()) {
+                    record = iteratorIn.next();
+                    readName1 = record.getReadName();
+                    pairedRead1 = record.getReadPairedFlag();
+                    firstOfPair1 = false;
+                    if (pairedRead1) {
+                        firstOfPair1 = record.getFirstOfPairFlag();
+                    }
+                }else{
+                    break; // No more unaligned input data
+                }
+                
+            }
+            // If we've found a matching record merge them
+            if(  readName1.equals(readName2)
+               && pairedRead1 == pairedRead2
+               && firstOfPair1 == firstOfPair2
+               ){
+                this.mergeRecords(alignment, record);
+                out.addAlignment(alignment); // Write merged record
+                String parent_rg = (String) alignment.getAttribute("RG");
+                while ( !secondary_supp.empty() ) {
+                    SAMRecord s = secondary_supp.pop();
+                    s.setAttribute("RG", parent_rg);
+                    out.addAlignment(s); // Write merged supp record
+                }
+                alignment = null;
+            } else if ( this.KEEP_EXTRA_UNMAPPED_READS ) {
+                out.addAlignment(record);
+            }
+        }
+        // If we have left over records in our aligned BAM something went wrong
+        if( alignment != null || nextAlignment != null || iteratorAlignments.hasNext() ){
+            SAMRecord firstRecordLeft = iteratorAlignments.next();
+            log.error( firstRecordLeft.getReadName() + " " + firstRecordLeft.getFlags() );
+            throw new RuntimeException("The mapped bam file has more reads than the unmapped"
+                                       + " after reading their common reads in their begining.");
+        }
+    }
+    
     @Override
     protected int doWork() {
       
@@ -139,78 +286,8 @@ public class BamMerger extends PicardCommandLine {
         SAMRecordIterator iteratorAlignments = alignments.iterator();
         SAMRecordIterator iteratorIn = in.iterator();
 
-        while( iteratorIn.hasNext() ){
-
-            SAMRecord record = iteratorIn.next();
-
-            SAMRecord alignment;
-            // Check if we are out of alignments
-            if(iteratorAlignments.hasNext()){
-               alignment = iteratorAlignments.next();
-            }else if ( this.KEEP_EXTRA_UNMAPPED_READS ) {
-                out.addAlignment(record);
-                continue;
-            }else {
-                break;
-            }
-
-            String readName1 = record.getReadName();
-            String readName2 = alignment.getReadName();
-            
-            boolean pairedRead1 = record.getReadPairedFlag();
-            boolean pairedRead2 = alignment.getReadPairedFlag();
-            
-            boolean firstOfPair1 = false;
-            if(pairedRead1){
-               firstOfPair1 = record.getFirstOfPairFlag();
-            }
-            boolean firstOfPair2 = false;
-            if(pairedRead2){
-               firstOfPair2= alignment.getFirstOfPairFlag();
-            }
-
-            // Try and read in from unaligned BAM until read name matches align'd bam's read
-            while( ( !readName1.equals(readName2)
-                || pairedRead1 != pairedRead2
-                || firstOfPair1 != firstOfPair2 )
-            ){
-                // Output
-                if( this.KEEP_EXTRA_UNMAPPED_READS ){
-                    out.addAlignment(record);
-                }
-
-                if (iteratorIn.hasNext()) {
-                    record = iteratorIn.next();
-                    readName1 = record.getReadName();
-                    pairedRead1 = record.getReadPairedFlag();
-                    firstOfPair1 = false;
-                    if (pairedRead1) {
-                        firstOfPair1 = record.getFirstOfPairFlag();
-                    }
-                }else{
-                    break; // No more unaligned input data
-                }
-                
-            }
-            // If we've found a matching record merge them
-            if(  readName1.equals(readName2)
-                    && pairedRead1 == pairedRead2
-                    && firstOfPair1 == firstOfPair2 
-              ){
-                  this.mergeRecords(alignment, record);
-                  out.addAlignment(alignment); // Write merged record
-            }else if ( this.KEEP_EXTRA_UNMAPPED_READS ) {
-                out.addAlignment(record);
-            }
-
-        }
-        // If we have left over records in our aligned BAM something went wrong
-        if( iteratorAlignments.hasNext() ){
-            SAMRecord firstRecordLeft = iteratorAlignments.next();
-            log.error( firstRecordLeft.getReadName() + " " + firstRecordLeft.getFlags() );
-            throw new RuntimeException("The mapped bam file has more reads than the unmapped"
-                    + " after reading their common reads in their begining.");
-        }
+        //mergealign_legacy(iteratorIn, iteratorAlignments, out);
+        mergealign_pairedsupp(iteratorIn, iteratorAlignments, out);
 
         out.close();
         in.close();
