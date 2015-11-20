@@ -101,6 +101,9 @@ public class BamIndexDecoder extends PicardCommandLine {
     @Option(doc="Convert low quality bases in barcode read to Ns .")
     public boolean CONVERT_LOW_QUALITY_TO_NO_CALL = false;
     
+    @Option(doc="Change the RG name by adding #<barcodename> suffix")
+    public boolean CHANGE_RG_NAME = false;
+    
     @Option(doc="Max low quality phred value to convert bases in barcode read to Ns .")
     private int MAX_LOW_QUALITY_TO_CONVERT = 15;
 
@@ -221,12 +224,14 @@ public class BamIndexDecoder extends PicardCommandLine {
             
             String barcodeName = this.barcodeNameList.get(barcode);
 
-            this.markBarcode(record, barcodeName, readGroupOnlyIdInHeader);
+            if (CHANGE_RG_NAME) {
+                this.markBarcode(record, barcodeName, readGroupOnlyIdInHeader);
             
-            if (isPaired) {
-                this.markBarcode(pairedRecord, barcodeName, readGroupOnlyIdInHeader);
+                if (isPaired) {
+                    this.markBarcode(pairedRecord, barcodeName, readGroupOnlyIdInHeader);
+                }
             }
-            
+
             if( OUTPUT != null ){
                 out.addAlignment(record);
                 if(isPaired){

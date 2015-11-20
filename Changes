@@ -1,3 +1,7 @@
+
+- new command line option CHANGE_RG_NAME default false
+- NB this is a change to previous behaviour, where it was always true
+
 release 1.17
 - New command line option ADD_CLUSTER_INDEX_TAG default false
 - Added function to read experiment name and computer name from runParameters file
