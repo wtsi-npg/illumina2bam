@@ -101,8 +101,8 @@ public class BamIndexDecoder extends PicardCommandLine {
     @Option(doc="Convert low quality bases in barcode read to Ns .")
     public boolean CONVERT_LOW_QUALITY_TO_NO_CALL = false;
     
-    @Option(doc="Change the RG name by adding #<barcodename> suffix")
-    public boolean CHANGE_RG_NAME = false;
+    @Option(doc="Change the read name by adding #<barcodename> suffix")
+    public boolean CHANGE_READ_NAME = false;
     
     @Option(doc="Max low quality phred value to convert bases in barcode read to Ns .")
     private int MAX_LOW_QUALITY_TO_CONVERT = 15;
@@ -224,12 +224,10 @@ public class BamIndexDecoder extends PicardCommandLine {
             
             String barcodeName = this.barcodeNameList.get(barcode);
 
-            if (CHANGE_RG_NAME) {
-                this.markBarcode(record, barcodeName, readGroupOnlyIdInHeader);
+            this.markBarcode(record, barcodeName, readGroupOnlyIdInHeader);
             
-                if (isPaired) {
-                    this.markBarcode(pairedRecord, barcodeName, readGroupOnlyIdInHeader);
-                }
+            if (isPaired) {
+                this.markBarcode(pairedRecord, barcodeName, readGroupOnlyIdInHeader);
             }
 
             if( OUTPUT != null ){
@@ -268,7 +266,10 @@ public class BamIndexDecoder extends PicardCommandLine {
     private SAMRecord markBarcode(SAMRecord record, String barcodeName, String readGroupOnlyIdInHeader) {
 
         String readName = record.getReadName();
-        record.setReadName(readName + "#" + barcodeName);
+
+        if (CHANGE_READ_NAME) {
+            record.setReadName(readName + "#" + barcodeName);
+        }
 
         Object oldReadGroupId = record.getAttribute("RG");
         if (oldReadGroupId == null && readGroupOnlyIdInHeader != null) {

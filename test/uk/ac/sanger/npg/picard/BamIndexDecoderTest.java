@@ -78,13 +78,13 @@ public class BamIndexDecoderTest {
             "CREATE_MD5_FILE=true",
             "TMP_DIR=testdata/",
             "VALIDATION_STRINGENCY=SILENT",
-            "CHANGE_RG_NAME=true",
+            "CHANGE_READ_NAME=true",
             "BARCODE_TAG_NAME=RT"
         };
 
         decoder.instanceMain(args);
         System.out.println(decoder.getCommandLine());
-        assertEquals(decoder.getCommandLine(), "uk.ac.sanger.npg.picard.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT=testdata/6383_8/6383_8.sam BARCODE_TAG_NAME=RT BARCODE_FILE=testdata/decode/6383_8.tag METRICS_FILE=testdata/6383_8/6383_8.metrics CHANGE_RG_NAME=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    BARCODE_QUALITY_TAG_NAME=QT MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 CONVERT_LOW_QUALITY_TO_NO_CALL=false MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        assertEquals(decoder.getCommandLine(), "uk.ac.sanger.npg.picard.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT=testdata/6383_8/6383_8.sam BARCODE_TAG_NAME=RT BARCODE_FILE=testdata/decode/6383_8.tag METRICS_FILE=testdata/6383_8/6383_8.metrics CHANGE_READ_NAME=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    BARCODE_QUALITY_TAG_NAME=QT MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 CONVERT_LOW_QUALITY_TO_NO_CALL=false MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
         File outputFile = new File(outputName + ".sam");
         File outputMetrics = new File(outputName + ".metrics");
         File outputMd5 = new File(outputName + ".sam.md5");
@@ -101,7 +101,7 @@ public class BamIndexDecoderTest {
         }
         samFileReader.close();
 
-        assertEquals("a71494cca1990ab452ab71d55c54e9d9", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
+        assertEquals("bcc84c81944ae6e1bc60da8960d67a29", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
         
         outputFile.delete();
         outputMetrics.delete();
@@ -132,13 +132,13 @@ public class BamIndexDecoderTest {
             "CREATE_MD5_FILE=true",
             "TMP_DIR=testdata/",
             "VALIDATION_STRINGENCY=SILENT",
-            "CHANGE_RG_NAME=true",
+            "CHANGE_READ_NAME=true",
             "BARCODE_TAG_NAME=RT"
         };
 
         decoder.instanceMain(args);
         System.out.println(decoder.getCommandLine());
-        assertEquals(decoder.getCommandLine(), "uk.ac.sanger.npg.picard.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT=testdata/6383_8/6383_8.sam BARCODE_TAG_NAME=RT BARCODE_FILE=testdata/decode/6383_8_N.tag METRICS_FILE=testdata/6383_8/6383_8.metrics CHANGE_RG_NAME=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    BARCODE_QUALITY_TAG_NAME=QT MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 CONVERT_LOW_QUALITY_TO_NO_CALL=false MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        assertEquals(decoder.getCommandLine(), "uk.ac.sanger.npg.picard.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT=testdata/6383_8/6383_8.sam BARCODE_TAG_NAME=RT BARCODE_FILE=testdata/decode/6383_8_N.tag METRICS_FILE=testdata/6383_8/6383_8.metrics CHANGE_READ_NAME=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    BARCODE_QUALITY_TAG_NAME=QT MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 CONVERT_LOW_QUALITY_TO_NO_CALL=false MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
         File outputFile = new File(outputName + ".sam");
         File outputMetrics = new File(outputName + ".metrics");
         File outputMd5 = new File(outputName + ".sam.md5");
@@ -155,7 +155,7 @@ public class BamIndexDecoderTest {
         }
         samFileReader.close();
 
-        assertEquals("cd5a5abd5f2f77977db8d55bef1d8f7b", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
+        assertEquals("786e66e8ab462404632c85f42b8b4594", CheckMd5.getBamMd5AfterRemovePGVersion(outputFile, "BamIndexDecoder"));
         
         outputFile.delete();
         outputMetrics.delete();
@@ -195,11 +195,11 @@ public class BamIndexDecoderTest {
 
         decoder.instanceMain(args);
         System.out.println(decoder.getCommandLine());
-        assertEquals(decoder.getCommandLine(), "uk.ac.sanger.npg.picard.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT_DIR=testdata/6383_8_split OUTPUT_PREFIX=6383_8 OUTPUT_FORMAT=bam BARCODE_TAG_NAME=RT BARCODE_QUALITY_TAG_NAME=QT BARCODE_FILE=testdata/decode/6383_8.tag METRICS_FILE=testdata/6383_8_split/6383_8.metrics CONVERT_LOW_QUALITY_TO_NO_CALL=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 CHANGE_RG_NAME=false MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        assertEquals(decoder.getCommandLine(), "uk.ac.sanger.npg.picard.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT_DIR=testdata/6383_8_split OUTPUT_PREFIX=6383_8 OUTPUT_FORMAT=bam BARCODE_TAG_NAME=RT BARCODE_QUALITY_TAG_NAME=QT BARCODE_FILE=testdata/decode/6383_8.tag METRICS_FILE=testdata/6383_8_split/6383_8.metrics CONVERT_LOW_QUALITY_TO_NO_CALL=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 CHANGE_READ_NAME=false MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
          
         File outputMetrics = new File(outputName + "/6383_8.metrics");
         outputMetrics.delete();
-        String [] md5s = {"e3e0b1cb89b50e69fb2c54daae226975", "d67e70c8be789e3658d7a60c7b239910", "6970326102dafc28ef8fb2c09844c4de"};
+        String [] md5s = {"fa8f39fdc8d355db7acfb339ed81aa83", "0425be8b5cf8650dcea86f70cf7a8d43", "0cf598db9d33e01c18d9cf8c23fc06e5"};
         for (int i=0;i<3;i++){
             File outputFile = new File(outputName + "/6383_8#" + i + ".bam");
             SAMFileReader f  = new SAMFileReader(outputFile);
@@ -220,7 +220,7 @@ public class BamIndexDecoderTest {
     }
 
     /**
-     * Test of CHANGE_RG_NAME paramater
+     * Test of CHANGE_READ_NAME paramater
      */
     @Test
     public void testMainWithChangeRGName() throws IOException {
@@ -245,17 +245,17 @@ public class BamIndexDecoderTest {
             "VALIDATION_STRINGENCY=SILENT",
             "BARCODE_TAG_NAME=RT",
             "BARCODE_QUALITY_TAG_NAME=QT",
-            "CHANGE_RG_NAME=true",
+            "CHANGE_READ_NAME=true",
             "CONVERT_LOW_QUALITY_TO_NO_CALL=true"
         };
 
         decoder.instanceMain(args);
         System.out.println(decoder.getCommandLine());
-        assertEquals(decoder.getCommandLine(), "uk.ac.sanger.npg.picard.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT_DIR=testdata/6383_8_split OUTPUT_PREFIX=6383_8 OUTPUT_FORMAT=bam BARCODE_TAG_NAME=RT BARCODE_QUALITY_TAG_NAME=QT BARCODE_FILE=testdata/decode/6383_8.tag METRICS_FILE=testdata/6383_8_split/6383_8.metrics CONVERT_LOW_QUALITY_TO_NO_CALL=true CHANGE_RG_NAME=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        assertEquals(decoder.getCommandLine(), "uk.ac.sanger.npg.picard.BamIndexDecoder INPUT=testdata/bam/6383_8.sam OUTPUT_DIR=testdata/6383_8_split OUTPUT_PREFIX=6383_8 OUTPUT_FORMAT=bam BARCODE_TAG_NAME=RT BARCODE_QUALITY_TAG_NAME=QT BARCODE_FILE=testdata/decode/6383_8.tag METRICS_FILE=testdata/6383_8_split/6383_8.metrics CONVERT_LOW_QUALITY_TO_NO_CALL=true CHANGE_READ_NAME=true TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    MAX_MISMATCHES=1 MIN_MISMATCH_DELTA=1 MAX_NO_CALLS=2 MAX_LOW_QUALITY_TO_CONVERT=15 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
          
         File outputMetrics = new File(outputName + "/6383_8.metrics");
         outputMetrics.delete();
-        String [] md5s = {"cc4c5e5c2a1746a804d26d08bc44f512", "02d1cf6c350ff9580f5ee3921d3b1550", "0a7bea441793db682f611b9da0dea90e"};
+        String [] md5s = {"a5e1d2eae40dc21f47ceaebdf9a4db95", "00b8e7601f3b149a2bb1e03371c35ce1", "0a331550fe0e7f9a6125fba654b636c1"};
         for (int i=0;i<3;i++){
             File outputFile = new File(outputName + "/6383_8#" + i + ".bam");
             SAMFileReader f  = new SAMFileReader(outputFile);
@@ -263,7 +263,7 @@ public class BamIndexDecoderTest {
             while(inIterator.hasNext()){
                 SAMRecord record = inIterator.next();
                 String readName = record.getReadName();
-                assertTrue("RG has changed", readName.matches("(.*)#(.*)"));
+                assertTrue("Read Name has changed", readName.matches("(.*)#(.*)"));
             }
             f.close();
             outputFile.deleteOnExit();
