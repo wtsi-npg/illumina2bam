@@ -207,7 +207,7 @@ public class BamIndexDecoderTest {
             while(inIterator.hasNext()){
                 SAMRecord record = inIterator.next();
                 String readName = record.getReadName();
-                assertFalse("RG has not changed", readName.matches("(.*)#(.*)"));
+                assertFalse("Read name has not changed", readName.matches("(.*)#(.*)"));
             }
             f.close();
             outputFile.deleteOnExit();
