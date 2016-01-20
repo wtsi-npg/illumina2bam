@@ -131,4 +131,33 @@ public class BamMergerTest {
 
          assertEquals("159060a1842a2e15c6a3e9464d7c7e51", CheckMd5.getBamMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"));
     }
+
+    /**
+     * Test of instanceMain method and program record.
+     */
+    @Test
+    public void testMainSupplementaryReads() throws FileNotFoundException, IOException {
+        
+        System.out.println("instanceMain with supplementary reads, not keep extra reads");
+        
+        String[] args = {
+            "ALIGNED=testdata/bam/6210_8_aligned_supp.sam",
+            "I=testdata/bam/6210_8_supp.sam",
+            "O=testdata/6210_8_merged_supp.bam",
+            "CREATE_MD5_FILE=true",
+            "TMP_DIR=testdata/",
+            "VALIDATION_STRINGENCY=SILENT",
+        };
+        
+        merger.instanceMain(args);
+        
+        assertEquals(merger.getCommandLine(), "uk.ac.sanger.npg.picard.BamMerger ALIGNED_BAM=testdata/bam/6210_8_aligned_supp.sam INPUT=testdata/bam/6210_8_supp.sam OUTPUT=testdata/6210_8_merged_supp.bam TMP_DIR=[testdata] VALIDATION_STRINGENCY=SILENT CREATE_MD5_FILE=true    ALIGNMENT_PROGRAM_ID=bwa KEEP_ALL_PG=false KEEP_EXTRA_UNMAPPED_READS=false REPLACE_ALIGNED_BASE_QUALITY=false VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false");
+        File mergedBamFile = new File("testdata/6210_8_merged_supp.bam");
+        mergedBamFile.deleteOnExit();
+        
+        File md5File = new File("testdata/6210_8_merged_supp.bam.md5");
+        md5File.deleteOnExit();
+        
+        assertEquals("06423e35c7f42b3301c0dd087a6872a5", CheckMd5.getBamMd5AfterRemovePGVersion(mergedBamFile, "BamMerger"));
+    }
 }

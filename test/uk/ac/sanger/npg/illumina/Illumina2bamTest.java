@@ -112,6 +112,52 @@ public class Illumina2bamTest {
     }
 
     /**
+     * Test of READ_GROUP_ID paramater.
+     */
+    @Test
+    public void testRG() {
+        
+        System.out.println("READ_GROUP_ID");
+        Data testData = new Data("testdata/test_6000_1.sam");
+        String[] args = {"INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities",
+            "READ_GROUP_ID=6000_1",
+            "LANE=1",
+            "OUTPUT=" + testData.tempBamFile.getPath(),
+            "VALIDATION_STRINGENCY=STRICT",
+            "CREATE_MD5_FILE=true",
+            "FIRST_TILE=1101",
+            "COMPRESSION_LEVEL=1",
+            "TILE_LIMIT=1",
+            "LB=Test library",
+            "SM=Test Sample",
+            "ST=testStudy",
+            "TMP_DIR=testdata/",
+            "RUN_START_DATE=2011-03-23T00:00:00+0000"
+        };
+
+        testData.commonAsserts(args);
+        assertEquals("uk.ac.sanger.npg.illumina.Illumina2bam"
+                + " INTENSITY_DIR=testdata/110323_HS13_06000_B_B039WABXX/Data/Intensities"
+                + " LANE=1 OUTPUT=" + testData.tempBamFile.getPath()
+                + " READ_GROUP_ID=6000_1 SAMPLE_ALIAS=Test Sample LIBRARY_NAME=Test library"
+                + " STUDY_NAME=testStudy RUN_START_DATE=2011-03-23T00:00:00+0000 FIRST_TILE=1101 TILE_LIMIT=1"
+                + " TMP_DIR=[testdata] VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=1"
+                + " CREATE_MD5_FILE=true    GENERATE_SECONDARY_BASE_CALLS=false PF_FILTER=true"
+                + " SEQUENCING_CENTER=SC PLATFORM=ILLUMINA BARCODE_SEQUENCE_TAG_NAME=BC BARCODE_QUALITY_TAG_NAME=QT"
+                + " ADD_CLUSTER_INDEX_TAG=false VERBOSITY=INFO QUIET=false MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false",
+                testData.illumina2bam.getCommandLine()
+               );
+    
+        SAMFileReader samFileReader = new SAMFileReader(testData.tempBamFile);
+        List<SAMReadGroupRecord> rgl =  samFileReader.getFileHeader().getReadGroups();
+        assertEquals(1, rgl.size());
+        assertEquals("6000_1",rgl.get(0).getReadGroupId());
+        samFileReader.close();
+
+        assertEquals("9d35354e308e6440d825a3f1a3c5a1db", CheckMd5.getBamMd5AfterRemovePGVersion(testData.tempBamFile, "Illumina2bam"));
+    }
+
+    /**
      * Test of instanceMain method and program record if no FIRST_TILE specified.
      */
     @Test
