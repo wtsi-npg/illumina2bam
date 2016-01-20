@@ -1,4 +1,4 @@
-
+release 1.18
 - new command line option CHANGE_RG_NAME default false
 - NB this is a change to previous behaviour, where it was always true
 
