@@ -1,3 +1,6 @@
+release 1.19
+- cope with unknown sort order in header
+
 release 1.18
 - new command line option CHANGE_RG_NAME default false
 - NB this is a change to previous behaviour, where it was always true

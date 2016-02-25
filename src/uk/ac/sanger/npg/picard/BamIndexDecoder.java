@@ -354,6 +354,11 @@ public class BamIndexDecoder extends PicardCommandLine {
                         + OUTPUT_FORMAT;
                 final SAMFileHeader perBarcodeOutputHeader = outputHeader.clone();
                 perBarcodeOutputHeader.setReadGroups(readGroupList);
+                try {
+                    perBarcodeOutputHeader.getSortOrder();
+                } catch(IllegalArgumentException e) {
+                    perBarcodeOutputHeader.setSortOrder(SAMFileHeader.SortOrder.unsorted);
+                }
                 final SAMFileWriter outPerBarcode = new SAMFileWriterFactory().makeSAMOrBAMWriter(perBarcodeOutputHeader, true, new File(barcodeBamOutputName));
                 outputList.put(barcode, outPerBarcode);
             }
@@ -363,6 +368,12 @@ public class BamIndexDecoder extends PicardCommandLine {
         if (OUTPUT != null) {
             log.info("Open output file with header: " + OUTPUT.getName());
             outputHeader.setReadGroups(fullReadGroupList);
+            try {
+                outputHeader.getSortOrder();
+            } catch(IllegalArgumentException e) {
+                outputHeader.setSortOrder(SAMFileHeader.SortOrder.unsorted);
+            }
+
             this.out = new SAMFileWriterFactory().makeSAMOrBAMWriter(outputHeader, true, OUTPUT);
         }
 
